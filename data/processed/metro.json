@@ -1,6 +1,6 @@
 {
  "meta": {
-  "generated_at": "2026-10-25T06:45:29+00:00",
+  "generated_at": "2026-10-26T02:06:48+00:00",
   "source": "OpenStreetMap (Overpass API)",
   "license": "Data (c) OpenStreetMap contributors, ODbL 1.0",
   "counts": {
@@ -5455,7 +5455,7 @@
   {
    "type": "in_station",
    "station": "anand-vihar",
-   "walk_min": 7
+   "walk_min": 6
   },
   {
    "type": "in_station",

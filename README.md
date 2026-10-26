@@ -37,9 +37,19 @@ python3 scripts/build_places.py         # geocode data/curated/places.csv -> pla
 | `GET /api/v1/places?q=hauz&limit=5` | autocomplete over places + metro stations |
 | `GET /api/v1/metro/lines` | every line with colour, operator and station order |
 | `GET /api/v1/metro/stations[/<id>]` | station coordinates and the lines serving them |
+| `POST /api/v1/lab/compare` | run BFS / DFS / UCS / Greedy / A* on one station-to-station query: route, cost, optimality gap, nodes expanded, runtime, expansion order |
 
 ## Status
 
-Phase 1 (data) done: 16 lines, 289 stations, 145 places. Next: Phase 2 (search algorithms). See PLAN.md §11.
+Phase 2 (search core) done: transit graph (616 nodes, 1384 edges) and five search algorithms with
+38 tests, including A* matching UCS on 100 random real queries. Next: Phase 3 (multi-modal journeys
+with cab/auto/walk). See PLAN.md §11.
+
+Try it:
+
+```bash
+curl -s -X POST localhost:8080/api/v1/lab/compare \
+  -d '{"from":"noida-sector-51","to":"kashmere-gate","include_expansion":false}'
+```
 
 Map data © OpenStreetMap contributors (ODbL).

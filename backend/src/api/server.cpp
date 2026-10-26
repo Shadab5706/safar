@@ -9,7 +9,6 @@
 namespace safar::api {
 
 using nlohmann::json;
-using Clock = std::chrono::steady_clock;
 
 namespace {
 
@@ -21,33 +20,14 @@ std::string make_request_id() {
     return os.str();
 }
 
-void send_json(httplib::Response& res, int status, const json& body) {
-    res.status = status;
-    res.set_content(body.dump(), "application/json");
-}
-
-// Sends a success envelope with timing + request id filled into meta.
-void send_ok(httplib::Response& res, Clock::time_point t0, const json& data) {
-    json body = ok_body(data);
-    body["meta"]["took_ms"] = std::chrono::duration<double, std::milli>(Clock::now() - t0).count();
-    body["meta"]["request_id"] = res.get_header_value("X-Request-Id");
-    send_json(res, 200, body);
-}
-
 }  // namespace
 
-json ok_body(const json& data) {
-    return {{"ok", true}, {"data", data}, {"meta", json::object()}};
-}
-
-json error_body(const std::string& code, const std::string& message) {
-    return {{"ok", false}, {"error", {{"code", code}, {"message", message}}}, {"meta", json::object()}};
-}
-
-Server::Server(Config config, std::shared_ptr<const data::Dataset> dataset)
-    : config_(std::move(config)), data_(std::move(dataset)), started_at_(Clock::now()) {
+Server::Server(Config config, std::shared_ptr<const data::Dataset> dataset,
+               std::shared_ptr<const graph::Graph> transit)
+    : config_(std::move(config)), data_(std::move(dataset)), transit_(std::move(transit)), started_at_(Clock::now()) {
     register_middleware();
     register_routes();
+    register_lab_routes();
 }
 
 void Server::register_middleware() {
@@ -103,7 +83,9 @@ void Server::register_routes() {
             {"data", {{"lines", data_->lines().size()},
                       {"stations", data_->stations().size()},
                       {"segments", data_->segments().size()},
-                      {"places", data_->places().size()}}},
+                      {"places", data_->places().size()},
+                      {"graph_nodes", transit_->node_count()},
+                      {"graph_edges", transit_->edge_count()}}},
         });
     });
 

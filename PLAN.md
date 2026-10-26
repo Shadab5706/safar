@@ -1,7 +1,7 @@
 # Safar — AI Multi-Modal Journey Planner for Delhi-NCR
 
 Course: Application of AI (B.Tech CSE, 3rd year)
-Status: Phase 1 (data) done — 2026-10-25. Next: Phase 2 (search core)
+Status: Phase 2 (search core) done — 2026-10-26. Next: Phase 3 (multi-modal journeys)
 
 ---
 
@@ -160,6 +160,15 @@ isn't possible legally for this project.
   - `WALK`: place ↔ station or place ↔ place if under ~1.2 km
   - `CAB` / `AUTO` / `BIKE`: place ↔ station / place ↔ place, from OSRM time + fare engine
   - `ENTRY/EXIT`: station gate time + platform wait
+
+### 7.1a As built (Phase 2)
+- Gate node per station (street level) + platform node per station-line (`rajiv-chowk@yellow`).
+- Edges: Board (entry 4 min + line's average wait), Alight (exit 2.5 min), Ride, Transfer
+  (walk + wait for the new line), Walk (gate to gate).
+- Invariant checked at startup: every in-station transfer is quicker than exit + re-entry,
+  so optimal routes never "leave and come back in".
+- Heuristic speed = the fastest straight-line speed any edge achieves (about 84 km/h, set by Namo
+  Bharat). That makes h consistent by the triangle inequality, which a test checks on every edge.
 
 ### 7.2 Search problem
 - **State:** `(node, mode_used_to_arrive)`, so switching mode can carry a penalty

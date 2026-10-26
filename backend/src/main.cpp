@@ -26,7 +26,11 @@ int main(int argc, char** argv) {
         spdlog::info("loaded {} lines, {} stations, {} segments, {} places", dataset->lines().size(),
                      dataset->stations().size(), dataset->segments().size(), dataset->places().size());
 
-        safar::api::Server server(std::move(config), std::move(dataset));
+        auto transit = std::make_shared<const safar::graph::Graph>(safar::graph::build_transit_graph(*dataset));
+        spdlog::info("transit graph: {} nodes, {} edges, heuristic speed {:.0f} km/h", transit->node_count(),
+                     transit->edge_count(), transit->max_speed_kmh());
+
+        safar::api::Server server(std::move(config), std::move(dataset), std::move(transit));
         g_server = &server;
         std::signal(SIGINT, on_signal);
         std::signal(SIGTERM, on_signal);

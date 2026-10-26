@@ -74,6 +74,7 @@ SearchResult best_first(const graph::Graph& g, NodeId start, NodeId goal, const 
 
         for (EdgeId e : g.out_edges(top.node)) {
             const auto& edge = g.edge(e);
+            if (detail::is_blocked(opt, e, edge.to)) continue;
             const double child_g = top.g + opt.cost.edge_cost(edge);
             if (child_g < reached[edge.to]) {
                 reached[edge.to] = child_g;

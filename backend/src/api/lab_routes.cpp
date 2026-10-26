@@ -62,9 +62,9 @@ void Server::register_lab_routes() {
         const json body = json::parse(req.body);  // bad JSON -> 400 via the exception handler
         try {
             if (!body.is_object()) throw BadRequest{400, "invalid_body", "body must be a JSON object"};
-            const auto& g = *transit_;
-            const auto start = station_node(g, *data_, body, "from");
-            const auto goal = station_node(g, *data_, body, "to");
+            const auto& g = *ctx_.transit;
+            const auto start = station_node(g, *ctx_.dataset, body, "from");
+            const auto goal = station_node(g, *ctx_.dataset, body, "to");
 
             std::vector<search::Algorithm> algos;
             if (body.contains("algorithms")) {
@@ -105,7 +105,7 @@ void Server::register_lab_routes() {
                 if (r.found && reference.found && reference.cost > 0) {
                     j["optimality_gap_pct"] = round2((r.cost - reference.cost) / reference.cost * 100.0);
                 }
-                if (r.found) j["itinerary"] = search::to_json(search::build_itinerary(g, r.path), *data_);
+                if (r.found) j["itinerary"] = search::to_json(search::build_itinerary(g, r.path), g, *ctx_.dataset);
                 if (opt.record_expansion) {
                     json order = json::array();
                     for (auto n : r.expansion_order) order.push_back(g.node(n).id);
@@ -114,8 +114,8 @@ void Server::register_lab_routes() {
                 results.push_back(std::move(j));
             }
 
-            const auto& from = *data_->station(g.node(start).id);
-            const auto& to = *data_->station(g.node(goal).id);
+            const auto& from = *ctx_.dataset->station(g.node(start).id);
+            const auto& to = *ctx_.dataset->station(g.node(goal).id);
             send_ok(res, t0, {
                 {"from", {{"id", from.id}, {"name", from.name}}},
                 {"to", {{"id", to.id}, {"name", to.name}}},

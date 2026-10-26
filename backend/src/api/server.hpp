@@ -7,8 +7,7 @@
 #include <nlohmann/json.hpp>
 
 #include "api/response.hpp"
-#include "data/dataset.hpp"
-#include "graph/graph.hpp"
+#include "app/context.hpp"
 #include "util/config.hpp"
 
 namespace safar::api {
@@ -19,7 +18,7 @@ namespace safar::api {
 //   { "ok": false, "error": { "code": .., "message": .. }, "meta": {..} }
 class Server {
 public:
-    Server(Config config, std::shared_ptr<const data::Dataset> dataset, std::shared_ptr<const graph::Graph> transit);
+    Server(Config config, AppContext ctx);
 
     // Blocks until stop() is called.
     bool listen();
@@ -29,12 +28,12 @@ public:
 
 private:
     void register_routes();
-    void register_lab_routes();  // api/lab_routes.cpp
+    void register_lab_routes();      // api/lab_routes.cpp
+    void register_journey_routes();  // api/journey_routes.cpp
     void register_middleware();
 
     Config config_;
-    std::shared_ptr<const data::Dataset> data_;
-    std::shared_ptr<const graph::Graph> transit_;
+    AppContext ctx_;
     httplib::Server http_;
     std::chrono::steady_clock::time_point started_at_;
 };

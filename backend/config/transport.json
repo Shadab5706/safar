@@ -1,0 +1,71 @@
+{
+  // Routing + pricing model. Loaded at startup; every number here can be changed
+  // without recompiling. Prices are in rupees, times in minutes, distances in km.
+
+  "metro_fares": {
+    // Distance slabs: [up_to_km, fare]; the last slab uses null for "beyond".
+    // DMRC: official fares from 25 Aug 2025 (verified). Other operators: approximate,
+    // check the operator's fare chart before the demo.
+    "DMRC": {
+      "verified": true,
+      "weekday": [[2, 11], [5, 21], [12, 32], [21, 43], [32, 54], [null, 64]],
+      "sunday":  [[2, 11], [5, 11], [12, 21], [21, 32], [32, 43], [null, 54]]
+    },
+    "DMRC-AE": {
+      "verified": false,
+      "weekday": [[3, 22], [8, 33], [13, 44], [18, 55], [null, 65]]
+    },
+    "NMRC": {
+      "verified": false,
+      "weekday": [[2, 11], [4, 16], [8, 21], [12, 31], [16, 41], [20, 46], [null, 55]]
+    },
+    "RAPID": {
+      "verified": false,
+      "weekday": [[3, 20], [null, 30]]
+    },
+    "NCRTC": {
+      "verified": false,
+      "weekday": [[5, 20], [15, 40], [30, 60], [45, 90], [60, 120], [null, 150]]
+    }
+  },
+
+  // Generic road rate cards used until Phase 4 adds per-provider fares (Uber/Ola/Rapido).
+  // fare = max(min_fare, base + per_km * max(0, km - base_km) + per_min * ride_min)
+  // max_km: longest whole trip offered. max_access_km: longest ride to/from a station
+  // (nobody takes a 37 km bike taxi just to reach the metro).
+  "road_modes": {
+    "cab":  { "base": 50, "base_km": 0,   "per_km": 13, "per_min": 1.5,  "min_fare": 90, "pickup_min": 6, "speed_factor": 1.00, "max_km": 120, "max_access_km": 40 },
+    "auto": { "base": 30, "base_km": 1.5, "per_km": 11, "per_min": 0.75, "min_fare": 30, "pickup_min": 4, "speed_factor": 1.15, "max_km": 35,  "max_access_km": 15 },
+    "bike": { "base": 20, "base_km": 0,   "per_km": 6,  "per_min": 0.5,  "min_fare": 25, "pickup_min": 4, "speed_factor": 0.85, "max_km": 40,  "max_access_km": 15 }
+  },
+
+  "walk": {
+    "speed_kmh": 4.5,
+    "detour_factor": 1.3,
+    "max_access_km": 2.0,   // straight-line distance to walk to/from a station
+    "max_direct_km": 3.0,   // walk the whole trip only if it is this short
+    // Tighter limits for places you can't just stroll into: airports are fenced, so
+    // only a station inside the terminal (IGI Airport on the Airport Express) is walkable.
+    "max_km_by_category": { "airport": 0.6 }
+  },
+
+  // When OSRM has no answer for a pair: road km = straight line * detour, driven at this
+  // free-flow speed (the traffic factor below is applied on top, as for OSRM times).
+  "road_fallback": { "detour_factor": 1.35, "speed_kmh": 40 },
+
+  // How many stations a place can reach by road: the nearest N, plus the nearest
+  // station of every line within line_radius_km.
+  "access": { "nearest_stations": 8, "line_radius_km": 35 },
+
+  // OSRM times are free-flow. Multiply by this factor for the hour of departure (0-23).
+  "traffic_by_hour": [
+    1.00, 1.00, 1.00, 1.00, 1.00, 1.05,
+    1.20, 1.45, 1.80, 1.85, 1.70, 1.50,
+    1.45, 1.45, 1.45, 1.50, 1.65, 1.85,
+    1.95, 1.90, 1.65, 1.40, 1.20, 1.05
+  ],
+
+  // Value of time range behind the preference slider (rupees per minute saved).
+  // preference 0 = cheapest (min), 1 = fastest (max), geometric in between.
+  "value_of_time": { "min": 0.5, "max": 15 }
+}

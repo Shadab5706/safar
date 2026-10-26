@@ -25,7 +25,7 @@ const char* to_string(Algorithm a) {
 }
 
 double CostModel::edge_cost(const graph::Edge& e) const {
-    double c = time_weight * e.time_min;
+    double c = time_weight * e.time_min + money_weight * e.money;
     if (e.kind == graph::EdgeKind::Board || e.kind == graph::EdgeKind::Transfer) c += boarding_penalty;
     return c;
 }

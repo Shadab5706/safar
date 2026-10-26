@@ -22,12 +22,12 @@ std::string make_request_id() {
 
 }  // namespace
 
-Server::Server(Config config, std::shared_ptr<const data::Dataset> dataset,
-               std::shared_ptr<const graph::Graph> transit)
-    : config_(std::move(config)), data_(std::move(dataset)), transit_(std::move(transit)), started_at_(Clock::now()) {
+Server::Server(Config config, AppContext ctx)
+    : config_(std::move(config)), ctx_(std::move(ctx)), started_at_(Clock::now()) {
     register_middleware();
     register_routes();
     register_lab_routes();
+    register_journey_routes();
 }
 
 void Server::register_middleware() {
@@ -80,12 +80,13 @@ void Server::register_routes() {
             {"service", "safar"},
             {"version", SAFAR_VERSION},
             {"uptime_s", uptime},
-            {"data", {{"lines", data_->lines().size()},
-                      {"stations", data_->stations().size()},
-                      {"segments", data_->segments().size()},
-                      {"places", data_->places().size()},
-                      {"graph_nodes", transit_->node_count()},
-                      {"graph_edges", transit_->edge_count()}}},
+            {"data", {{"lines", ctx_.dataset->lines().size()},
+                      {"stations", ctx_.dataset->stations().size()},
+                      {"segments", ctx_.dataset->segments().size()},
+                      {"places", ctx_.dataset->places().size()},
+                      {"graph_nodes", ctx_.transit->node_count()},
+                      {"graph_edges", ctx_.transit->edge_count()},
+                      {"road_pairs", ctx_.roads->size()}}},
         });
     });
 
@@ -108,7 +109,7 @@ void Server::register_routes() {
         }
 
         json results = json::array();
-        for (const auto& hit : data_->search(q, limit)) {
+        for (const auto& hit : ctx_.dataset->search(q, limit)) {
             if (hit.kind == data::SearchHit::Kind::Place) {
                 json j = data::to_json(*hit.place);
                 j["kind"] = "place";
@@ -126,20 +127,20 @@ void Server::register_routes() {
     http_.Get("/api/v1/metro/lines", [this](const httplib::Request&, httplib::Response& res) {
         const auto t0 = Clock::now();
         json lines = json::array();
-        for (const auto& l : data_->lines()) lines.push_back(data::to_json(l));
+        for (const auto& l : ctx_.dataset->lines()) lines.push_back(data::to_json(l));
         send_ok(res, t0, lines);
     });
 
     http_.Get("/api/v1/metro/stations", [this](const httplib::Request&, httplib::Response& res) {
         const auto t0 = Clock::now();
         json stations = json::array();
-        for (const auto& s : data_->stations()) stations.push_back(data::to_json(s));
+        for (const auto& s : ctx_.dataset->stations()) stations.push_back(data::to_json(s));
         send_ok(res, t0, stations);
     });
 
     http_.Get(R"(/api/v1/metro/stations/([a-z0-9\-]+))", [this](const httplib::Request& req, httplib::Response& res) {
         const auto t0 = Clock::now();
-        const auto* s = data_->station(req.matches[1]);
+        const auto* s = ctx_.dataset->station(req.matches[1]);
         if (!s) {
             send_json(res, 404, error_body("station_not_found", "no station with id " + std::string(req.matches[1])));
             return;

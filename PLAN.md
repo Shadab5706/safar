@@ -1,7 +1,7 @@
 # Safar — AI Multi-Modal Journey Planner for Delhi-NCR
 
 Course: Application of AI (B.Tech CSE, 3rd year)
-Status: Phase 2 (search core) done — 2026-10-26. Next: Phase 3 (multi-modal journeys)
+Status: Phase 3 (multi-modal journeys) done — 2026-10-26. Next: Phase 4 (per-provider fares)
 
 ---
 
@@ -186,6 +186,26 @@ isn't possible legally for this project.
 2. Run **Yen's k-shortest paths** (k = 5) on the recommended weights for alternatives.
 3. Merge results, drop near-duplicates (more than 70% of legs shared), keep the
    **Pareto-optimal** set on (time, cost, transfers), then tag the winners.
+
+### 7.3a As built (Phase 3)
+Per query the planner copies the transit graph, adds the endpoints as place nodes and links
+them to access stations (nearest 8 + the nearest station of every other line within 35 km)
+by walk / cab / auto / bike. Road times come from OSRM (prefetched, `road_matrix.json`) times
+a time-of-day traffic factor; fares from `backend/config/transport.json`. Candidates come from:
+1. **Weighted-sum sweep**: A* with value of time ₹0.5 to ₹30/min, plus cheapest and fastest.
+   Finds every route on the convex hull of the time/money trade-off.
+2. **Via-station alternatives**: first or last leg forced through each access station,
+   which finds Pareto-optimal routes inside the hull (e.g. "cab to Botanical Garden, then Magenta").
+3. **Yen's k = 12** on the user's preference; fewest-changes and public-transport-only presets;
+   the direct road trip.
+
+Then: price exactly (DMRC slabs, one ticket per paid area), merge vehicle variants of a
+route into per-leg options, drop near-duplicates (same lines, within 10 min / ₹20),
+Pareto-filter on (time, fare, changes) with 2 min / ₹5 slack, always keep the direct cab
+for reference, tag, and return up to 5. About 4 ms per query.
+
+Auto and bike taxi only feed stations up to 15 km away (cab: 40 km), and airports are
+walkable only from a station inside them (0.6 km).
 
 ### 7.4 Trip planner (local search)
 - State = an order of stops. Neighbour = 2-opt swap. Cost = total journey cost from the router.

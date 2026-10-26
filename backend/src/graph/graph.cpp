@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <stdexcept>
 
+#include "fares/transport_config.hpp"
+
 namespace safar::graph {
 
 NodeId Graph::add_node(Node n) {
@@ -37,10 +39,22 @@ std::optional<NodeId> Graph::find(std::string_view id) const {
     return it->second;
 }
 
-Graph build_transit_graph(const data::Dataset& ds, const TransitParams& params) {
+Graph build_transit_graph(const data::Dataset& ds, const TransitParams& params, const fares::TransportConfig* fares) {
     Graph g;
     const auto& stations = ds.stations();
     const auto& lines = ds.lines();
+
+    // Linearised fare per line (0 when no fare config is given, e.g. in unit tests).
+    std::vector<double> board_rs(lines.size(), 0), per_km_rs(lines.size(), 0);
+    std::vector<std::string> zone(lines.size());
+    for (std::size_t i = 0; i < lines.size(); ++i) {
+        zone[i] = fares::fare_zone(lines[i]);
+        if (fares) {
+            const auto& table = fares->fare_table(zone[i]);
+            board_rs[i] = table.base_fare();
+            per_km_rs[i] = table.per_km();
+        }
+    }
 
     std::unordered_map<std::string, std::size_t> station_idx, line_idx;
     for (std::size_t i = 0; i < stations.size(); ++i) station_idx[stations[i].id] = i;
@@ -62,7 +76,8 @@ Graph build_transit_graph(const data::Dataset& ds, const TransitParams& params) 
             if (g.find(pid)) continue;  // loop lines list a station twice
             const std::size_t si = station_idx.at(sid);
             const NodeId p = g.add_node({pid, NodeKind::Platform, stations[si].pos, si, li});
-            g.add_edge({gate[si], p, EdgeKind::Board, params.entry_min + line.avg_wait_min, line.avg_wait_min, 0, li});
+            g.add_edge({gate[si], p, EdgeKind::Board, params.entry_min + line.avg_wait_min, line.avg_wait_min, 0, li,
+                        board_rs[li]});
             g.add_edge({p, gate[si], EdgeKind::Alight, params.exit_min, 0, 0, kNone});
         }
     }
@@ -72,8 +87,9 @@ Graph build_transit_graph(const data::Dataset& ds, const TransitParams& params) 
         const std::size_t li = line_idx.at(s.line);
         const NodeId a = *g.find(platform_id(s.a, s.line));
         const NodeId b = *g.find(platform_id(s.b, s.line));
-        g.add_edge({a, b, EdgeKind::Ride, s.time_min, 0, s.distance_km, li});
-        g.add_edge({b, a, EdgeKind::Ride, s.time_min, 0, s.distance_km, li});
+        const double rs = per_km_rs[li] * s.distance_km;
+        g.add_edge({a, b, EdgeKind::Ride, s.time_min, 0, s.distance_km, li, rs});
+        g.add_edge({b, a, EdgeKind::Ride, s.time_min, 0, s.distance_km, li, rs});
     }
 
     // Transfers and walking links.
@@ -90,10 +106,13 @@ Graph build_transit_graph(const data::Dataset& ds, const TransitParams& params) 
             for (const auto& from_line : st.lines) {
                 for (const auto& to_line : st.lines) {
                     if (from_line == to_line) continue;
+                    const std::size_t from_li = line_idx.at(from_line);
                     const std::size_t to_li = line_idx.at(to_line);
                     const double wait = lines[to_li].avg_wait_min;
+                    // Same operator = same ticket. Another operator = a new ticket.
+                    const double rs = zone[from_li] == zone[to_li] ? 0 : board_rs[to_li];
                     g.add_edge({*g.find(platform_id(st.id, from_line)), *g.find(platform_id(st.id, to_line)),
-                                EdgeKind::Transfer, t.walk_min + wait, wait, 0, to_li});
+                                EdgeKind::Transfer, t.walk_min + wait, wait, 0, to_li, rs});
                 }
             }
         } else {
@@ -113,8 +132,18 @@ const char* to_string(EdgeKind k) {
         case EdgeKind::Alight: return "alight";
         case EdgeKind::Transfer: return "transfer";
         case EdgeKind::Walk: return "walk";
+        case EdgeKind::Road: return "road";
     }
     return "ride";
+}
+
+const char* to_string(RoadMode m) {
+    switch (m) {
+        case RoadMode::Cab: return "cab";
+        case RoadMode::Auto: return "auto";
+        case RoadMode::Bike: return "bike";
+    }
+    return "cab";
 }
 
 }  // namespace safar::graph

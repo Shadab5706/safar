@@ -11,6 +11,10 @@
 #include "data/dataset.hpp"
 #include "util/geo.hpp"
 
+namespace safar::fares {
+struct TransportConfig;
+}
+
 namespace safar::graph {
 
 using NodeId = std::uint32_t;
@@ -21,15 +25,21 @@ inline constexpr std::size_t kNone = std::numeric_limits<std::size_t>::max();
 // Platform = one line inside a station ("rajiv-chowk@yellow"). Trains run between platforms.
 // Splitting them is what makes a change of line cost time: you can only get from the
 // Yellow platform to the Blue platform through a Transfer edge (walk + wait).
-enum class NodeKind { Gate, Platform };
+// Place    = a journey endpoint that is not a station (Bennett University, a mall...).
+//            Only added to the per-query copy of the graph, never to the shared one.
+enum class NodeKind { Gate, Platform, Place };
 
 enum class EdgeKind {
     Ride,      // platform -> next platform on the same line
     Board,     // gate -> platform: security check, stairs, wait for the train
     Alight,    // platform -> gate: stairs, exit gates
     Transfer,  // platform -> platform of another line in the same station
-    Walk,      // gate -> gate of a nearby station (e.g. Noida Sector 52 <-> 51)
+    Walk,      // on foot: gate <-> gate of a nearby station, or place <-> station/place
+    Road,      // cab / auto / bike taxi between a place and a station or another place
 };
+
+enum class RoadMode { Cab, Auto, Bike };
+inline constexpr RoadMode kAllRoadModes[] = {RoadMode::Cab, RoadMode::Auto, RoadMode::Bike};
 
 struct Node {
     std::string id;
@@ -37,6 +47,7 @@ struct Node {
     geo::LatLng pos;
     std::size_t station = kNone;  // index into Dataset::stations()
     std::size_t line = kNone;     // index into Dataset::lines(), platforms only
+    std::size_t place = kNone;    // index into Dataset::places(), places only
 };
 
 struct Edge {
@@ -47,6 +58,9 @@ struct Edge {
     double wait_min = 0;     // the part spent waiting for a train
     double distance_km = 0;  // distance actually travelled (0 inside a station)
     std::size_t line = kNone;  // line ridden / boarded / transferred to
+    double money = 0;          // rupees this edge adds, as seen by the search (metro fares linearised)
+    RoadMode road_mode = RoadMode::Cab;  // Road edges only
+    bool from_osrm = false;              // Road edges: real road data (true) or straight-line estimate
 };
 
 // Model constants for moving through a station. Kept here (not in the data files)
@@ -81,10 +95,16 @@ private:
     double max_speed_kmh_ = 0;
 };
 
-// Builds the metro/RRTS network as a directed graph from the dataset.
+// Builds the metro/RRTS network as a directed graph from the dataset. With a fare
+// config, edges also carry money: boarding pays the operator's minimum fare, each km
+// ridden adds the average per-km step of its fare slabs, and changing to another
+// operator inside a station pays a new minimum fare. That linear version is what the
+// search optimises; exact slab fares are computed afterwards (price_itinerary).
 // Throws std::runtime_error if a model invariant is broken (see graph.cpp).
-Graph build_transit_graph(const data::Dataset& ds, const TransitParams& params = {});
+Graph build_transit_graph(const data::Dataset& ds, const TransitParams& params = {},
+                          const fares::TransportConfig* fares = nullptr);
 
 const char* to_string(EdgeKind k);
+const char* to_string(RoadMode m);
 
 }  // namespace safar::graph

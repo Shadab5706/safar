@@ -26,6 +26,10 @@ inline void reconstruct(const graph::Graph& g, const std::vector<graph::EdgeId>&
     for (auto e : result.path) result.cost += cost.edge_cost(g.edge(e));
 }
 
+inline bool is_blocked(const SearchOptions& opt, graph::EdgeId e, graph::NodeId to) {
+    return (opt.blocked_edges && (*opt.blocked_edges)[e]) || (opt.blocked_nodes && (*opt.blocked_nodes)[to]);
+}
+
 inline void record(SearchResult& r, const SearchOptions& opt, graph::NodeId n) {
     if (opt.record_expansion && r.expansion_order.size() < opt.max_recorded) r.expansion_order.push_back(n);
 }

@@ -38,7 +38,7 @@ SearchResult breadth_first(const graph::Graph& g, NodeId start, NodeId goal, con
 
         for (EdgeId e : g.out_edges(n)) {
             const NodeId child = g.edge(e).to;
-            if (reached[child]) continue;
+            if (reached[child] || detail::is_blocked(opt, e, child)) continue;
             reached[child] = true;
             parent[child] = e;
             ++r.stats.nodes_generated;
@@ -90,7 +90,7 @@ SearchResult depth_first(const graph::Graph& g, NodeId start, NodeId goal, const
         const auto& out = g.out_edges(top.node);
         for (auto it = out.rbegin(); it != out.rend(); ++it) {
             const NodeId child = g.edge(*it).to;
-            if (!explored[child]) {
+            if (!explored[child] && !detail::is_blocked(opt, *it, child)) {
                 stack.push_back({child, *it});
                 ++r.stats.nodes_generated;
             }

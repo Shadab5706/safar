@@ -31,12 +31,18 @@ FetchContent_MakeAvailable(httplib json spdlog)
 add_library(safar_core
   src/api/server.cpp
   src/api/lab_routes.cpp
+  src/api/journey_routes.cpp
+  src/app/context.cpp
   src/data/dataset.cpp
+  src/fares/transport_config.cpp
   src/graph/graph.cpp
+  src/journey/planner.cpp
+  src/roads/road_matrix.cpp
   src/search/search.cpp
   src/search/uninformed.cpp
   src/search/best_first.cpp
   src/search/itinerary.cpp
+  src/search/yen.cpp
   src/util/config.cpp
 )
 target_include_directories(safar_core PUBLIC src)
@@ -67,9 +73,11 @@ if(SAFAR_BUILD_TESTS)
   FetchContent_MakeAvailable(googletest)
 
   enable_testing()
-  add_executable(safar_tests tests/test_geo.cpp tests/test_dataset.cpp tests/test_search.cpp tests/test_api.cpp)
+  add_executable(safar_tests tests/test_geo.cpp tests/test_dataset.cpp tests/test_search.cpp tests/test_journey.cpp tests/test_api.cpp)
   target_link_libraries(safar_tests PRIVATE safar_core GTest::gtest_main)
-  target_compile_definitions(safar_tests PRIVATE SAFAR_TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/../data/processed")
+  target_compile_definitions(safar_tests PRIVATE
+    SAFAR_TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/../data/processed"
+    SAFAR_TEST_CONFIG_DIR="${CMAKE_CURRENT_SOURCE_DIR}/config")
   include(GoogleTest)
   gtest_discover_tests(safar_tests)
 endif()

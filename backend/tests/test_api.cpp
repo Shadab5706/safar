@@ -13,13 +13,12 @@ namespace {
 class ApiTest : public ::testing::Test {
 protected:
     void SetUp() override {
-        static const auto dataset =
-            std::make_shared<const safar::data::Dataset>(safar::data::Dataset::load(SAFAR_TEST_DATA_DIR));
         safar::Config cfg;
         cfg.host = "127.0.0.1";
-        static const auto transit =
-            std::make_shared<const safar::graph::Graph>(safar::graph::build_transit_graph(*dataset));
-        server_ = std::make_unique<safar::api::Server>(cfg, dataset, transit);
+        cfg.data_dir = SAFAR_TEST_DATA_DIR;
+        cfg.transport_file = SAFAR_TEST_CONFIG_DIR "/transport.json";
+        static const safar::AppContext ctx = safar::AppContext::load(cfg);
+        server_ = std::make_unique<safar::api::Server>(cfg, ctx);
         port_ = server_->raw().bind_to_any_port(cfg.host);
         thread_ = std::thread([this] { server_->raw().listen_after_bind(); });
         server_->raw().wait_until_ready();
@@ -168,4 +167,52 @@ TEST_F(ApiTest, LabCompareValidatesInput) {
     ASSERT_TRUE(res);
     EXPECT_EQ(res->status, 400);
     EXPECT_EQ(nlohmann::json::parse(res->body)["error"]["code"], "bad_json");
+}
+
+TEST_F(ApiTest, JourneysBennettToHauzKhasVillage) {
+    auto c = client();
+    int status = 0;
+    auto body = post_json(c, "/api/v1/journeys",
+                          {{"from", {{"type", "place"}, {"id", "bennett-university"}}},
+                           {"to", "hauz-khas-village"},
+                           {"depart_at", "2026-10-27T09:00"}},
+                          status);
+    ASSERT_EQ(status, 200) << body.dump();
+    const auto& data = body["data"];
+    EXPECT_EQ(data["from"]["name"], "Bennett University");
+    EXPECT_EQ(data["depart"]["hour"], 9);
+    EXPECT_FALSE(data["depart"]["sunday_fares"].get<bool>());  // 27 Oct 2026 is a Tuesday
+    ASSERT_GE(data["routes"].size(), 3u);
+    for (const auto& r : data["routes"]) {
+        EXPECT_GT(r["total_min"].get<double>(), 0);
+        EXPECT_GT(r["fare_rs"].get<double>(), 0);
+        EXPECT_FALSE(r["summary"].get<std::string>().empty());
+        for (const auto& leg : r["legs"]) EXPECT_FALSE(leg["points"].empty());
+    }
+    const auto& tags = data["routes"][0]["tags"];
+    EXPECT_NE(std::find(tags.begin(), tags.end(), "recommended"), tags.end());
+}
+
+TEST_F(ApiTest, JourneysValidatesInput) {
+    auto c = client();
+    int status = 0;
+    auto bad_mode = post_json(c, "/api/v1/journeys",
+                              {{"from", "india-gate"}, {"to", "red-fort"}, {"modes", {"helicopter"}}}, status);
+    EXPECT_EQ(status, 400);
+    EXPECT_EQ(bad_mode["error"]["code"], "unknown_mode");
+
+    auto unknown = post_json(c, "/api/v1/journeys", {{"from", "place:atlantis"}, {"to", "red-fort"}}, status);
+    EXPECT_EQ(status, 404);
+    EXPECT_EQ(unknown["error"]["code"], "place_not_found");
+
+    auto same = post_json(c, "/api/v1/journeys", {{"from", "india-gate"}, {"to", "india-gate"}}, status);
+    EXPECT_EQ(status, 400);
+    EXPECT_EQ(same["error"]["code"], "same_endpoints");
+
+    post_json(c, "/api/v1/journeys", {{"from", "india-gate"}, {"to", "red-fort"}, {"depart_at", "2026-02-30T09:00"}},
+              status);
+    EXPECT_EQ(status, 400);
+
+    post_json(c, "/api/v1/journeys", {{"from", "india-gate"}, {"to", "red-fort"}, {"preference", 3}}, status);
+    EXPECT_EQ(status, 400);
 }

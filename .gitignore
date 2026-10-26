@@ -1,0 +1,16 @@
+# build
+backend/build/
+build/
+compile_commands.json
+# data
+data/raw/*
+!data/raw/.gitkeep
+*.sqlite
+# frontend
+node_modules/
+dist/
+# env / editor
+.env
+.DS_Store
+.vscode/
+.idea/

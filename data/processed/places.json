@@ -1,0 +1,2474 @@
+{
+ "meta": {
+  "source": "OpenStreetMap Nominatim",
+  "license": "Data (c) OpenStreetMap contributors, ODbL 1.0",
+  "count": 145
+ },
+ "places": [
+  {
+   "id": "bennett-university",
+   "name": "Bennett University",
+   "category": "education",
+   "city": "Greater Noida",
+   "lat": 28.450611,
+   "lng": 77.583912,
+   "nearest_station": {
+    "id": "depot-station",
+    "distance_km": 5.78
+   },
+   "osm": {
+    "type": "way",
+    "id": 547845046,
+    "label": "Bennett University, Delhi Eastern Peripheral Expressway, Madhaiya Maincha, Dadri, Gautam Buddha Nagar, Uttar Pradesh, In"
+   }
+  },
+  {
+   "id": "sharda-university",
+   "name": "Sharda University",
+   "category": "education",
+   "city": "Greater Noida",
+   "lat": 28.473407,
+   "lng": 77.482934,
+   "nearest_station": {
+    "id": "noida-sector-147",
+    "distance_km": 2.27
+   },
+   "osm": {
+    "type": "node",
+    "id": 7835031255,
+    "label": "Sharda University, Path to amphitheater, Knowledge Park III, Badauli Bangar, Namoli, Gautam Buddha Nagar, Uttar Pradesh,"
+   }
+  },
+  {
+   "id": "galgotias-university",
+   "name": "Galgotias University",
+   "category": "education",
+   "city": "Greater Noida",
+   "lat": 28.367123,
+   "lng": 77.54046,
+   "nearest_station": {
+    "id": "knowledge-park-ii",
+    "distance_km": 10.74
+   },
+   "osm": {
+    "type": "way",
+    "id": 977331644,
+    "label": "Galgotias University, Yamuna Expressway, Dankaur, Gautam Buddha Nagar, Uttar Pradesh, 203200, India"
+   }
+  },
+  {
+   "id": "gautam-buddha-university",
+   "name": "Gautam Buddha University",
+   "category": "education",
+   "city": "Greater Noida",
+   "lat": 28.42266,
+   "lng": 77.525723,
+   "nearest_station": {
+    "id": "knowledge-park-ii",
+    "distance_km": 4.56
+   },
+   "osm": {
+    "type": "way",
+    "id": 188067195,
+    "label": "Gautam Buddha University, Yamuna Expressway, Momnathal, Murshadpur, Gautam Buddha Nagar, Uttar Pradesh, 201312, India"
+   }
+  },
+  {
+   "id": "shiv-nadar-university",
+   "name": "Shiv Nadar University",
+   "category": "education",
+   "city": "Greater Noida",
+   "lat": 28.525712,
+   "lng": 77.574455,
+   "nearest_station": {
+    "id": "depot-station",
+    "distance_km": 5.05
+   },
+   "osm": {
+    "type": "way",
+    "id": 369248213,
+    "label": "Shiv Nadar University, Circular Road, Chithera, Dadri, Gautam Buddha Nagar, Uttar Pradesh, 201314, India"
+   }
+  },
+  {
+   "id": "pari-chowk",
+   "name": "Pari Chowk",
+   "category": "landmark",
+   "city": "Greater Noida",
+   "lat": 28.463128,
+   "lng": 77.508099,
+   "nearest_station": {
+    "id": "pari-chowk",
+    "distance_km": 0.04
+   },
+   "osm": {
+    "type": "way",
+    "id": 696191675,
+    "label": "Pari Chowk, Noida-Greater Noida Expressway, Sector 20, Shafipur, Greater Noida, Gautam Buddha Nagar, Uttar Pradesh, 2103"
+   }
+  },
+  {
+   "id": "knowledge-park-ii",
+   "name": "Knowledge Park II",
+   "category": "landmark",
+   "city": "Greater Noida",
+   "lat": 28.456995,
+   "lng": 77.500197,
+   "nearest_station": {
+    "id": "knowledge-park-ii",
+    "distance_km": 0.01
+   },
+   "osm": {
+    "type": "way",
+    "id": 696190204,
+    "label": "Knowledge Park II, Noida-Greater Noida Expressway, Shafipur, Greater Noida, Gautam Buddha Nagar, Uttar Pradesh, 201315, "
+   }
+  },
+  {
+   "id": "alpha-1-commercial-belt",
+   "name": "Alpha 1 Commercial Belt",
+   "category": "market",
+   "city": "Greater Noida",
+   "lat": 28.471034,
+   "lng": 77.512737,
+   "nearest_station": {
+    "id": "alpha-1",
+    "distance_km": 0.0
+   },
+   "osm": {
+    "type": "node",
+    "id": 4165778689,
+    "label": "Alpha 1, Shree Krishan Estates Greater Noida & Yamuna Expressway, JP Greens, Sector 20, Greater Noida, Gautam Buddha Nag"
+   }
+  },
+  {
+   "id": "gaur-city-mall",
+   "name": "Gaur City Mall",
+   "category": "mall",
+   "city": "Greater Noida West",
+   "lat": 28.606167,
+   "lng": 77.429513,
+   "nearest_station": {
+    "id": "noida-sector-59",
+    "distance_km": 5.55
+   },
+   "osm": {
+    "type": "way",
+    "id": 1360310371,
+    "label": "gaur city mall, Havelia Rd, Gaur City 2, Dadri, Gautam Buddha Nagar, Uttar Pradesh, 201218, India"
+   }
+  },
+  {
+   "id": "india-expo-mart",
+   "name": "India Expo Mart",
+   "category": "business",
+   "city": "Greater Noida",
+   "lat": 28.461491,
+   "lng": 77.499888,
+   "nearest_station": {
+    "id": "knowledge-park-ii",
+    "distance_km": 0.5
+   },
+   "osm": {
+    "type": "way",
+    "id": 87176871,
+    "label": "India Expo Mart, APJ Abdul Kalam Road, Knowledge Park III, Shafipur, Greater Noida, Gautam Buddha Nagar, Uttar Pradesh, "
+   }
+  },
+  {
+   "id": "buddh-international-circuit",
+   "name": "Buddh International Circuit",
+   "category": "landmark",
+   "city": "Greater Noida",
+   "lat": 28.349253,
+   "lng": 77.537005,
+   "nearest_station": {
+    "id": "noida-sector-148",
+    "distance_km": 12.48
+   },
+   "osm": {
+    "type": "relation",
+    "id": 2261609,
+    "label": "Buddh International Circuit, Yamuna Expressway, Dankaur, Gautam Buddha Nagar, Uttar Pradesh, 203200, India"
+   }
+  },
+  {
+   "id": "grand-venice-mall",
+   "name": "Grand Venice Mall",
+   "category": "mall",
+   "city": "Greater Noida",
+   "lat": 28.452634,
+   "lng": 77.526266,
+   "nearest_station": {
+    "id": "pari-chowk",
+    "distance_km": 2.12
+   },
+   "osm": {
+    "type": "node",
+    "id": 11236475338,
+    "label": "द ग्रैंड वेनिस मॉल, SH3, Sector 31 D Block Road, Sector 31 Tau, Sector 20, Greater Noida, Gautam Buddha Nagar, Uttar Pra"
+   }
+  },
+  {
+   "id": "noida-film-city",
+   "name": "Noida Film City",
+   "category": "business",
+   "city": "Noida",
+   "lat": 28.573881,
+   "lng": 77.314072,
+   "nearest_station": {
+    "id": "noida-sector-16",
+    "distance_km": 0.6
+   },
+   "osm": {
+    "type": "node",
+    "id": 7041856756,
+    "label": "BHEL Power, Ecity Bioscope Road, Sector 16A, Chilla, Noida, Dadri, Gautam Buddha Nagar, Uttar Pradesh, 201313, India"
+   }
+  },
+  {
+   "id": "dlf-mall-of-india",
+   "name": "DLF Mall of India",
+   "category": "mall",
+   "city": "Noida",
+   "lat": 28.567418,
+   "lng": 77.321113,
+   "nearest_station": {
+    "id": "noida-sector-18",
+    "distance_km": 0.62
+   },
+   "osm": {
+    "type": "way",
+    "id": 351621425,
+    "label": "DLF Mall Of India, Maharaja Agrasen Marg, Nithari, Noida, Dadri, Gautam Buddha Nagar, Uttar Pradesh, 201301, India"
+   }
+  },
+  {
+   "id": "the-great-india-place",
+   "name": "The Great India Place",
+   "category": "mall",
+   "city": "Noida",
+   "lat": 28.567523,
+   "lng": 77.325898,
+   "nearest_station": {
+    "id": "noida-sector-18",
+    "distance_km": 0.37
+   },
+   "osm": {
+    "type": "way",
+    "id": 44819871,
+    "label": "The Great India Place, Maharaja Agrasen Marg, Nithari, Noida, Dadri, Gautam Buddha Nagar, Uttar Pradesh, 201301, India"
+   }
+  },
+  {
+   "id": "logix-mall",
+   "name": "Logix Mall",
+   "category": "mall",
+   "city": "Noida",
+   "lat": 28.574169,
+   "lng": 77.353611,
+   "nearest_station": {
+    "id": "noida-city-centre",
+    "distance_km": 0.27
+   },
+   "osm": {
+    "type": "way",
+    "id": 1528697568,
+    "label": "Bhutani City Center, Noida City Centre, Noida, Dadri, Gautam Buddha Nagar, Uttar Pradesh, India"
+   }
+  },
+  {
+   "id": "amity-university-noida",
+   "name": "Amity University Noida",
+   "category": "education",
+   "city": "Noida",
+   "lat": 28.543223,
+   "lng": 77.332748,
+   "nearest_station": {
+    "id": "okhla-bird-sanctuary",
+    "distance_km": 1.53
+   },
+   "osm": {
+    "type": "way",
+    "id": 502875300,
+    "label": "Amity University, Noida, Amity Road, Ralpur Khadar, Noida, Dadri, Gautam Buddha Nagar, Uttar Pradesh, 201313, India"
+   }
+  },
+  {
+   "id": "jiit-noida-sector-62",
+   "name": "JIIT Noida Sector 62",
+   "category": "education",
+   "city": "Noida",
+   "lat": 28.629541,
+   "lng": 77.372505,
+   "nearest_station": {
+    "id": "noida-electronic-city",
+    "distance_km": 0.29
+   },
+   "osm": {
+    "type": "way",
+    "id": 71847594,
+    "label": "JAYPEE INSTITUTE OF INFORMATION TECHNOLOGY, A-10, Sector 62, Noida, Dadri, Gautam Buddha Nagar, Uttar Pradesh, 201309, I"
+   }
+  },
+  {
+   "id": "noida-sector-18-market",
+   "name": "Noida Sector 18 Market",
+   "category": "market",
+   "city": "Noida",
+   "lat": 28.57054,
+   "lng": 77.322893,
+   "nearest_station": {
+    "id": "noida-sector-18",
+    "distance_km": 0.32
+   },
+   "osm": {
+    "type": "relation",
+    "id": 19397973,
+    "label": "Sector 18, Noida, Dadri, Gautam Buddha Nagar, Uttar Pradesh, India"
+   }
+  },
+  {
+   "id": "botanical-garden-noida",
+   "name": "Botanical Garden Noida",
+   "category": "landmark",
+   "city": "Noida",
+   "lat": 28.562368,
+   "lng": 77.330984,
+   "nearest_station": {
+    "id": "botanical-garden",
+    "distance_km": 0.35
+   },
+   "osm": {
+    "type": "way",
+    "id": 188106889,
+    "label": "Noida Botanical Garden, Chhalera, Noida, Dadri, Gautam Buddha Nagar, Uttar Pradesh, India"
+   }
+  },
+  {
+   "id": "fortis-hospital-noida",
+   "name": "Fortis Hospital Noida",
+   "category": "hospital",
+   "city": "Noida",
+   "lat": 28.618756,
+   "lng": 77.37261,
+   "nearest_station": {
+    "id": "noida-sector-62",
+    "distance_km": 0.22
+   },
+   "osm": {
+    "type": "way",
+    "id": 71656934,
+    "label": "Fortis Hospital, Vishwakarma Road, Sector 62, Noida, Dadri, Gautam Buddha Nagar, Uttar Pradesh, 201301, India"
+   }
+  },
+  {
+   "id": "okhla-bird-sanctuary",
+   "name": "Okhla Bird Sanctuary",
+   "category": "tourist",
+   "city": "Noida",
+   "lat": 28.556987,
+   "lng": 77.309003,
+   "nearest_station": {
+    "id": "okhla-bird-sanctuary",
+    "distance_km": 1.31
+   },
+   "osm": {
+    "type": "way",
+    "id": 28208892,
+    "label": "Okhla Bird Sanctuary, Central, Noida, Dadri, Gautam Buddha Nagar, Uttar Pradesh, India"
+   }
+  },
+  {
+   "id": "worlds-of-wonder",
+   "name": "Worlds of Wonder",
+   "category": "tourist",
+   "city": "Noida",
+   "lat": 28.564933,
+   "lng": 77.325965,
+   "nearest_station": {
+    "id": "noida-sector-18",
+    "distance_km": 0.65
+   },
+   "osm": {
+    "type": "way",
+    "id": 188106888,
+    "label": "Worlds of Wonder, 38A, Maharaja Agrasen Marg, Nithari, Noida, Dadri, Gautam Buddha Nagar, Uttar Pradesh, 201301, India"
+   }
+  },
+  {
+   "id": "noida-stadium",
+   "name": "Noida Stadium",
+   "category": "landmark",
+   "city": "Noida",
+   "lat": 28.590819,
+   "lng": 77.337293,
+   "nearest_station": {
+    "id": "noida-sector-16",
+    "distance_km": 2.37
+   },
+   "osm": {
+    "type": "node",
+    "id": 7189787490,
+    "label": "Noida Stadium, Ramnath Goenka Marg, Sector 10, Noida, Dadri, Gautam Buddha Nagar, Uttar Pradesh, 110096, India"
+   }
+  },
+  {
+   "id": "indirapuram-habitat-centre",
+   "name": "Indirapuram Habitat Centre",
+   "category": "mall",
+   "city": "Ghaziabad",
+   "lat": 28.639914,
+   "lng": 77.368342,
+   "nearest_station": {
+    "id": "noida-electronic-city",
+    "distance_km": 1.45
+   },
+   "osm": {
+    "type": "way",
+    "id": 536967391,
+    "label": "Indirapuram Habitat Center, Doctor Sushila Naiyar Marg, Ghaziabad, Uttar Pradesh, 201001, India"
+   }
+  },
+  {
+   "id": "shipra-mall",
+   "name": "Shipra Mall",
+   "category": "mall",
+   "city": "Ghaziabad",
+   "lat": 28.632608,
+   "lng": 77.366648,
+   "nearest_station": {
+    "id": "noida-electronic-city",
+    "distance_km": 0.95
+   },
+   "osm": {
+    "type": "node",
+    "id": 9887713354,
+    "label": "Shipra Mall, Indirapuram, DME Service Road, Ghaziabad, Uttar Pradesh, 201001, India"
+   }
+  },
+  {
+   "id": "ghaziabad-railway-station",
+   "name": "Ghaziabad Railway Station",
+   "category": "railway",
+   "city": "Ghaziabad",
+   "lat": 28.652856,
+   "lng": 77.428244,
+   "nearest_station": {
+    "id": "shaheed-sthal",
+    "distance_km": 2.35
+   },
+   "osm": {
+    "type": "node",
+    "id": 6354716753,
+    "label": "Ghaziabad Junction, Railway Road, Ghaziabad, Uttar Pradesh, 201001, India"
+   }
+  },
+  {
+   "id": "kaushambi-bus-stand",
+   "name": "Kaushambi Bus Stand",
+   "category": "bus",
+   "city": "Ghaziabad",
+   "lat": 28.646786,
+   "lng": 77.318605,
+   "nearest_station": {
+    "id": "anand-vihar",
+    "distance_km": 0.23
+   },
+   "osm": {
+    "type": "way",
+    "id": 196483129,
+    "label": "Kaushambi Bus Stand, Ghazipur Road, Anand Vihar, Indraprastha Extension, Shahdara South, Delhi, East Delhi, Delhi, 11009"
+   }
+  },
+  {
+   "id": "hindon-airport",
+   "name": "Hindon Airport",
+   "category": "airport",
+   "city": "Ghaziabad",
+   "lat": 28.704347,
+   "lng": 77.364806,
+   "nearest_station": {
+    "id": "shyam-park",
+    "distance_km": 2.96
+   },
+   "osm": {
+    "type": "way",
+    "id": 265984430,
+    "label": "Hindon Airport, shalimar garden extn, Pasonda, Sikanderpur, Ghaziabad, Uttar Pradesh, 201001, India"
+   }
+  },
+  {
+   "id": "india-gate",
+   "name": "India Gate",
+   "category": "tourist",
+   "city": "New Delhi",
+   "lat": 28.612933,
+   "lng": 77.229493,
+   "nearest_station": {
+    "id": "khan-market",
+    "distance_km": 1.19
+   },
+   "osm": {
+    "type": "way",
+    "id": 361709652,
+    "label": "India Gate, Shahjahan Road, Pandara Park, Central Vista, New Delhi, Delhi, 020626, India"
+   }
+  },
+  {
+   "id": "rashtrapati-bhavan",
+   "name": "Rashtrapati Bhavan",
+   "category": "tourist",
+   "city": "New Delhi",
+   "lat": 28.614359,
+   "lng": 77.199589,
+   "nearest_station": {
+    "id": "central-secretariat",
+    "distance_km": 1.25
+   },
+   "osm": {
+    "type": "relation",
+    "id": 5354966,
+    "label": "Rashtrapati Bhavan, Kartavya Path, Central Secretariat, Raisina Hill, New Delhi, Delhi, 110004, India"
+   }
+  },
+  {
+   "id": "kartavya-path",
+   "name": "Kartavya Path",
+   "category": "tourist",
+   "city": "New Delhi",
+   "lat": 28.613604,
+   "lng": 77.215336,
+   "nearest_station": {
+    "id": "central-secretariat",
+    "distance_km": 0.39
+   },
+   "osm": {
+    "type": "way",
+    "id": 359757123,
+    "label": "Kartavya Path, Central Vista, New Delhi, Delhi, 110011, India"
+   }
+  },
+  {
+   "id": "red-fort",
+   "name": "Red Fort",
+   "category": "tourist",
+   "city": "Delhi",
+   "lat": 28.656081,
+   "lng": 77.240796,
+   "nearest_station": {
+    "id": "lal-quila",
+    "distance_km": 0.44
+   },
+   "osm": {
+    "type": "way",
+    "id": 264863907,
+    "label": "Red Fort, Chandni Chowk, Old Delhi, City & Sadar, Delhi, Old Delhi, Delhi, 110003, India"
+   }
+  },
+  {
+   "id": "jama-masjid",
+   "name": "Jama Masjid",
+   "category": "tourist",
+   "city": "Delhi",
+   "lat": 28.650682,
+   "lng": 77.232961,
+   "nearest_station": {
+    "id": "jama-masjid",
+    "distance_km": 0.46
+   },
+   "osm": {
+    "type": "relation",
+    "id": 3926057,
+    "label": "Jama Masjid, Meena Bazaar, Old Delhi, City & Sadar, Delhi, Old Delhi, Delhi, 110006, India"
+   }
+  },
+  {
+   "id": "chandni-chowk-market",
+   "name": "Chandni Chowk Market",
+   "category": "market",
+   "city": "Delhi",
+   "lat": 28.655983,
+   "lng": 77.232194,
+   "nearest_station": {
+    "id": "chandni-chowk",
+    "distance_km": 0.33
+   },
+   "osm": {
+    "type": "node",
+    "id": 3268564739,
+    "label": "Chandni Chowk, Old Delhi, City & Sadar, Delhi, Old Delhi, Delhi, 110006, India"
+   }
+  },
+  {
+   "id": "qutub-minar",
+   "name": "Qutub Minar",
+   "category": "tourist",
+   "city": "Delhi",
+   "lat": 28.524413,
+   "lng": 77.18545,
+   "nearest_station": {
+    "id": "qutab-minar",
+    "distance_km": 1.28
+   },
+   "osm": {
+    "type": "way",
+    "id": 369140381,
+    "label": "Qutb Minar, Kalka Das Marg, Mehrauli, South, Delhi, South Delhi, Delhi, 110030, India"
+   }
+  },
+  {
+   "id": "humayuns-tomb",
+   "name": "Humayun's Tomb",
+   "category": "tourist",
+   "city": "Delhi",
+   "lat": 28.593286,
+   "lng": 77.250647,
+   "nearest_station": {
+    "id": "sarai-kale-khan-nizamuddin",
+    "distance_km": 0.79
+   },
+   "osm": {
+    "type": "way",
+    "id": 220385654,
+    "label": "Humayun's Tomb, B. C. Sanyal Marg, Nizamuddin East, Central, Delhi, South East Delhi, Delhi, 110013, India"
+   }
+  },
+  {
+   "id": "lotus-temple",
+   "name": "Lotus Temple",
+   "category": "tourist",
+   "city": "Delhi",
+   "lat": 28.553363,
+   "lng": 77.258606,
+   "nearest_station": {
+    "id": "kalkaji-mandir",
+    "distance_km": 0.4
+   },
+   "osm": {
+    "type": "way",
+    "id": 44827278,
+    "label": "Lotus Temple, Lotus Temple Road, Govindpuri, Okhla, Central, Delhi, South East Delhi, Delhi, 110019, India"
+   }
+  },
+  {
+   "id": "akshardham-temple",
+   "name": "Akshardham Temple",
+   "category": "tourist",
+   "city": "Delhi",
+   "lat": 28.612517,
+   "lng": 77.277318,
+   "nearest_station": {
+    "id": "akshardham",
+    "distance_km": 0.64
+   },
+   "osm": {
+    "type": "way",
+    "id": 400921719,
+    "label": "Swaminarayan's Akshardham Temple, NH24 Bypass, Mayur Vihar, Shahdara South, Delhi, East Delhi, Delhi, 110091, India"
+   }
+  },
+  {
+   "id": "iskcon-temple-east-of-kailash",
+   "name": "ISKCON Temple East of Kailash",
+   "category": "tourist",
+   "city": "Delhi",
+   "lat": 28.556446,
+   "lng": 77.25361,
+   "nearest_station": {
+    "id": "nehru-place",
+    "distance_km": 0.59
+   },
+   "osm": {
+    "type": "node",
+    "id": 6799113785,
+    "label": "ISKCON Temple, Raja Dheer Sen Marg, Sant Nagar, Greater Kailash, East of Kailash, South, Delhi, South Delhi, Delhi, 1100"
+   }
+  },
+  {
+   "id": "lodhi-garden",
+   "name": "Lodhi Garden",
+   "category": "tourist",
+   "city": "New Delhi",
+   "lat": 28.5963,
+   "lng": 77.22155,
+   "nearest_station": {
+    "id": "khan-market",
+    "distance_km": 0.99
+   },
+   "osm": {
+    "type": "way",
+    "id": 359512682,
+    "label": "Tomb of Sikandar Lodhi, Lodhi Garden, Rajesh Pilot Marg, Rabindra Nagar, Central Vista, New Delhi, Delhi, 110003, India"
+   }
+  },
+  {
+   "id": "hauz-khas-village",
+   "name": "Hauz Khas Village",
+   "category": "tourist",
+   "city": "Delhi",
+   "lat": 28.553367,
+   "lng": 77.194849,
+   "nearest_station": {
+    "id": "iit-delhi",
+    "distance_km": 0.71
+   },
+   "osm": {
+    "type": "way",
+    "id": 400623271,
+    "label": "Hauz Khas Village, Hauz Khas, South, Delhi, South Delhi, Delhi, India"
+   }
+  },
+  {
+   "id": "jantar-mantar",
+   "name": "Jantar Mantar",
+   "category": "tourist",
+   "city": "New Delhi",
+   "lat": 28.627179,
+   "lng": 77.216617,
+   "nearest_station": {
+    "id": "janpath",
+    "distance_km": 0.43
+   },
+   "osm": {
+    "type": "way",
+    "id": 223456559,
+    "label": "Jantar Mantar, Tolstoy Marg, Connaught Place, New Delhi, Delhi, 110001, India"
+   }
+  },
+  {
+   "id": "agrasen-ki-baoli",
+   "name": "Agrasen ki Baoli",
+   "category": "tourist",
+   "city": "New Delhi",
+   "lat": 28.626024,
+   "lng": 77.225012,
+   "nearest_station": {
+    "id": "barakhambha-road",
+    "distance_km": 0.42
+   },
+   "osm": {
+    "type": "way",
+    "id": 500411689,
+    "label": "Agrasen ki Baoli, Hailey Road, Connaught Place, New Delhi, Delhi, 110001, India"
+   }
+  },
+  {
+   "id": "national-museum",
+   "name": "National Museum",
+   "category": "tourist",
+   "city": "New Delhi",
+   "lat": 28.611915,
+   "lng": 77.219639,
+   "nearest_station": {
+    "id": "seva-teerth",
+    "distance_km": 0.81
+   },
+   "osm": {
+    "type": "relation",
+    "id": 17080654,
+    "label": "National Museum, Janpath, Central Vista, New Delhi, Delhi, 020626, India"
+   }
+  },
+  {
+   "id": "purana-qila",
+   "name": "Purana Qila",
+   "category": "tourist",
+   "city": "Delhi",
+   "lat": 28.609196,
+   "lng": 77.244111,
+   "nearest_station": {
+    "id": "indraprastha",
+    "distance_km": 1.38
+   },
+   "osm": {
+    "type": "way",
+    "id": 973075081,
+    "label": "पुराना किला, Bhairon Marg, Central, Delhi, South East Delhi, Delhi, 110503, India"
+   }
+  },
+  {
+   "id": "gurudwara-bangla-sahib",
+   "name": "Gurudwara Bangla Sahib",
+   "category": "tourist",
+   "city": "New Delhi",
+   "lat": 28.62523,
+   "lng": 77.209419,
+   "nearest_station": {
+    "id": "shivaji-stadium",
+    "distance_km": 0.45
+   },
+   "osm": {
+    "type": "node",
+    "id": 5637101391,
+    "label": "Gurudwara Bangla Sahib, Ashoka Road, Ashok Place, Connaught Place, New Delhi, Delhi, 110001, India"
+   }
+  },
+  {
+   "id": "raj-ghat",
+   "name": "Raj Ghat",
+   "category": "tourist",
+   "city": "Delhi",
+   "lat": 28.644154,
+   "lng": 77.249838,
+   "nearest_station": {
+    "id": "delhi-gate",
+    "distance_km": 1.04
+   },
+   "osm": {
+    "type": "way",
+    "id": 80429893,
+    "label": "Raj Ghat, Central, Delhi, South East Delhi, Delhi, India"
+   }
+  },
+  {
+   "id": "delhi-zoo",
+   "name": "Delhi Zoo",
+   "category": "tourist",
+   "city": "Delhi",
+   "lat": 28.602695,
+   "lng": 77.247176,
+   "nearest_station": {
+    "id": "khan-market",
+    "distance_km": 1.76
+   },
+   "osm": {
+    "type": "way",
+    "id": 80439686,
+    "label": "National Zoological Park, path f, Central, Delhi, South East Delhi, Delhi, 110503, India"
+   }
+  },
+  {
+   "id": "pragati-maidan-bharat-mandapam",
+   "name": "Pragati Maidan Bharat Mandapam",
+   "category": "business",
+   "city": "New Delhi",
+   "lat": 28.617238,
+   "lng": 77.243462,
+   "nearest_station": {
+    "id": "supreme-court",
+    "distance_km": 0.7
+   },
+   "osm": {
+    "type": "way",
+    "id": 28103691,
+    "label": "Bharat Mandapam, Pragati Maidan Tunnel, Central, Delhi, South East Delhi, Delhi, 110503, India"
+   }
+  },
+  {
+   "id": "connaught-place",
+   "name": "Connaught Place",
+   "category": "market",
+   "city": "New Delhi",
+   "lat": 28.626274,
+   "lng": 77.197802,
+   "nearest_station": {
+    "id": "shivaji-stadium",
+    "distance_km": 1.35
+   },
+   "osm": {
+    "type": "way",
+    "id": 1469664187,
+    "label": "Delhi Transco Limited Park Street Substation, Bangabandhu Sheikh Mujib Road, Raisina Hill, New Delhi, Delhi, 110004, Ind"
+   }
+  },
+  {
+   "id": "janpath-market",
+   "name": "Janpath Market",
+   "category": "market",
+   "city": "New Delhi",
+   "lat": 28.62824,
+   "lng": 77.219375,
+   "nearest_station": {
+    "id": "janpath",
+    "distance_km": 0.47
+   },
+   "osm": {
+    "type": "way",
+    "id": 563679821,
+    "label": "Janpath, Kashmiri Market, Connaught Place, New Delhi, Delhi, 110001, India"
+   }
+  },
+  {
+   "id": "khan-market",
+   "name": "Khan Market",
+   "category": "market",
+   "city": "New Delhi",
+   "lat": 28.599553,
+   "lng": 77.225951,
+   "nearest_station": {
+    "id": "khan-market",
+    "distance_km": 0.43
+   },
+   "osm": {
+    "type": "way",
+    "id": 1187268497,
+    "label": "Khan Market, Rabindra Nagar, Central Vista, New Delhi, Delhi, 110003, India"
+   }
+  },
+  {
+   "id": "sarojini-nagar-market",
+   "name": "Sarojini Nagar Market",
+   "category": "market",
+   "city": "New Delhi",
+   "lat": 28.576916,
+   "lng": 77.196257,
+   "nearest_station": {
+    "id": "sarojini-nagar",
+    "distance_km": 0.22
+   },
+   "osm": {
+    "type": "way",
+    "id": 287240064,
+    "label": "Sarojini Nagar Market, Sarojini Nagar, New Delhi, Delhi, 110023, India"
+   }
+  },
+  {
+   "id": "lajpat-nagar-central-market",
+   "name": "Lajpat Nagar Central Market",
+   "category": "market",
+   "city": "Delhi",
+   "lat": 28.568987,
+   "lng": 77.240827,
+   "nearest_station": {
+    "id": "lajpat-nagar",
+    "distance_km": 0.35
+   },
+   "osm": {
+    "type": "node",
+    "id": 1796122219,
+    "label": "Lajpat Nagar Central Market, Feroze Gandhi Road, Lajpat Nagar III, Lajpat Nagar, Central, Delhi, South East Delhi, Delhi"
+   }
+  },
+  {
+   "id": "karol-bagh-market",
+   "name": "Karol Bagh Market",
+   "category": "market",
+   "city": "Delhi",
+   "lat": 28.654398,
+   "lng": 77.19529,
+   "nearest_station": {
+    "id": "jhandewalan",
+    "distance_km": 1.21
+   },
+   "osm": {
+    "type": "way",
+    "id": 1077640740,
+    "label": "Ajmal Khan Road, Karol Bagh, Delhi, Central Delhi, Delhi, 110055, India"
+   }
+  },
+  {
+   "id": "dilli-haat-ina",
+   "name": "Dilli Haat INA",
+   "category": "market",
+   "city": "New Delhi",
+   "lat": 28.574169,
+   "lng": 77.209271,
+   "nearest_station": {
+    "id": "dilli-haat-ina",
+    "distance_km": 0.09
+   },
+   "osm": {
+    "type": "node",
+    "id": 5777602018,
+    "label": "Dilli Haat - INA, Aurobindo Marg, Kidwai Nagar, New Delhi, Delhi, 110029, India"
+   }
+  },
+  {
+   "id": "chandni-chowk-paranthe-wali-gali",
+   "name": "Chandni Chowk Paranthe Wali Gali",
+   "category": "market",
+   "city": "Delhi",
+   "lat": 28.656082,
+   "lng": 77.230481,
+   "nearest_station": {
+    "id": "chandni-chowk",
+    "distance_km": 0.26
+   },
+   "osm": {
+    "type": "way",
+    "id": 44141276,
+    "label": "Paranthe Wali Gali, Dharampura, Sadar Bazar, Old Delhi, City & Sadar, Delhi, Old Delhi, Delhi, 110006, India"
+   }
+  },
+  {
+   "id": "kamla-nagar-market",
+   "name": "Kamla Nagar Market",
+   "category": "market",
+   "city": "Delhi",
+   "lat": 28.680675,
+   "lng": 77.20395,
+   "nearest_station": {
+    "id": "pul-bangash",
+    "distance_km": 1.62
+   },
+   "osm": {
+    "type": "relation",
+    "id": 3694062,
+    "label": "Kamla Nagar, Keshavpuram, Delhi, Central North Delhi, Delhi, India"
+   }
+  },
+  {
+   "id": "nehru-place",
+   "name": "Nehru Place",
+   "category": "business",
+   "city": "Delhi",
+   "lat": 28.549257,
+   "lng": 77.252953,
+   "nearest_station": {
+    "id": "nehru-place",
+    "distance_km": 0.27
+   },
+   "osm": {
+    "type": "relation",
+    "id": 3709872,
+    "label": "Nehru Place, South, Delhi, South Delhi, Delhi, India"
+   }
+  },
+  {
+   "id": "select-citywalk",
+   "name": "Select Citywalk",
+   "category": "mall",
+   "city": "Delhi",
+   "lat": 28.529339,
+   "lng": 77.218322,
+   "nearest_station": {
+    "id": "malviya-nagar",
+    "distance_km": 1.32
+   },
+   "osm": {
+    "type": "way",
+    "id": 1385319907,
+    "label": "Select Citywalk Lawn, Saket, South, Delhi, South Delhi, Delhi, India"
+   }
+  },
+  {
+   "id": "dlf-avenue-saket",
+   "name": "DLF Avenue Saket",
+   "category": "mall",
+   "city": "Delhi",
+   "lat": 28.528242,
+   "lng": 77.217711,
+   "nearest_station": {
+    "id": "malviya-nagar",
+    "distance_km": 1.26
+   },
+   "osm": {
+    "type": "relation",
+    "id": 19112422,
+    "label": "DLF Avenue, Mandir Marg, Saket, South, Delhi, South Delhi, Delhi, 110017, India"
+   }
+  },
+  {
+   "id": "ambience-mall-vasant-kunj",
+   "name": "Ambience Mall Vasant Kunj",
+   "category": "mall",
+   "city": "Delhi",
+   "lat": 28.541168,
+   "lng": 77.154758,
+   "nearest_station": {
+    "id": "vasant-vihar",
+    "distance_km": 1.95
+   },
+   "osm": {
+    "type": "relation",
+    "id": 17653225,
+    "label": "Ambience Mall, 2, Nelson Mandela Marg, Vasant Kunj, South, New Delhi, South Delhi, Delhi, 110070, India"
+   }
+  },
+  {
+   "id": "dlf-promenade",
+   "name": "DLF Promenade",
+   "category": "mall",
+   "city": "Delhi",
+   "lat": 28.542473,
+   "lng": 77.155806,
+   "nearest_station": {
+    "id": "vasant-vihar",
+    "distance_km": 1.78
+   },
+   "osm": {
+    "type": "way",
+    "id": 191980803,
+    "label": "DLF Promenade, 3, Nelson Mandela Marg, Vasant Kunj, South, New Delhi, South Delhi, Delhi, 110070, India"
+   }
+  },
+  {
+   "id": "pacific-mall-anand-vihar",
+   "name": "Pacific Mall Anand Vihar",
+   "category": "mall",
+   "city": "Delhi",
+   "lat": 28.646387,
+   "lng": 77.319992,
+   "nearest_station": {
+    "id": "anand-vihar",
+    "distance_km": 0.37
+   },
+   "osm": {
+    "type": "way",
+    "id": 196622332,
+    "label": "Pacific Mall, Anand Vihar, Indraprastha Extension, Shahdara South, Delhi, East Delhi, Delhi, India"
+   }
+  },
+  {
+   "id": "vegas-mall-dwarka",
+   "name": "Vegas Mall Dwarka",
+   "category": "mall",
+   "city": "Delhi",
+   "lat": 28.601084,
+   "lng": 77.029601,
+   "nearest_station": {
+    "id": "dwarka-sector-14",
+    "distance_km": 0.38
+   },
+   "osm": {
+    "type": "way",
+    "id": 209492487,
+    "label": "Vegas Mall, Internal road, metro view apartments, Najafgarh, Delhi, South West Delhi, Delhi, 110078, India"
+   }
+  },
+  {
+   "id": "pacific-mall-nsp",
+   "name": "Pacific Mall NSP",
+   "category": "mall",
+   "city": "Delhi",
+   "lat": 28.695911,
+   "lng": 77.153833,
+   "nearest_station": {
+    "id": "netaji-subhash-place",
+    "distance_km": 0.07
+   },
+   "osm": {
+    "type": "way",
+    "id": 1209274129,
+    "label": "Red Line - Pink Line, Pacific Mall Pathway, Block C5, Ashok Vihar, Shalimar Bagh, Keshavpuram, Delhi, Central North Delh"
+   }
+  },
+  {
+   "id": "unity-one-mall-rohini",
+   "name": "Unity One Mall Rohini",
+   "category": "mall",
+   "city": "Delhi",
+   "lat": 28.715034,
+   "lng": 77.116316,
+   "nearest_station": {
+    "id": "rohini-west",
+    "distance_km": 0.09
+   },
+   "osm": {
+    "type": "way",
+    "id": 300014142,
+    "label": "Unity One, HL Parwana Road, Rohini, Delhi, North West Delhi, Delhi, 110085, India"
+   }
+  },
+  {
+   "id": "delhi-university-north-campus",
+   "name": "Delhi University North Campus",
+   "category": "education",
+   "city": "Delhi",
+   "lat": 28.692487,
+   "lng": 77.218177,
+   "nearest_station": {
+    "id": "vishwa-vidyalaya",
+    "distance_km": 0.44
+   },
+   "osm": {
+    "type": "way",
+    "id": 351082468,
+    "label": "Faculty of Music and Fine Arts, University Road, Cavalry Line, North Campus, Civil Lines, Delhi, North Delhi, Delhi, 110"
+   }
+  },
+  {
+   "id": "delhi-university-south-campus",
+   "name": "Delhi University South Campus",
+   "category": "education",
+   "city": "Delhi",
+   "lat": 28.581759,
+   "lng": 77.162655,
+   "nearest_station": {
+    "id": "durgabai-deshmukh-south-campus",
+    "distance_km": 1.07
+   },
+   "osm": {
+    "type": "way",
+    "id": 1418308532,
+    "label": "University Grants Commission, Benito Juarez Marg, Moti Bagh, South, Delhi, South Delhi, Delhi, 110057, India"
+   }
+  },
+  {
+   "id": "jnu",
+   "name": "JNU",
+   "category": "education",
+   "city": "Delhi",
+   "lat": 28.550525,
+   "lng": 77.17876,
+   "nearest_station": {
+    "id": "r-k-puram",
+    "distance_km": 0.66
+   },
+   "osm": {
+    "type": "way",
+    "id": 173228188,
+    "label": "JNU Old Campus, Hauz Khas, South, Delhi, South Delhi, Delhi, India"
+   }
+  },
+  {
+   "id": "iit-delhi",
+   "name": "IIT Delhi",
+   "category": "education",
+   "city": "Delhi",
+   "lat": 28.544997,
+   "lng": 77.189151,
+   "nearest_station": {
+    "id": "iit-delhi",
+    "distance_km": 0.57
+   },
+   "osm": {
+    "type": "way",
+    "id": 283148869,
+    "label": "Indian Institute of Technology Delhi, Gamal Abdel Nasser Marg, Kalu Sarai, Hauz Khas, South, Delhi, South Delhi, Delhi, "
+   }
+  },
+  {
+   "id": "jamia-millia-islamia",
+   "name": "Jamia Millia Islamia",
+   "category": "education",
+   "city": "Delhi",
+   "lat": 28.55849,
+   "lng": 77.281165,
+   "nearest_station": {
+    "id": "sukhdev-vihar",
+    "distance_km": 0.62
+   },
+   "osm": {
+    "type": "relation",
+    "id": 3695425,
+    "label": "Jamia Millia Islamia, Nafees road, Batla House, Central, Delhi, South East Delhi, Delhi, 110025, India"
+   }
+  },
+  {
+   "id": "ip-university-dwarka",
+   "name": "IP University Dwarka",
+   "category": "education",
+   "city": "Delhi",
+   "lat": 28.594758,
+   "lng": 77.018061,
+   "nearest_station": {
+    "id": "dwarka-sector-14",
+    "distance_km": 1.13
+   },
+   "osm": {
+    "type": "way",
+    "id": 154103766,
+    "label": "Guru Gobind Singh Indraprastha University, Najafgarh, Delhi, South West Delhi, Delhi, India"
+   }
+  },
+  {
+   "id": "dtu",
+   "name": "DTU",
+   "category": "education",
+   "city": "Delhi",
+   "lat": 28.750815,
+   "lng": 77.116276,
+   "nearest_station": {
+    "id": "samaypur-badli",
+    "distance_km": 2.25
+   },
+   "osm": {
+    "type": "way",
+    "id": 111212532,
+    "label": "Delhi Technological University, Shahbad Daulatpur Village, Western Yamuna Canal Link Road, Narela, Delhi, Outer North De"
+   }
+  },
+  {
+   "id": "nsut-dwarka",
+   "name": "NSUT Dwarka",
+   "category": "education",
+   "city": "Delhi",
+   "lat": 28.610948,
+   "lng": 77.038456,
+   "nearest_station": {
+    "id": "dwarka-mor",
+    "distance_km": 1.06
+   },
+   "osm": {
+    "type": "relation",
+    "id": 16034563,
+    "label": "Netaji Subhas University of Technology, Azad Hind Fauj Marg, Nawada, Sector 3, Dwarka, South West Delhi, Delhi, 110078, "
+   }
+  },
+  {
+   "id": "iiit-delhi",
+   "name": "IIIT Delhi",
+   "category": "education",
+   "city": "Delhi",
+   "lat": 28.546326,
+   "lng": 77.273257,
+   "nearest_station": {
+    "id": "harkesh-nagar-okhla",
+    "distance_km": 0.42
+   },
+   "osm": {
+    "type": "way",
+    "id": 220356974,
+    "label": "IIIT-Delhi, Govindpuri, Okhla, Central, New Delhi, South East Delhi, Delhi, 110020, India"
+   }
+  },
+  {
+   "id": "aiims-delhi",
+   "name": "AIIMS Delhi",
+   "category": "hospital",
+   "city": "New Delhi",
+   "lat": 28.564543,
+   "lng": 77.209965,
+   "nearest_station": {
+    "id": "a-i-i-m-s",
+    "distance_km": 0.33
+   },
+   "osm": {
+    "type": "way",
+    "id": 1413244686,
+    "label": "All India Institute of Medical Sciences, Kidwai Nagar, New Delhi, Delhi, India"
+   }
+  },
+  {
+   "id": "safdarjung-hospital",
+   "name": "Safdarjung Hospital",
+   "category": "hospital",
+   "city": "New Delhi",
+   "lat": 28.567338,
+   "lng": 77.204973,
+   "nearest_station": {
+    "id": "a-i-i-m-s",
+    "distance_km": 0.28
+   },
+   "osm": {
+    "type": "way",
+    "id": 454523330,
+    "label": "Safdarjung Hospital, Aurobindo Marg, Kidwai Nagar, South, New Delhi, Delhi, 110029, India"
+   }
+  },
+  {
+   "id": "sir-ganga-ram-hospital",
+   "name": "Sir Ganga Ram Hospital",
+   "category": "hospital",
+   "city": "Delhi",
+   "lat": 28.638528,
+   "lng": 77.189693,
+   "nearest_station": {
+    "id": "karol-bagh",
+    "distance_km": 0.62
+   },
+   "osm": {
+    "type": "way",
+    "id": 158038115,
+    "label": "Sir Ganga Ram Hospital, Sir Ganga Ram Hospital Marg, Karol Bagh, Delhi, Central Delhi, Delhi, 110060, India"
+   }
+  },
+  {
+   "id": "max-hospital-saket",
+   "name": "Max Hospital Saket",
+   "category": "hospital",
+   "city": "Delhi",
+   "lat": 28.52663,
+   "lng": 77.212267,
+   "nearest_station": {
+    "id": "malviya-nagar",
+    "distance_km": 0.78
+   },
+   "osm": {
+    "type": "way",
+    "id": 741785958,
+    "label": "Max Hospital Internal Road, Press Enclave, Saket, South, Delhi, South Delhi, Delhi, 110017, India"
+   }
+  },
+  {
+   "id": "apollo-hospital-sarita-vihar",
+   "name": "Apollo Hospital Sarita Vihar",
+   "category": "hospital",
+   "city": "Delhi",
+   "lat": 28.540816,
+   "lng": 77.283519,
+   "nearest_station": {
+    "id": "jasola-apollo",
+    "distance_km": 0.27
+   },
+   "osm": {
+    "type": "node",
+    "id": 9295424879,
+    "label": "Indraprastha Apollo Hospital, Mathura Road, Pocket B, Govindpuri, Okhla, Central, Delhi, South East Delhi, Delhi, 110076"
+   }
+  },
+  {
+   "id": "fortis-escorts-okhla",
+   "name": "Fortis Escorts Okhla",
+   "category": "hospital",
+   "city": "Delhi",
+   "lat": 28.560134,
+   "lng": 77.273743,
+   "nearest_station": {
+    "id": "sukhdev-vihar",
+    "distance_km": 0.12
+   },
+   "osm": {
+    "type": "way",
+    "id": 80508232,
+    "label": "Escorts Heart Institute, MP Road, Pocket B, Okhla, Central, Delhi, South East Delhi, Delhi, 110025, India"
+   }
+  },
+  {
+   "id": "medanta-gurugram",
+   "name": "Medanta Gurugram",
+   "category": "hospital",
+   "city": "Gurugram",
+   "lat": 28.438947,
+   "lng": 77.040273,
+   "nearest_station": {
+    "id": "millennium-city-centre-gurugram",
+    "distance_km": 3.9
+   },
+   "osm": {
+    "type": "way",
+    "id": 348234206,
+    "label": "Medanta The Medicity, Chowdhury Baktawar Singh Road, HUDA, Sector 38, Gurgaon, Gurugram, Haryana, 122001, India"
+   }
+  },
+  {
+   "id": "new-delhi-railway-station",
+   "name": "New Delhi Railway Station",
+   "category": "railway",
+   "city": "New Delhi",
+   "lat": 28.640282,
+   "lng": 77.22041,
+   "nearest_station": {
+    "id": "new-delhi-airport-express-terminal",
+    "distance_km": 0.36
+   },
+   "osm": {
+    "type": "relation",
+    "id": 3905298,
+    "label": "New Delhi Railway Station, New Delhi, Delhi, India"
+   }
+  },
+  {
+   "id": "old-delhi-railway-station",
+   "name": "Old Delhi Railway Station",
+   "category": "railway",
+   "city": "Delhi",
+   "lat": 28.660932,
+   "lng": 77.227649,
+   "nearest_station": {
+    "id": "chandni-chowk",
+    "distance_km": 0.38
+   },
+   "osm": {
+    "type": "node",
+    "id": 913095905,
+    "label": "Delhi Junction, Shyama Prasad Mukherji Marg, Mori Gate, Sadar Bazar, Old Delhi, City & Sadar, Delhi, Old Delhi, Delhi, 1"
+   }
+  },
+  {
+   "id": "hazrat-nizamuddin-railway-station",
+   "name": "Hazrat Nizamuddin Railway Station",
+   "category": "railway",
+   "city": "Delhi",
+   "lat": 28.586413,
+   "lng": 77.252982,
+   "nearest_station": {
+    "id": "sarai-kale-khan-nizamuddin",
+    "distance_km": 0.51
+   },
+   "osm": {
+    "type": "node",
+    "id": 5584870726,
+    "label": "Hazrat Nizamuddin Railway Station, Jathedar Harbans Singh Bhogal Marg, Central, Delhi, South East Delhi, Delhi, 110013, "
+   }
+  },
+  {
+   "id": "anand-vihar-terminal",
+   "name": "Anand Vihar Terminal",
+   "category": "railway",
+   "city": "Delhi",
+   "lat": 28.648851,
+   "lng": 77.3155,
+   "nearest_station": {
+    "id": "anand-vihar",
+    "distance_km": 0.21
+   },
+   "osm": {
+    "type": "node",
+    "id": 944845341,
+    "label": "Anand Vihar Terminal, DLI Side Subway, Anand Vihar, Indraprastha Extension, Shahdara South, Delhi, East Delhi, Delhi, 11"
+   }
+  },
+  {
+   "id": "delhi-sarai-rohilla",
+   "name": "Delhi Sarai Rohilla",
+   "category": "railway",
+   "city": "Delhi",
+   "lat": 28.662751,
+   "lng": 77.185256,
+   "nearest_station": {
+    "id": "shastri-nagar",
+    "distance_km": 0.88
+   },
+   "osm": {
+    "type": "node",
+    "id": 915407469,
+    "label": "Delhi Sarai Rohilla, New Rohtak Road, Karol Bagh, Delhi, Central Delhi, Delhi, 110060, India"
+   }
+  },
+  {
+   "id": "delhi-cantt-railway-station",
+   "name": "Delhi Cantt Railway Station",
+   "category": "railway",
+   "city": "Delhi",
+   "lat": 28.613497,
+   "lng": 77.116342,
+   "nearest_station": {
+    "id": "naraina-vihar",
+    "distance_km": 2.31
+   },
+   "osm": {
+    "type": "way",
+    "id": 164461746,
+    "label": "Delhi Cantonment Railway Station, Nangal Raya, West, Delhi, West Delhi, Delhi, India"
+   }
+  },
+  {
+   "id": "isbt-kashmere-gate",
+   "name": "ISBT Kashmere Gate",
+   "category": "bus",
+   "city": "Delhi",
+   "lat": 28.668652,
+   "lng": 77.230683,
+   "nearest_station": {
+    "id": "kashmere-gate",
+    "distance_km": 0.26
+   },
+   "osm": {
+    "type": "way",
+    "id": 170062629,
+    "label": "Inter-State Bus Terminus (ISBT) Kashmiri Gate, Gali Number 2, Kashmere Gate, Sadar Bazar, Old Delhi, City & Sadar, Delhi"
+   }
+  },
+  {
+   "id": "isbt-anand-vihar",
+   "name": "ISBT Anand Vihar",
+   "category": "bus",
+   "city": "Delhi",
+   "lat": 28.648984,
+   "lng": 77.318288,
+   "nearest_station": {
+    "id": "anand-vihar",
+    "distance_km": 0.29
+   },
+   "osm": {
+    "type": "node",
+    "id": 13421995364,
+    "label": "Anand Vihar ISBT, Ghazipur Road, Anand Vihar, Shahdara South, Delhi, East Delhi, Delhi, 110092, India"
+   }
+  },
+  {
+   "id": "isbt-sarai-kale-khan",
+   "name": "ISBT Sarai Kale Khan",
+   "category": "bus",
+   "city": "Delhi",
+   "lat": 28.585038,
+   "lng": 77.25876,
+   "nearest_station": {
+    "id": "sarai-kale-khan",
+    "distance_km": 0.47
+   },
+   "osm": {
+    "type": "way",
+    "id": 80439683,
+    "label": "Sarai Kale Khan ISBT, Mahatma Gandhi Marg, Vidyut Vihar, Lajpat Nagar, Central, Delhi, South East Delhi, Delhi, 110013, "
+   }
+  },
+  {
+   "id": "igi-airport-terminal-1",
+   "name": "IGI Airport Terminal 1",
+   "category": "airport",
+   "city": "Delhi",
+   "lat": 28.555549,
+   "lng": 77.085322,
+   "nearest_station": {
+    "id": "igi-airport",
+    "distance_km": 0.17
+   },
+   "osm": {
+    "type": "node",
+    "id": 6820758891,
+    "label": "Shuttle Bus to Terminal 1 - Pillar 10, Indira Gandhi International Airport Arrival Road, Najafgarh, Delhi, South West De"
+   }
+  },
+  {
+   "id": "igi-airport-terminal-2",
+   "name": "IGI Airport Terminal 2",
+   "category": "airport",
+   "city": "Delhi",
+   "lat": 28.553886,
+   "lng": 77.088077,
+   "nearest_station": {
+    "id": "igi-airport",
+    "distance_km": 0.32
+   },
+   "osm": {
+    "type": "way",
+    "id": 168099461,
+    "label": "Indira Gandhi International Airport Arrival Road, Najafgarh, Delhi, South West Delhi, Delhi, 110077, India"
+   }
+  },
+  {
+   "id": "igi-airport-terminal-3",
+   "name": "IGI Airport Terminal 3",
+   "category": "airport",
+   "city": "Delhi",
+   "lat": 28.557946,
+   "lng": 77.083493,
+   "nearest_station": {
+    "id": "igi-airport",
+    "distance_km": 0.36
+   },
+   "osm": {
+    "type": "way",
+    "id": 51419112,
+    "label": "Terminal 3 (International), Indira Gandhi International Airport Arrival Road, Najafgarh, Delhi, South West Delhi, Delhi,"
+   }
+  },
+  {
+   "id": "aerocity",
+   "name": "Aerocity",
+   "category": "business",
+   "city": "Delhi",
+   "lat": 28.54799,
+   "lng": 77.12124,
+   "nearest_station": {
+    "id": "delhi-aerocity",
+    "distance_km": 0.1
+   },
+   "osm": {
+    "type": "node",
+    "id": 5215706930,
+    "label": "Aerocity, Manhattan Drive, Mahipalpur, Najafgarh, Delhi, South West Delhi, Delhi, 110037, India"
+   }
+  },
+  {
+   "id": "yashobhoomi-convention-centre",
+   "name": "Yashobhoomi Convention Centre",
+   "category": "business",
+   "city": "Delhi",
+   "lat": 28.551953,
+   "lng": 77.042676,
+   "nearest_station": {
+    "id": "yashobhoomi-dwarka-sector-25",
+    "distance_km": 0.29
+   },
+   "osm": {
+    "type": "way",
+    "id": 563433017,
+    "label": "Yashobhoomi, Dwarka Expressway, Najafgarh, Delhi, South West Delhi, Delhi, 110061, India"
+   }
+  },
+  {
+   "id": "dwarka-sector-21",
+   "name": "Dwarka Sector 21",
+   "category": "landmark",
+   "city": "Delhi",
+   "lat": 28.551922,
+   "lng": 77.05856,
+   "nearest_station": {
+    "id": "dwarka-sector-21",
+    "distance_km": 0.0
+   },
+   "osm": {
+    "type": "node",
+    "id": 6539894862,
+    "label": "Dwarka Sector 21, Dwarka Sector 21 Underpass, Najafgarh, Delhi, South West Delhi, Delhi, 110061, India"
+   }
+  },
+  {
+   "id": "rohini-sector-10",
+   "name": "Rohini Sector 10",
+   "category": "landmark",
+   "city": "Delhi",
+   "lat": 28.714957,
+   "lng": 77.115385,
+   "nearest_station": {
+    "id": "rohini-west",
+    "distance_km": 0.0
+   },
+   "osm": {
+    "type": "node",
+    "id": 1988598418,
+    "label": "Rohini West, Bhagwan mahavir marg, Sector 10, Sector 9, Rohini, Delhi, North West Delhi, Delhi, 110085, India"
+   }
+  },
+  {
+   "id": "pitampura-tv-tower",
+   "name": "Pitampura TV Tower",
+   "category": "landmark",
+   "city": "Delhi",
+   "lat": 28.697261,
+   "lng": 77.150329,
+   "nearest_station": {
+    "id": "netaji-subhash-place",
+    "distance_km": 0.36
+   },
+   "osm": {
+    "type": "way",
+    "id": 629998459,
+    "label": "Pitampura TV Tower, Red Line - Pink Line, Pacific Mall Pathway, Block C5, Ashok Vihar, Shalimar Bagh, Keshavpuram, Delhi"
+   }
+  },
+  {
+   "id": "rajouri-garden-market",
+   "name": "Rajouri Garden Market",
+   "category": "market",
+   "city": "Delhi",
+   "lat": 28.645698,
+   "lng": 77.119987,
+   "nearest_station": {
+    "id": "rajouri-garden",
+    "distance_km": 0.6
+   },
+   "osm": {
+    "type": "node",
+    "id": 11252135037,
+    "label": "Rajouri Garden Market, Block 7 J, Sant Sujan Singh Marg, Rajouri Garden, West, Delhi, West Delhi, Delhi, 110027, India"
+   }
+  },
+  {
+   "id": "janakpuri-district-centre",
+   "name": "Janakpuri District Centre",
+   "category": "business",
+   "city": "Delhi",
+   "lat": 28.629551,
+   "lng": 77.091439,
+   "nearest_station": {
+    "id": "janakpuri-east",
+    "distance_km": 0.6
+   },
+   "osm": {
+    "type": "node",
+    "id": 14069817329,
+    "label": "Raju Chur Chur Naan, B-1 Community Centre, Dharam Marg, Janakpuri, West, New Delhi, West Delhi, Delhi, 110058, India"
+   }
+  },
+  {
+   "id": "mayur-vihar-phase-1",
+   "name": "Mayur Vihar Phase 1",
+   "category": "landmark",
+   "city": "Delhi",
+   "lat": 28.603554,
+   "lng": 77.289921,
+   "nearest_station": {
+    "id": "mayur-vihar-i",
+    "distance_km": 0.05
+   },
+   "osm": {
+    "type": "node",
+    "id": 11034898964,
+    "label": "Mayur Vihar Phase 1, Khudiram Bose Marg, Mayur Vihar I, Trilok Puri, Mayur Vihar, Shahdara South, Delhi, East Delhi, Del"
+   }
+  },
+  {
+   "id": "laxmi-nagar-market",
+   "name": "Laxmi Nagar Market",
+   "category": "market",
+   "city": "Delhi",
+   "lat": 28.630597,
+   "lng": 77.277523,
+   "nearest_station": {
+    "id": "laxmi-nagar",
+    "distance_km": 0.0
+   },
+   "osm": {
+    "type": "node",
+    "id": 9415047898,
+    "label": "Laxmi Nagar, Vikas Marg, Vir Savarkar Block, Shahdara South, Delhi, East Delhi, Delhi, 110031, India"
+   }
+  },
+  {
+   "id": "preet-vihar",
+   "name": "Preet Vihar",
+   "category": "landmark",
+   "city": "Delhi",
+   "lat": 28.641441,
+   "lng": 77.295259,
+   "nearest_station": {
+    "id": "preet-vihar",
+    "distance_km": 0.0
+   },
+   "osm": {
+    "type": "node",
+    "id": 663793549,
+    "label": "Preet Vihar, Vikas Marg, D Block, Preet Vihar, Indraprastha Extension, Shahdara South, Delhi, East Delhi, Delhi, 110051,"
+   }
+  },
+  {
+   "id": "okhla-industrial-area",
+   "name": "Okhla Industrial Area",
+   "category": "business",
+   "city": "Delhi",
+   "lat": 28.576996,
+   "lng": 77.368816,
+   "nearest_station": {
+    "id": "noida-sector-34",
+    "distance_km": 0.63
+   },
+   "osm": {
+    "type": "way",
+    "id": 974559847,
+    "label": "Noida Authority open Area, Noida City Centre, Noida, Dadri, Gautam Buddha Nagar, Uttar Pradesh, India"
+   }
+  },
+  {
+   "id": "jasola-district-centre",
+   "name": "Jasola District Centre",
+   "category": "business",
+   "city": "Delhi",
+   "lat": 28.540615,
+   "lng": 77.286838,
+   "nearest_station": {
+    "id": "jasola-apollo",
+    "distance_km": 0.45
+   },
+   "osm": {
+    "type": "way",
+    "id": 266074789,
+    "label": "Jasola District Park, Jasola, Central, Delhi, South East Delhi, Delhi, India"
+   }
+  },
+  {
+   "id": "kalkaji-temple",
+   "name": "Kalkaji Temple",
+   "category": "tourist",
+   "city": "Delhi",
+   "lat": 28.549775,
+   "lng": 77.260667,
+   "nearest_station": {
+    "id": "kalkaji-mandir",
+    "distance_km": 0.27
+   },
+   "osm": {
+    "type": "node",
+    "id": 4234967390,
+    "label": "Kalkaji Mandir, Outer Ring Road, Govindpuri, Okhla, Central, Delhi, South East Delhi, Delhi, 110019, India"
+   }
+  },
+  {
+   "id": "greater-kailash-m-block-market",
+   "name": "Greater Kailash M Block Market",
+   "category": "market",
+   "city": "Delhi",
+   "lat": 28.550265,
+   "lng": 77.235112,
+   "nearest_station": {
+    "id": "kailash-colony",
+    "distance_km": 0.87
+   },
+   "osm": {
+    "type": "way",
+    "id": 275997663,
+    "label": "M Block Market, Greater Kailash, South, Delhi, South Delhi, Delhi, India"
+   }
+  },
+  {
+   "id": "defence-colony-market",
+   "name": "Defence Colony Market",
+   "category": "market",
+   "city": "Delhi",
+   "lat": 28.573476,
+   "lng": 77.230241,
+   "nearest_station": {
+    "id": "lajpat-nagar",
+    "distance_km": 0.8
+   },
+   "osm": {
+    "type": "way",
+    "id": 210241397,
+    "label": "Defence Colony Market, Defence Colony, Central, Delhi, South East Delhi, Delhi, India"
+   }
+  },
+  {
+   "id": "majnu-ka-tilla",
+   "name": "Majnu ka Tilla",
+   "category": "tourist",
+   "city": "Delhi",
+   "lat": 28.704335,
+   "lng": 77.224494,
+   "nearest_station": {
+    "id": "soorghat",
+    "distance_km": 0.72
+   },
+   "osm": {
+    "type": "node",
+    "id": 7138534333,
+    "label": "DGD, Majnu Ka Tilla, Timarpur Road, Timarpur, Civil Lines, Delhi, North Delhi, Delhi, 110054, India"
+   }
+  },
+  {
+   "id": "mukherjee-nagar",
+   "name": "Mukherjee Nagar",
+   "category": "education",
+   "city": "Delhi",
+   "lat": 28.712557,
+   "lng": 77.214404,
+   "nearest_station": {
+    "id": "soorghat",
+    "distance_km": 1.3
+   },
+   "osm": {
+    "type": "relation",
+    "id": 3860426,
+    "label": "Mukherjee Nagar, Civil Lines, Delhi, North Delhi, Delhi, India"
+   }
+  },
+  {
+   "id": "burari",
+   "name": "Burari",
+   "category": "landmark",
+   "city": "Delhi",
+   "lat": 28.753644,
+   "lng": 77.201651,
+   "nearest_station": {
+    "id": "burari",
+    "distance_km": 2.66
+   },
+   "osm": {
+    "type": "relation",
+    "id": 3524330,
+    "label": "Burari, Civil Lines, Delhi, North Delhi, Delhi, 110084, India"
+   }
+  },
+  {
+   "id": "narela",
+   "name": "Narela",
+   "category": "landmark",
+   "city": "Delhi",
+   "lat": 28.846477,
+   "lng": 77.085663,
+   "nearest_station": {
+    "id": "samaypur-badli",
+    "distance_km": 12.43
+   },
+   "osm": {
+    "type": "node",
+    "id": 345195834,
+    "label": "Narela, Bawana road, Narela, Delhi, Outer North Delhi, Delhi, 110040, India"
+   }
+  },
+  {
+   "id": "najafgarh",
+   "name": "Najafgarh",
+   "category": "landmark",
+   "city": "Delhi",
+   "lat": 28.61245,
+   "lng": 76.986507,
+   "nearest_station": {
+    "id": "najafgarh",
+    "distance_km": 0.01
+   },
+   "osm": {
+    "type": "node",
+    "id": 9172459622,
+    "label": "Najafgarh, Shivaji Marg, Najafgarh, Delhi, South West Delhi, Delhi, 110043, India"
+   }
+  },
+  {
+   "id": "mehrauli-archaeological-park",
+   "name": "Mehrauli Archaeological Park",
+   "category": "tourist",
+   "city": "Delhi",
+   "lat": 28.521238,
+   "lng": 77.185862,
+   "nearest_station": {
+    "id": "qutab-minar",
+    "distance_km": 0.92
+   },
+   "osm": {
+    "type": "way",
+    "id": 89583607,
+    "label": "Mehrauli Archaeological Park, Lado Sarai, South, Delhi, South Delhi, Delhi, India"
+   }
+  },
+  {
+   "id": "sanjay-van",
+   "name": "Sanjay Van",
+   "category": "tourist",
+   "city": "Delhi",
+   "lat": 28.532487,
+   "lng": 77.180585,
+   "nearest_station": {
+    "id": "r-k-puram",
+    "distance_km": 2.05
+   },
+   "osm": {
+    "type": "relation",
+    "id": 3760983,
+    "label": "Sanjay Van, South, Delhi, South Delhi, Delhi, India"
+   }
+  },
+  {
+   "id": "garden-of-five-senses",
+   "name": "Garden of Five Senses",
+   "category": "tourist",
+   "city": "Delhi",
+   "lat": 28.513772,
+   "lng": 77.198345,
+   "nearest_station": {
+    "id": "saket",
+    "distance_km": 0.91
+   },
+   "osm": {
+    "type": "way",
+    "id": 414336477,
+    "label": "The Garden of Five Senses, Saidulajaib Extension, South, Delhi, South Delhi, Delhi, India"
+   }
+  },
+  {
+   "id": "cyber-hub",
+   "name": "Cyber Hub",
+   "category": "business",
+   "city": "Gurugram",
+   "lat": 28.495101,
+   "lng": 77.088513,
+   "nearest_station": {
+    "id": "cyber-city",
+    "distance_km": 0.34
+   },
+   "osm": {
+    "type": "way",
+    "id": 1449268449,
+    "label": "DLF Cyber Hub, Sector 25A, Gurgaon, Gurugram, Haryana, India"
+   }
+  },
+  {
+   "id": "cyber-city",
+   "name": "Cyber City",
+   "category": "business",
+   "city": "Gurugram",
+   "lat": 28.49731,
+   "lng": 77.091798,
+   "nearest_station": {
+    "id": "cyber-city",
+    "distance_km": 0.27
+   },
+   "osm": {
+    "type": "relation",
+    "id": 3587101,
+    "label": "Cyber City, Sector 25A, Gurgaon, Gurugram, Haryana, 122010, India"
+   }
+  },
+  {
+   "id": "ambience-mall-gurugram",
+   "name": "Ambience Mall Gurugram",
+   "category": "mall",
+   "city": "Gurugram",
+   "lat": 28.504202,
+   "lng": 77.096954,
+   "nearest_station": {
+    "id": "moulsari-avenue-station",
+    "distance_km": 0.44
+   },
+   "osm": {
+    "type": "node",
+    "id": 11436616920,
+    "label": "Ambience Mall, Gurugram, NH 8, Golf Drive, Sector 24, Gurgaon, Gurugram, Haryana, 122002, India"
+   }
+  },
+  {
+   "id": "mgf-metropolitan-mall",
+   "name": "MGF Metropolitan Mall",
+   "category": "mall",
+   "city": "Gurugram",
+   "lat": 28.481114,
+   "lng": 77.080209,
+   "nearest_station": {
+    "id": "m-g-road",
+    "distance_km": 0.18
+   },
+   "osm": {
+    "type": "way",
+    "id": 42943770,
+    "label": "MGF Metropolitan Mall, Sector 25, Gurgaon, Gurugram, Haryana, India"
+   }
+  },
+  {
+   "id": "kingdom-of-dreams",
+   "name": "Kingdom of Dreams",
+   "category": "tourist",
+   "city": "Gurugram",
+   "lat": 28.46813,
+   "lng": 77.069126,
+   "nearest_station": {
+    "id": "iffco-chowk",
+    "distance_km": 0.57
+   },
+   "osm": {
+    "type": "way",
+    "id": 125775480,
+    "label": "Kingdom of Dreams, IFFCO Chowk, Sector 29, Gurgaon, Gurugram, Haryana, India"
+   }
+  },
+  {
+   "id": "sohna-road",
+   "name": "Sohna Road",
+   "category": "business",
+   "city": "Gurugram",
+   "lat": 28.39992,
+   "lng": 77.045127,
+   "nearest_station": {
+    "id": "sector-55-56",
+    "distance_km": 6.41
+   },
+   "osm": {
+    "type": "way",
+    "id": 1380662666,
+    "label": "Sohna Road, Badshahpur, Gurgaon, Gurugram, Haryana, 122101, India"
+   }
+  },
+  {
+   "id": "golf-course-road",
+   "name": "Golf Course Road",
+   "category": "business",
+   "city": "Gurugram",
+   "lat": 28.467732,
+   "lng": 77.094226,
+   "nearest_station": {
+    "id": "dlf-phase-1",
+    "distance_km": 0.41
+   },
+   "osm": {
+    "type": "way",
+    "id": 814983713,
+    "label": "Golf Course Road, HUDA Sector 43, DLF I, Gurgaon, Gurugram, Haryana, 122009, India"
+   }
+  },
+  {
+   "id": "udyog-vihar",
+   "name": "Udyog Vihar",
+   "category": "business",
+   "city": "Gurugram",
+   "lat": 28.491735,
+   "lng": 77.081972,
+   "nearest_station": {
+    "id": "belvedere-towers",
+    "distance_km": 0.6
+   },
+   "osm": {
+    "type": "node",
+    "id": 9706919851,
+    "label": "Udyog Vihar, Delhi-Gurugram Expressway, Sector 18, Gurgaon, Gurugram, Haryana, 122002, India"
+   }
+  },
+  {
+   "id": "gurugram-railway-station",
+   "name": "Gurugram Railway Station",
+   "category": "railway",
+   "city": "Gurugram",
+   "lat": 28.489087,
+   "lng": 77.011157,
+   "nearest_station": {
+    "id": "iffco-chowk",
+    "distance_km": 6.27
+   },
+   "osm": {
+    "type": "node",
+    "id": 1774430929,
+    "label": "Gurgaon, Old Railway Road, Sector 3, Gurgaon, Gurugram, Haryana, 122001, India"
+   }
+  },
+  {
+   "id": "rajiv-chowk-gurugram",
+   "name": "Rajiv Chowk Gurugram",
+   "category": "landmark",
+   "city": "Gurugram",
+   "lat": 28.445628,
+   "lng": 77.033799,
+   "nearest_station": {
+    "id": "millennium-city-centre-gurugram",
+    "distance_km": 4.09
+   },
+   "osm": {
+    "type": "way",
+    "id": 642940951,
+    "label": "Rajiv Chowk Underpass, Sector 38, Gurgaon, Gurugram, Haryana, 110058, India"
+   }
+  },
+  {
+   "id": "sector-29-gurugram",
+   "name": "Sector 29 Gurugram",
+   "category": "market",
+   "city": "Gurugram",
+   "lat": 28.469151,
+   "lng": 77.064783,
+   "nearest_station": {
+    "id": "iffco-chowk",
+    "distance_km": 0.83
+   },
+   "osm": {
+    "type": "way",
+    "id": 468979245,
+    "label": "Leisure Valley, IFFCO Chowk, Sector 29, Gurgaon, Gurugram, Haryana, India"
+   }
+  },
+  {
+   "id": "huda-city-centre",
+   "name": "Huda City Centre",
+   "category": "landmark",
+   "city": "Gurugram",
+   "lat": 28.459343,
+   "lng": 77.072657,
+   "nearest_station": {
+    "id": "millennium-city-centre-gurugram",
+    "distance_km": 0.0
+   },
+   "osm": {
+    "type": "node",
+    "id": 7018316590,
+    "label": "Millennium City Centre Gurugram, Flyover, IFFCO Chowk, Sector 29, Gurgaon, Gurugram, Haryana, 122022, India"
+   }
+  },
+  {
+   "id": "amity-university-gurugram",
+   "name": "Amity University Gurugram",
+   "category": "education",
+   "city": "Gurugram",
+   "lat": 28.317361,
+   "lng": 76.915553,
+   "nearest_station": {
+    "id": "sector-55-56",
+    "distance_km": 21.97
+   },
+   "osm": {
+    "type": "way",
+    "id": 297172467,
+    "label": "Amity University Haryana, Amer Road, Manesar, Gurugram, Haryana, 122001, India"
+   }
+  },
+  {
+   "id": "manesar",
+   "name": "Manesar",
+   "category": "business",
+   "city": "Gurugram",
+   "lat": 28.367185,
+   "lng": 76.920669,
+   "nearest_station": {
+    "id": "millennium-city-centre-gurugram",
+    "distance_km": 18.06
+   },
+   "osm": {
+    "type": "node",
+    "id": 3159115964,
+    "label": "Industrial Modern Township Manesar, Manesar, Gurugram, Haryana, 122052, India"
+   }
+  },
+  {
+   "id": "faridabad-sector-12",
+   "name": "Faridabad Sector 12",
+   "category": "landmark",
+   "city": "Faridabad",
+   "lat": 28.385548,
+   "lng": 77.323236,
+   "nearest_station": {
+    "id": "bata-chowk",
+    "distance_km": 0.96
+   },
+   "osm": {
+    "type": "node",
+    "id": 10832441690,
+    "label": "Sector 12, Faridabad, Haryana, 121001, India"
+   }
+  },
+  {
+   "id": "crown-interiorz-mall",
+   "name": "Crown Interiorz Mall",
+   "category": "mall",
+   "city": "Faridabad",
+   "lat": 28.469708,
+   "lng": 77.307265,
+   "nearest_station": {
+    "id": "sarai",
+    "distance_km": 0.95
+   },
+   "osm": {
+    "type": "way",
+    "id": 352467736,
+    "label": "Crown Interiorz Mall, Crown Interior Mall, Mathura Road, Faridabad, Haryana, 121003, India"
+   }
+  },
+  {
+   "id": "surajkund",
+   "name": "Surajkund",
+   "category": "tourist",
+   "city": "Faridabad",
+   "lat": 28.48367,
+   "lng": 77.283006,
+   "nearest_station": {
+    "id": "badarpur",
+    "distance_km": 2.22
+   },
+   "osm": {
+    "type": "way",
+    "id": 213101581,
+    "label": "Surajkund, Suraj Kund Road, Surajkund, Faridabad, Haryana, 121001, India"
+   }
+  },
+  {
+   "id": "faridabad-railway-station",
+   "name": "Faridabad Railway Station",
+   "category": "railway",
+   "city": "Faridabad",
+   "lat": 28.410762,
+   "lng": 77.307077,
+   "nearest_station": {
+    "id": "old-faridabad",
+    "distance_km": 0.43
+   },
+   "osm": {
+    "type": "node",
+    "id": 1572649890,
+    "label": "Faridabad, ITI Road, Sant Nagar, New Industrial Township, Faridabad, Haryana, 121001, India"
+   }
+  },
+  {
+   "id": "manav-rachna-university",
+   "name": "Manav Rachna University",
+   "category": "education",
+   "city": "Faridabad",
+   "lat": 28.450757,
+   "lng": 77.283493,
+   "nearest_station": {
+    "id": "mewala-maharajpur",
+    "distance_km": 2.41
+   },
+   "osm": {
+    "type": "relation",
+    "id": 5244339,
+    "label": "A Block, Manav Rachna International University, Surajkund Road, Greenfield, Faridabad, Haryana, 121004, India"
+   }
+  },
+  {
+   "id": "badkhal-lake",
+   "name": "Badkhal Lake",
+   "category": "tourist",
+   "city": "Faridabad",
+   "lat": 28.416764,
+   "lng": 77.275762,
+   "nearest_station": {
+    "id": "badhkal-mor",
+    "distance_km": 3.45
+   },
+   "osm": {
+    "type": "way",
+    "id": 143936094,
+    "label": "Badkhal Lake, Badkhal, Faridabad, Haryana, 121001, India"
+   }
+  },
+  {
+   "id": "ballabgarh",
+   "name": "Ballabgarh",
+   "category": "landmark",
+   "city": "Faridabad",
+   "lat": 28.294073,
+   "lng": 77.359224,
+   "nearest_station": {
+    "id": "raja-nahar-singh",
+    "distance_km": 6.6
+   },
+   "osm": {
+    "type": "relation",
+    "id": 10398276,
+    "label": "Ballabgarh, Faridabad, Haryana, India"
+   }
+  },
+  {
+   "id": "bahadurgarh",
+   "name": "Bahadurgarh",
+   "category": "landmark",
+   "city": "Bahadurgarh",
+   "lat": 28.690778,
+   "lng": 76.935481,
+   "nearest_station": {
+    "id": "bahadurgarh-city",
+    "distance_km": 0.01
+   },
+   "osm": {
+    "type": "node",
+    "id": 6465991453,
+    "label": "Bahadurgarh City, Najafgarh Bahadurgarh Road, Bahadurgarh, Jhajjar, Haryana, 124507, India"
+   }
+  },
+  {
+   "id": "meerut-city",
+   "name": "Meerut City",
+   "category": "landmark",
+   "city": "Meerut",
+   "lat": 28.978966,
+   "lng": 77.675699,
+   "nearest_station": {
+    "id": "shatabdi-nagar",
+    "distance_km": 3.48
+   },
+   "osm": {
+    "type": "node",
+    "id": 1286130406,
+    "label": "Meerut City Junction, Railway Road, Meerut, Uttar Pradesh, 250001, India"
+   }
+  },
+  {
+   "id": "modinagar",
+   "name": "Modinagar",
+   "category": "landmark",
+   "city": "Ghaziabad",
+   "lat": 28.832071,
+   "lng": 77.577087,
+   "nearest_station": {
+    "id": "modinagar-north",
+    "distance_km": 1.4
+   },
+   "osm": {
+    "type": "node",
+    "id": 245767001,
+    "label": "Modinagar, Ghaziabad, Uttar Pradesh, 201204, India"
+   }
+  },
+  {
+   "id": "noida-expressway-sector-137",
+   "name": "Noida Expressway Sector 137",
+   "category": "landmark",
+   "city": "Noida",
+   "lat": 28.508788,
+   "lng": 77.410439,
+   "nearest_station": {
+    "id": "noida-sector-137",
+    "distance_km": 0.7
+   },
+   "osm": {
+    "type": "way",
+    "id": 170571038,
+    "label": "Sector 137, Shahdara, Noida, Gautam Buddha Nagar, Uttar Pradesh, India"
+   }
+  },
+  {
+   "id": "jewar-airport",
+   "name": "Jewar Airport",
+   "category": "airport",
+   "city": "Greater Noida",
+   "lat": 28.171689,
+   "lng": 77.608935,
+   "nearest_station": {
+    "id": "noida-sector-148",
+    "distance_km": 33.35
+   },
+   "osm": {
+    "type": "way",
+    "id": 1089989191,
+    "label": "Noida International Airport, NH334DD, Kishorpur, Jewar, Gautam Buddha Nagar, Uttar Pradesh, 203155, India"
+   }
+  }
+ ]
+}

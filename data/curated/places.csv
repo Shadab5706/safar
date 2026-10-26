@@ -1,0 +1,146 @@
+name,category,city,query
+Bennett University,education,Greater Noida,Bennett University
+Sharda University,education,Greater Noida,Sharda University
+Galgotias University,education,Greater Noida,Galgotias University
+Gautam Buddha University,education,Greater Noida,Gautam Buddha University
+Shiv Nadar University,education,Greater Noida,Shiv Nadar University Dadri
+Pari Chowk,landmark,Greater Noida,Pari Chowk Greater Noida
+Knowledge Park II,landmark,Greater Noida,Knowledge Park II Greater Noida
+Alpha 1 Commercial Belt,market,Greater Noida,"Alpha 1, Greater Noida"
+Gaur City Mall,mall,Greater Noida West,Gaur City Mall
+India Expo Mart,business,Greater Noida,India Expo Mart
+Buddh International Circuit,landmark,Greater Noida,Buddh International Circuit
+Grand Venice Mall,mall,Greater Noida,The Grand Venice Mall
+Noida Film City,business,Noida,Film City Noida Sector 16A
+DLF Mall of India,mall,Noida,DLF Mall of India Noida
+The Great India Place,mall,Noida,The Great India Place Noida
+Logix Mall,mall,Noida,Logix City Centre Noida
+Amity University Noida,education,Noida,Amity University Sector 125 Noida
+JIIT Noida Sector 62,education,Noida,Jaypee Institute of Information Technology Sector 62
+Noida Sector 18 Market,market,Noida,"Sector 18, Noida"
+Botanical Garden Noida,landmark,Noida,Noida Botanical Garden
+Fortis Hospital Noida,hospital,Noida,Fortis Hospital Noida Sector 62
+Okhla Bird Sanctuary,tourist,Noida,Okhla Bird Sanctuary
+Worlds of Wonder,tourist,Noida,Worlds of Wonder Noida
+Noida Stadium,landmark,Noida,Noida Stadium Sector 21A
+Indirapuram Habitat Centre,mall,Ghaziabad,Indirapuram Habitat
+Shipra Mall,mall,Ghaziabad,Shipra Mall Indirapuram
+Ghaziabad Railway Station,railway,Ghaziabad,Ghaziabad Junction railway station
+Kaushambi Bus Stand,bus,Ghaziabad,Kaushambi Bus Station
+Hindon Airport,airport,Ghaziabad,Hindon Airport Civil Terminal
+India Gate,tourist,New Delhi,India Gate New Delhi
+Rashtrapati Bhavan,tourist,New Delhi,Rashtrapati Bhavan
+Kartavya Path,tourist,New Delhi,Kartavya Path
+Red Fort,tourist,Delhi,Red Fort Delhi
+Jama Masjid,tourist,Delhi,Jama Masjid Delhi
+Chandni Chowk Market,market,Delhi,Chandni Chowk
+Qutub Minar,tourist,Delhi,Qutub Minar
+Humayun's Tomb,tourist,Delhi,Humayun's Tomb
+Lotus Temple,tourist,Delhi,Lotus Temple Delhi
+Akshardham Temple,tourist,Delhi,Swaminarayan Akshardham Delhi
+ISKCON Temple East of Kailash,tourist,Delhi,ISKCON Temple East of Kailash
+Lodhi Garden,tourist,New Delhi,Lodhi Garden
+Hauz Khas Village,tourist,Delhi,Hauz Khas Village
+Jantar Mantar,tourist,New Delhi,Jantar Mantar New Delhi
+Agrasen ki Baoli,tourist,New Delhi,Agrasen ki Baoli
+National Museum,tourist,New Delhi,National Museum New Delhi
+Purana Qila,tourist,Delhi,Purana Qila Delhi
+Gurudwara Bangla Sahib,tourist,New Delhi,Gurudwara Bangla Sahib
+Raj Ghat,tourist,Delhi,Raj Ghat Delhi
+Delhi Zoo,tourist,Delhi,National Zoological Park Delhi
+Pragati Maidan Bharat Mandapam,business,New Delhi,Bharat Mandapam Pragati Maidan
+Connaught Place,market,New Delhi,Connaught Place Central Park New Delhi
+Janpath Market,market,New Delhi,Janpath Market
+Khan Market,market,New Delhi,Khan Market
+Sarojini Nagar Market,market,New Delhi,Sarojini Nagar Market
+Lajpat Nagar Central Market,market,Delhi,Lajpat Nagar Central Market
+Karol Bagh Market,market,Delhi,Ajmal Khan Road Karol Bagh
+Dilli Haat INA,market,New Delhi,Dilli Haat INA
+Chandni Chowk Paranthe Wali Gali,market,Delhi,Paranthe Wali Gali
+Kamla Nagar Market,market,Delhi,"Kamla Nagar, Delhi"
+Nehru Place,business,Delhi,Nehru Place Delhi
+Select Citywalk,mall,Delhi,Select Citywalk Saket
+DLF Avenue Saket,mall,Delhi,DLF Avenue Saket
+Ambience Mall Vasant Kunj,mall,Delhi,Ambience Mall Vasant Kunj
+DLF Promenade,mall,Delhi,DLF Promenade Vasant Kunj
+Pacific Mall Anand Vihar,mall,Delhi,Pacific Mall Delhi
+Vegas Mall Dwarka,mall,Delhi,Vegas Mall Dwarka
+Pacific Mall NSP,mall,Delhi,Pacific Mall Netaji Subhash Place
+Unity One Mall Rohini,mall,Delhi,Unity One Mall Rohini
+Delhi University North Campus,education,Delhi,Arts Faculty University of Delhi North Campus
+Delhi University South Campus,education,Delhi,University of Delhi South Campus Benito Juarez Marg
+JNU,education,Delhi,Jawaharlal Nehru University New Delhi
+IIT Delhi,education,Delhi,Indian Institute of Technology Delhi Hauz Khas
+Jamia Millia Islamia,education,Delhi,Jamia Millia Islamia
+IP University Dwarka,education,Delhi,Guru Gobind Singh Indraprastha University Dwarka
+DTU,education,Delhi,Delhi Technological University
+NSUT Dwarka,education,Delhi,Netaji Subhas University of Technology Dwarka
+IIIT Delhi,education,Delhi,IIIT Delhi Okhla
+AIIMS Delhi,hospital,New Delhi,All India Institute of Medical Sciences New Delhi
+Safdarjung Hospital,hospital,New Delhi,Safdarjung Hospital
+Sir Ganga Ram Hospital,hospital,Delhi,Sir Ganga Ram Hospital Delhi
+Max Hospital Saket,hospital,Delhi,Max Super Speciality Hospital Saket
+Apollo Hospital Sarita Vihar,hospital,Delhi,Indraprastha Apollo Hospital
+Fortis Escorts Okhla,hospital,Delhi,Escorts Heart Institute
+Medanta Gurugram,hospital,Gurugram,Medanta The Medicity Gurugram
+New Delhi Railway Station,railway,New Delhi,New Delhi railway station
+Old Delhi Railway Station,railway,Delhi,Delhi Junction railway station
+Hazrat Nizamuddin Railway Station,railway,Delhi,Hazrat Nizamuddin railway station
+Anand Vihar Terminal,railway,Delhi,Anand Vihar Terminal railway station
+Delhi Sarai Rohilla,railway,Delhi,Delhi Sarai Rohilla railway station
+Delhi Cantt Railway Station,railway,Delhi,Delhi Cantonment railway station
+ISBT Kashmere Gate,bus,Delhi,Maharana Pratap Inter State Bus Terminal Kashmere Gate
+ISBT Anand Vihar,bus,Delhi,Anand Vihar ISBT
+ISBT Sarai Kale Khan,bus,Delhi,Sarai Kale Khan ISBT
+IGI Airport Terminal 1,airport,Delhi,Indira Gandhi International Airport Terminal 1
+IGI Airport Terminal 2,airport,Delhi,Indira Gandhi International Airport Terminal 2
+IGI Airport Terminal 3,airport,Delhi,Indira Gandhi International Airport Terminal 3
+Aerocity,business,Delhi,Aerocity New Delhi hospitality district
+Yashobhoomi Convention Centre,business,Delhi,Yashobhoomi India International Convention Centre Dwarka
+Dwarka Sector 21,landmark,Delhi,Dwarka Sector 21 Delhi
+Rohini Sector 10,landmark,Delhi,Rohini Sector 10 Delhi
+Pitampura TV Tower,landmark,Delhi,Pitampura TV Tower
+Rajouri Garden Market,market,Delhi,Rajouri Garden Main Market
+Janakpuri District Centre,business,Delhi,Janakpuri District Centre
+Mayur Vihar Phase 1,landmark,Delhi,Mayur Vihar Phase 1 Delhi
+Laxmi Nagar Market,market,Delhi,Laxmi Nagar Delhi
+Preet Vihar,landmark,Delhi,Preet Vihar Delhi
+Okhla Industrial Area,business,Delhi,Okhla Industrial Area Phase 1
+Jasola District Centre,business,Delhi,Jasola District Centre
+Kalkaji Temple,tourist,Delhi,Kalkaji Mandir Delhi
+Greater Kailash M Block Market,market,Delhi,M Block Market Greater Kailash 1
+Defence Colony Market,market,Delhi,Defence Colony Market
+Majnu ka Tilla,tourist,Delhi,Majnu ka Tilla
+Mukherjee Nagar,education,Delhi,Mukherjee Nagar Delhi
+Burari,landmark,Delhi,Burari Delhi
+Narela,landmark,Delhi,Narela Delhi
+Najafgarh,landmark,Delhi,Najafgarh Delhi
+Mehrauli Archaeological Park,tourist,Delhi,Mehrauli Archaeological Park
+Sanjay Van,tourist,Delhi,Sanjay Van
+Garden of Five Senses,tourist,Delhi,Garden of Five Senses
+Cyber Hub,business,Gurugram,DLF CyberHub Gurugram
+Cyber City,business,Gurugram,DLF Cyber City Gurugram
+Ambience Mall Gurugram,mall,Gurugram,Ambience Mall Gurugram
+MGF Metropolitan Mall,mall,Gurugram,MGF Metropolitan Mall Gurugram
+Kingdom of Dreams,tourist,Gurugram,Kingdom of Dreams Gurugram
+Sohna Road,business,Gurugram,Sohna Road Gurugram
+Golf Course Road,business,Gurugram,Golf Course Road Gurugram
+Udyog Vihar,business,Gurugram,Udyog Vihar Gurugram
+Gurugram Railway Station,railway,Gurugram,Gurgaon railway station
+Rajiv Chowk Gurugram,landmark,Gurugram,Rajiv Chowk Gurugram
+Sector 29 Gurugram,market,Gurugram,Sector 29 Gurugram leisure valley
+Huda City Centre,landmark,Gurugram,Millennium City Centre Gurugram
+Amity University Gurugram,education,Gurugram,Amity University Manesar
+Manesar,business,Gurugram,IMT Manesar
+Faridabad Sector 12,landmark,Faridabad,Sector 12 Faridabad
+Crown Interiorz Mall,mall,Faridabad,Crown Interiorz Mall Faridabad
+Surajkund,tourist,Faridabad,Surajkund
+Faridabad Railway Station,railway,Faridabad,Faridabad railway station
+Manav Rachna University,education,Faridabad,Manav Rachna International Institute of Research and Studies
+Badkhal Lake,tourist,Faridabad,Badkhal Lake
+Ballabgarh,landmark,Faridabad,Ballabgarh
+Bahadurgarh,landmark,Bahadurgarh,Bahadurgarh city
+Meerut City,landmark,Meerut,Meerut City railway station
+Modinagar,landmark,Ghaziabad,Modinagar
+Noida Expressway Sector 137,landmark,Noida,Sector 137 Noida
+Jewar Airport,airport,Greater Noida,Noida International Airport Jewar

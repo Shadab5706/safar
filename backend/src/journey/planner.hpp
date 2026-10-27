@@ -8,6 +8,7 @@
 #include <nlohmann/json.hpp>
 
 #include "data/dataset.hpp"
+#include "fares/fare_engine.hpp"
 #include "fares/transport_config.hpp"
 #include "graph/graph.hpp"
 #include "roads/road_matrix.hpp"
@@ -44,18 +45,13 @@ struct JourneyRequest {
     std::size_t max_results = 5;
 };
 
-// The same road leg with each vehicle type, so the user can pick ("cab ₹240 / auto ₹180").
-struct RoadOption {
-    graph::RoadMode mode = graph::RoadMode::Cab;
-    double total_min = 0;
-    double wait_min = 0;
-    double fare_rs = 0;
-    double distance_km = 0;
-};
+// The same road leg priced by every provider and product (Uber Go, Rapido Auto, the
+// auto meter, ...), so the user can pick and open the app for the live price.
+using RoadOption = fares::Quote;
 
 struct Route {
     search::Itinerary itinerary;
-    std::vector<std::vector<RoadOption>> road_options;  // one list per leg, empty unless it is a road leg
+    std::vector<std::vector<RoadOption>> road_options;  // one list per leg (cheapest first), empty unless a road leg
     std::vector<std::string> tags;  // fastest, cheapest, fewest_changes, most_expensive, recommended
     std::string found_by;           // which search produced it
     double score = 0;               // minutes + rupees / value_of_time (lower is better)
@@ -87,9 +83,13 @@ public:
 class Planner {
 public:
     Planner(std::shared_ptr<const data::Dataset> ds, std::shared_ptr<const fares::TransportConfig> cfg,
-            std::shared_ptr<const roads::RoadMatrix> roads, std::shared_ptr<const graph::Graph> transit);
+            std::shared_ptr<const roads::RoadMatrix> roads, std::shared_ptr<const graph::Graph> transit,
+            std::shared_ptr<const fares::FareEngine> fares);
 
     JourneyResult plan(const JourneyRequest& req) const;
+
+    // The road trip between two endpoints (OSRM distance and time when known), for fare quotes.
+    fares::Trip road_trip(const Endpoint& from, const Endpoint& to, int hour) const;
 
 private:
     struct Point {
@@ -99,6 +99,7 @@ private:
         std::size_t place = graph::kNone;  // place index for place endpoints
     };
 
+    Point point(const Endpoint& e) const;  // node left at 0
     Point attach(graph::Graph& g, const Endpoint& e) const;
     Point station_point(const graph::Graph& g, std::size_t station) const;
     std::vector<std::size_t> access_stations(geo::LatLng pos) const;
@@ -110,6 +111,7 @@ private:
     std::shared_ptr<const fares::TransportConfig> cfg_;
     std::shared_ptr<const roads::RoadMatrix> roads_;
     std::shared_ptr<const graph::Graph> transit_;
+    std::shared_ptr<const fares::FareEngine> fares_;
 };
 
 nlohmann::json to_json(const JourneyResult& r, const data::Dataset& ds);

@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <set>
 #include <thread>
 
 #include <httplib.h>
@@ -215,4 +216,71 @@ TEST_F(ApiTest, JourneysValidatesInput) {
 
     post_json(c, "/api/v1/journeys", {{"from", "india-gate"}, {"to", "red-fort"}, {"preference", 3}}, status);
     EXPECT_EQ(status, 400);
+}
+
+TEST_F(ApiTest, FaresEstimateListsEveryProvider) {
+    auto res = client().Get("/api/v1/fares/estimate?from=india-gate&to=place:hauz-khas-village&at=2026-10-27T09:00");
+    ASSERT_TRUE(res);
+    ASSERT_EQ(res->status, 200) << res->body;
+    const auto data = nlohmann::json::parse(res->body)["data"];
+    EXPECT_EQ(data["from"]["name"], "India Gate");
+    EXPECT_EQ(data["depart"]["hour"], 9);
+    EXPECT_GT(data["trip"]["distance_km"].get<double>(), 3);
+    EXPECT_FALSE(data["note"].get<std::string>().empty());
+    const auto& quotes = data["quotes"];
+    ASSERT_EQ(quotes.size(), 9u);  // 3 Uber + 2 Ola + 3 Rapido + auto meter
+    double last = 0;
+    bool uber_link = false;
+    for (const auto& q : quotes) {
+        EXPECT_EQ(q["source"], "estimate");
+        EXPECT_EQ(q["fare_range_rs"].size(), 2u);
+        EXPECT_GE(q["fare_rs"].get<double>(), last);
+        last = q["fare_rs"].get<double>();
+        if (q["provider"] == "uber") {
+            uber_link = q["deep_link"]["url"].get<std::string>().rfind("https://m.uber.com/ul/?action=setPickup", 0) == 0;
+        }
+        if (q["provider"] == "delhi_auto") EXPECT_TRUE(q["deep_link"].is_null());
+    }
+    EXPECT_TRUE(uber_link);
+}
+
+TEST_F(ApiTest, FaresEstimateValidatesInput) {
+    auto c = client();
+    auto missing = c.Get("/api/v1/fares/estimate?from=india-gate");
+    ASSERT_TRUE(missing);
+    EXPECT_EQ(missing->status, 400);
+    auto unknown = c.Get("/api/v1/fares/estimate?from=place:atlantis&to=red-fort");
+    EXPECT_EQ(unknown->status, 404);
+    EXPECT_EQ(nlohmann::json::parse(unknown->body)["error"]["code"], "place_not_found");
+    auto same = c.Get("/api/v1/fares/estimate?from=red-fort&to=red-fort");
+    EXPECT_EQ(nlohmann::json::parse(same->body)["error"]["code"], "same_endpoints");
+    auto bad_time = c.Get("/api/v1/fares/estimate?from=india-gate&to=red-fort&at=2026-13-01T09:00");
+    EXPECT_EQ(bad_time->status, 400);
+}
+
+TEST_F(ApiTest, JourneyRoadLegsHaveProviderQuotesWithDeepLinks) {
+    auto c = client();
+    int status = 0;
+    auto body = post_json(c, "/api/v1/journeys",
+                          {{"from", "india-gate"}, {"to", "hauz-khas-village"}, {"depart_at", "2026-10-27T10:00"}}, status);
+    ASSERT_EQ(status, 200) << body.dump();
+    EXPECT_FALSE(body["data"]["fare_note"].get<std::string>().empty());
+    bool checked = false;
+    for (const auto& r : body["data"]["routes"]) {
+        for (const auto& leg : r["legs"]) {
+            if (leg["kind"] != "road") continue;
+            ASSERT_TRUE(leg.contains("options"));
+            std::set<std::string> providers;
+            for (const auto& o : leg["options"]) {
+                providers.insert(o["provider"].get<std::string>());
+                EXPECT_EQ(o["source"], "estimate");
+                EXPECT_TRUE(o.contains("product_name"));
+                EXPECT_TRUE(o.contains("pickup_eta_min"));
+                EXPECT_TRUE(o.contains("deep_link"));
+            }
+            EXPECT_TRUE(providers.count("uber") || providers.count("rapido")) << leg.dump();
+            checked = true;
+        }
+    }
+    EXPECT_TRUE(checked);
 }

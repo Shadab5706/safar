@@ -28,6 +28,7 @@ Server::Server(Config config, AppContext ctx)
     register_routes();
     register_lab_routes();
     register_journey_routes();
+    register_fare_routes();
 }
 
 void Server::register_middleware() {

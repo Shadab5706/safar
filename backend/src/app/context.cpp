@@ -9,7 +9,8 @@ AppContext AppContext::load(const Config& config) {
     ctx.roads = std::make_shared<const roads::RoadMatrix>(roads::RoadMatrix::load(config.data_dir / "road_matrix.json"));
     // Building the graph with the fare config also checks every line has a fare table.
     ctx.transit = std::make_shared<const graph::Graph>(graph::build_transit_graph(*ctx.dataset, {}, ctx.transport.get()));
-    ctx.planner = std::make_shared<const journey::Planner>(ctx.dataset, ctx.transport, ctx.roads, ctx.transit);
+    ctx.fares = std::make_shared<const fares::FareEngine>(fares::FareEngine::load(config.providers_path(), ctx.transport));
+    ctx.planner = std::make_shared<const journey::Planner>(ctx.dataset, ctx.transport, ctx.roads, ctx.transit, ctx.fares);
     return ctx;
 }
 

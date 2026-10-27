@@ -1,0 +1,58 @@
+{
+  "_note": "APPROXIMATE rate cards, NOT live prices. Uber, Ola and Rapido publish no price API for third-party apps, so every quote is labelled source=estimate. Cards with basis=approximate were set by hand from typical Delhi-NCR fares (2025); scripts/fit_fares.py refits them from real quotes in data/fare_samples.csv and sets basis=fitted. The Delhi auto meter is the government rate card. fare = max(min_fare, base + per_km*max(0, km-base_km) + per_min*ride_min + waiting_per_min*minutes_stuck_in_traffic) * surge_by_hour[hour] * (1 + night_pct/100 at night).",
+  "currency": "INR",
+  "providers": {
+    "uber": {
+      "name": "Uber",
+      "adapter": "uber",
+      "surge_by_hour": [1.1, 1.1, 1.1, 1.05, 1.0, 1.0, 1.0, 1.1, 1.25, 1.25, 1.1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.1, 1.2, 1.3, 1.25, 1.1, 1.0, 1.05, 1.1],
+      "products": {
+        "go": {"name": "Uber Go", "mode": "cab", "basis": "approximate", "base": 50, "base_km": 0, "per_km": 12, "per_min": 1.5, "min_fare": 85, "pickup_min": 5, "range_pct": 0.15},
+        "premier": {"name": "Uber Premier", "mode": "cab", "basis": "approximate", "base": 70, "base_km": 0, "per_km": 15.5, "per_min": 1.75, "min_fare": 120, "pickup_min": 6, "range_pct": 0.15},
+        "xl": {"name": "Uber XL", "mode": "cab", "basis": "approximate", "base": 90, "base_km": 0, "per_km": 20, "per_min": 2.25, "min_fare": 160, "pickup_min": 9, "range_pct": 0.15}
+      }
+    },
+    "ola": {
+      "name": "Ola",
+      "adapter": "ola",
+      "surge_by_hour": [1.1, 1.1, 1.05, 1.05, 1.0, 1.0, 1.0, 1.1, 1.2, 1.25, 1.1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.1, 1.2, 1.25, 1.25, 1.1, 1.0, 1.05, 1.1],
+      "products": {
+        "mini": {"name": "Ola Mini", "mode": "cab", "app_category": "mini", "basis": "approximate", "base": 50, "base_km": 0, "per_km": 12.5, "per_min": 1.25, "min_fare": 90, "pickup_min": 6, "range_pct": 0.15},
+        "prime": {"name": "Ola Prime Sedan", "mode": "cab", "app_category": "prime", "basis": "approximate", "base": 65, "base_km": 0, "per_km": 15, "per_min": 1.5, "min_fare": 115, "pickup_min": 7, "range_pct": 0.15}
+      }
+    },
+    "rapido": {
+      "name": "Rapido",
+      "adapter": "rapido",
+      "surge_by_hour": [1.05, 1.05, 1.05, 1.0, 1.0, 1.0, 1.0, 1.05, 1.15, 1.15, 1.05, 1.0, 1.0, 1.0, 1.0, 1.0, 1.05, 1.15, 1.2, 1.15, 1.05, 1.0, 1.0, 1.05],
+      "products": {
+        "bike": {"name": "Rapido Bike", "mode": "bike", "basis": "approximate", "base": 20, "base_km": 0, "per_km": 6, "per_min": 0.5, "min_fare": 25, "pickup_min": 4, "range_pct": 0.15},
+        "auto": {"name": "Rapido Auto", "mode": "auto", "basis": "approximate", "base": 30, "base_km": 1.5, "per_km": 11.5, "per_min": 0.5, "min_fare": 35, "pickup_min": 4, "range_pct": 0.15},
+        "cab": {"name": "Rapido Cab", "mode": "cab", "basis": "approximate", "base": 45, "base_km": 0, "per_km": 11.5, "per_min": 1.25, "min_fare": 80, "pickup_min": 6, "range_pct": 0.15}
+      }
+    },
+    "delhi_auto": {
+      "name": "Delhi auto (meter)",
+      "adapter": "meter",
+      "_source": "Delhi govt auto fare notified 2022: Rs 30 for the first 1.5 km, Rs 11 per km after, 25% extra 23:00-05:00. Waiting charge Rs 0.75/min is from the 2019 notification. Not re-verified against the gazette; check before relying on it.",
+      "products": {
+        "meter": {
+          "name": "Auto (meter)",
+          "mode": "auto",
+          "basis": "govt_rate_card",
+          "base": 30,
+          "base_km": 1.5,
+          "per_km": 11,
+          "per_min": 0,
+          "waiting_per_min": 0.75,
+          "min_fare": 30,
+          "night_pct": 25,
+          "night_from": 23,
+          "night_to": 5,
+          "pickup_min": 5,
+          "range_pct": 0.1
+        }
+      }
+    }
+  }
+}

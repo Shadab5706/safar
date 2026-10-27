@@ -30,6 +30,30 @@ python3 scripts/build_places.py         # geocode data/curated/places.csv -> pla
 python3 scripts/prefetch_road_matrix.py # real road km + drive times from OSRM -> road_matrix.json
 ```
 
+## Calibrate cab / auto / bike fares
+
+Uber, Ola and Rapido have no public price API, so their fares are estimates from rate cards in
+`backend/config/providers.json`. To make them data-driven, check the apps on real trips and add one
+row per quote to `data/fare_samples.csv`:
+
+```
+provider,product,from,to,km,minutes,hour,quoted_fare,date,source
+uber,go,Bennett University,Pari Chowk metro,7.4,16,9,178,2026-10-20,app
+```
+
+`km` / `minutes` are what the app shows for the trip, `hour` is 0-23, `source` is `app` (rows marked
+`example` are illustrative and ignored). Then fit `fare / surge(hour) = base + per_km·km + per_min·min`
+per product with least squares:
+
+```bash
+python3 scripts/fit_fares.py --dry-run   # print the MAE table only
+python3 scripts/fit_fares.py             # also write the fitted values into providers.json
+```
+
+A product needs at least 3 quotes (8+ recommended). Fitted cards get `"basis": "fitted"` and a `fit`
+block with the sample count, MAE and date. The Delhi auto meter is the government rate card and is
+never refitted.
+
 ## API so far
 
 | Endpoint | What it returns |
@@ -38,13 +62,13 @@ python3 scripts/prefetch_road_matrix.py # real road km + drive times from OSRM -
 | `GET /api/v1/places?q=hauz&limit=5` | autocomplete over places + metro stations |
 | `GET /api/v1/metro/lines` | every line with colour, operator and station order |
 | `GET /api/v1/metro/stations[/<id>]` | station coordinates and the lines serving them |
-| `POST /api/v1/journeys` | multi-modal routes between two places/stations: walk + metro + cab/auto/bike, with time, fare, distance, tickets, per-leg vehicle options and tags (recommended, fastest, cheapest, fewest changes, most expensive) |
+| `POST /api/v1/journeys` | multi-modal routes between two places/stations: walk + metro + cab/auto/bike, with time, fare, distance, tickets and tags (recommended, fastest, cheapest, fewest changes, most expensive). Every road leg lists per-provider quotes in `options` |
+| `GET /api/v1/fares/estimate?from=&to=&at=` | every provider's quote for one road trip (Uber Go / Premier / XL, Ola Mini / Prime, Rapido Bike / Auto / Cab, Delhi auto meter), cheapest first |
 | `POST /api/v1/lab/compare` | run BFS / DFS / UCS / Greedy / A* on one station-to-station query: route, cost, optimality gap, nodes expanded, runtime, expansion order |
 
 ## Status
 
-Phase 3 (multi-modal journeys) done: 58 tests. Next: Phase 4 (per-provider cab fares: Uber / Ola /
-Rapido). See PLAN.md §11.
+Phase 4 (per-provider fares) done: 80 tests. Next: Phase 5 (frontend). See PLAN.md §11.
 
 Try it:
 
@@ -53,8 +77,21 @@ curl -s -X POST localhost:8080/api/v1/journeys \
   -d '{"from":"bennett-university","to":"hauz-khas-village","depart_at":"2026-10-27T09:00"}'
 ```
 
+```bash
+curl -s 'localhost:8080/api/v1/fares/estimate?from=bennett-university&to=station:pari-chowk&at=2026-10-27T18:30'
+```
+
 Fares: DMRC slabs are the official ones from 25 Aug 2025. Airport Express, NMRC, Rapid Metro and
-Namo Bharat fares are approximate (`"verified": false` in `backend/config/transport.json`). Cab,
-auto and bike fares are generic estimates until Phase 4.
+Namo Bharat fares are approximate (`"verified": false` in `backend/config/transport.json`).
+
+Cab, auto and bike quotes are **estimates** (`"source": "estimate"` on every quote) from the rate
+cards in `backend/config/providers.json`: hand-set approximations (`"basis": "approximate"`) until
+refitted from real quotes (`"fitted"`), plus the Delhi govt auto meter card (`"govt_rate_card"`,
+2022 notification, not re-checked against the gazette). The search prices each road edge with the
+cheapest product of that vehicle type; the route then lists every product. Each quote has a
+`deep_link` to see the live price: Uber's documented universal link (pickup and drop filled in),
+Ola's web/app link (filled in, but the format is undocumented: `"documented": false`), and the
+Rapido site (no pre-fill format exists, `"prefilled": false`). Links carry only public coordinates
+and place names.
 
 Map and road data © OpenStreetMap contributors (ODbL). Road times via OSRM.

@@ -147,6 +147,22 @@ isn't possible legally for this project.
    already filled in, so the user sees the real live price in one tap.
 5. The UI always labels estimates clearly ("≈ ₹240 · estimated").
 
+### 6a. As built (Phase 4)
+- `backend/src/fares/`: `FareProvider` interface (`provider.hpp`); `RateCardProvider` plus one
+  adapter per provider (`UberProvider`, `OlaProvider`, `RapidoProvider`, `DelhiAutoMeter`) that adds
+  its deep link (`adapters.hpp`); `FareEngine` groups the 9 products by vehicle type
+  (`fare_engine.hpp`).
+- Rate cards in `backend/config/providers.json`:
+  `fare = max(min_fare, base + per_km·max(0, km − base_km) + per_min·ride_min + waiting_per_min·stuck_min) × surge[hour] × night`.
+  Each card says its `basis`: `approximate` (hand-set), `fitted` (from samples) or `govt_rate_card`.
+- The search uses one number per vehicle type (the cheapest product), so planning stays ~4 ms; the
+  final routes list every product's quote, range (± `range_pct`), pickup ETA and deep link.
+- `GET /api/v1/fares/estimate?from=&to=&at=` returns all quotes for one road trip.
+- `scripts/fit_fares.py`: non-negative least squares per product on `data/fare_samples.csv`
+  (peak quotes deflated by the surge curve first), prints MAE before/after and MAPE, writes the
+  fitted values back. Example rows are ignored unless `--include-examples`.
+- Still to do for the report: collect 40–60 real quotes, run the fit, put the MAE table in.
+
 ---
 
 ## 7. The AI core
@@ -255,14 +271,14 @@ safar/
 ├── PLAN.md, README.md
 ├── backend/
 │   ├── CMakeLists.txt
-│   ├── config/            fares.json, server.json
+│   ├── config/            server.json, transport.json, providers.json
 │   ├── src/
 │   │   ├── main.cpp
 │   │   ├── api/           routes, request validation, JSON responses
 │   │   ├── graph/         Graph, Node, Edge, builders
 │   │   ├── search/        bfs, dfs, ucs, greedy, astar, yen_ksp, ranking
 │   │   ├── optimize/      hill_climbing, simulated_annealing
-│   │   ├── fares/         FareProvider interface + uber/ola/rapido/auto/metro adapters
+│   │   ├── fares/         metro fare tables + FareProvider interface, uber/ola/rapido/auto-meter adapters
 │   │   ├── roads/         OSRM client + cache
 │   │   ├── store/         SQLite wrapper
 │   │   └── util/          geo (haversine), time, config, logging
@@ -289,7 +305,7 @@ safar/
 | 1. Data | metro network + interchanges + places; OSRM cache | `metro.json` has every line; spot-check 10 routes against DMRC |
 | 2. Search core | graph, BFS/DFS/UCS/Greedy/A*, unit tests | A* = UCS cost on 100 random queries; tests pass |
 | 3. Journeys | multi-modal edges, Yen's k-paths, Pareto + tags, `/journeys` | Bennett → Hauz Khas returns 3+ sensible mixed routes |
-| 4. Fares | fare engine, adapters, collect samples, fit model, deep links | MAE per provider in a table; prices on every leg |
+| 4. Fares | fare engine, adapters, collect samples, fit model, deep links | MAE per provider in a table; prices on every leg (built 2026-10-27; real samples still to collect) |
 | 5. Frontend | Plan screen + map + route cards | full journey flow works in the browser |
 | 6. Lab + extras | Algorithm Lab animation, disruptions, trip planner | all three demo-able |
 | 7. Polish | Docker, deploy, report, slides, viva prep | one-command run; report draft done |

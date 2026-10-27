@@ -32,9 +32,13 @@ add_library(safar_core
   src/api/server.cpp
   src/api/lab_routes.cpp
   src/api/journey_routes.cpp
+  src/api/fare_routes.cpp
+  src/api/params.cpp
   src/app/context.cpp
   src/data/dataset.cpp
   src/fares/transport_config.cpp
+  src/fares/adapters.cpp
+  src/fares/fare_engine.cpp
   src/graph/graph.cpp
   src/journey/planner.cpp
   src/roads/road_matrix.cpp
@@ -72,12 +76,18 @@ if(SAFAR_BUILD_TESTS)
   set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
   FetchContent_MakeAvailable(googletest)
 
+  # The fit_fares.py tests need a python3; they are skipped if none is found.
+  find_package(Python3 COMPONENTS Interpreter)
+
   enable_testing()
-  add_executable(safar_tests tests/test_geo.cpp tests/test_dataset.cpp tests/test_search.cpp tests/test_journey.cpp tests/test_api.cpp)
+  add_executable(safar_tests tests/test_geo.cpp tests/test_dataset.cpp tests/test_search.cpp tests/test_journey.cpp
+                             tests/test_api.cpp tests/test_fares.cpp)
   target_link_libraries(safar_tests PRIVATE safar_core GTest::gtest_main)
   target_compile_definitions(safar_tests PRIVATE
     SAFAR_TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/../data/processed"
-    SAFAR_TEST_CONFIG_DIR="${CMAKE_CURRENT_SOURCE_DIR}/config")
+    SAFAR_TEST_CONFIG_DIR="${CMAKE_CURRENT_SOURCE_DIR}/config"
+    SAFAR_SCRIPTS_DIR="${CMAKE_CURRENT_SOURCE_DIR}/../scripts"
+    SAFAR_PYTHON="${Python3_EXECUTABLE}")
   include(GoogleTest)
   gtest_discover_tests(safar_tests)
 endif()

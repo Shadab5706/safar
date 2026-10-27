@@ -1,0 +1,7 @@
+provider,product,from,to,km,minutes,hour,quoted_fare,date,source
+uber,go,Bennett University,Pari Chowk metro,7.4,16,9,178,2026-10-20,example
+uber,go,Pari Chowk metro,Bennett University,7.6,14,15,146,2026-10-20,example
+uber,go,Botanical Garden metro,India Gate,24.5,52,18,520,2026-10-21,example
+rapido,bike,Bennett University,Knowledge Park II metro,4.1,10,9,52,2026-10-20,example
+rapido,auto,Pari Chowk metro,Bennett University,7.6,18,15,118,2026-10-20,example
+ola,mini,Hauz Khas metro,India Gate,9.8,28,11,214,2026-10-22,example

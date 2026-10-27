@@ -81,6 +81,14 @@ const char* road_label(graph::RoadMode m) {
     return "Cab";
 }
 
+// Public name of a place or station node, used to label deep links.
+std::string node_name(const graph::Graph& g, const data::Dataset& ds, NodeId n) {
+    const auto& node = g.node(n);
+    if (node.place != graph::kNone) return ds.places()[node.place].name;
+    if (node.station != graph::kNone) return ds.stations()[node.station].name;
+    return {};
+}
+
 std::string summary(const search::Itinerary& it, const data::Dataset& ds) {
     std::string s;
     for (const auto& l : it.legs) {
@@ -112,8 +120,29 @@ bool ModeSet::road(graph::RoadMode m) const {
 }
 
 Planner::Planner(std::shared_ptr<const data::Dataset> ds, std::shared_ptr<const fares::TransportConfig> cfg,
-                 std::shared_ptr<const roads::RoadMatrix> roads, std::shared_ptr<const graph::Graph> transit)
-    : ds_(std::move(ds)), cfg_(std::move(cfg)), roads_(std::move(roads)), transit_(std::move(transit)) {}
+                 std::shared_ptr<const roads::RoadMatrix> roads, std::shared_ptr<const graph::Graph> transit,
+                 std::shared_ptr<const fares::FareEngine> fares)
+    : ds_(std::move(ds)), cfg_(std::move(cfg)), roads_(std::move(roads)), transit_(std::move(transit)),
+      fares_(std::move(fares)) {
+    if (!fares_) throw std::invalid_argument("Planner needs a fare engine");
+}
+
+Planner::Point Planner::point(const Endpoint& e) const {
+    if (e.type == Endpoint::Type::Station) {
+        const auto& s = ds_->stations()[e.index];
+        return {0, s.pos, roads::station_key(s.id)};
+    }
+    const auto& p = ds_->places()[e.index];
+    return {0, p.pos, roads::place_key(p.id), e.index};
+}
+
+fares::Trip Planner::road_trip(const Endpoint& from, const Endpoint& to, int hour) const {
+    const auto name = [&](const Endpoint& e) {
+        return e.type == Endpoint::Type::Station ? ds_->stations()[e.index].name : ds_->places()[e.index].name;
+    };
+    const auto leg = road_leg(point(from), point(to));
+    return {point(from).pos, point(to).pos, name(from), name(to), leg.km, leg.free_flow_min, hour, leg.from_osrm};
+}
 
 Planner::Point Planner::attach(graph::Graph& g, const Endpoint& e) const {
     if (e.type == Endpoint::Type::Station) return station_point(g, e.index);
@@ -178,15 +207,15 @@ void Planner::add_links(graph::Graph& g, const Point& a, const Point& b, const J
     if (!req.modes.any_road()) return;
 
     const auto leg = road_leg(a, b);
-    const double traffic = cfg_->traffic[static_cast<std::size_t>(req.hour)];
+    const fares::Trip trip{a.pos, b.pos, {}, {}, leg.km, leg.free_flow_min, req.hour, leg.from_osrm};
     for (auto mode : graph::kAllRoadModes) {
         if (!req.modes.road(mode)) continue;
         const auto& p = cfg_->road_params(mode);
         if (leg.km > (access ? p.max_access_km : p.max_km)) continue;
-        const double ride = std::max(1.0, leg.free_flow_min * traffic * p.speed_factor);
-        const double fare = cfg_->road_fare(mode, leg.km, ride);
-        g.add_edge({a.node, b.node, EdgeKind::Road, p.pickup_min + ride, p.pickup_min, leg.km, graph::kNone, fare, mode,
-                    leg.from_osrm});
+        const auto ride = fares_->ride(mode, trip);
+        const double fare = fares_->search_fare(mode, ride);  // cheapest product of this vehicle type
+        g.add_edge({a.node, b.node, EdgeKind::Road, p.pickup_min + ride.ride_min, p.pickup_min, leg.km, graph::kNone,
+                    fare, mode, leg.from_osrm});
     }
 }
 
@@ -344,7 +373,8 @@ JourneyResult Planner::plan(const JourneyRequest& req) const {
     all = std::move(unique);
     out.distinct = all.size();
 
-    // Vehicle options for every road leg.
+    // Every provider's quote for every road leg, from the vehicle types the leg allows.
+    const double traffic = cfg_->traffic[static_cast<std::size_t>(req.hour)];
     for (auto& r : all) {
         r.road_options.resize(r.itinerary.legs.size());
         for (std::size_t i = 0; i < r.itinerary.legs.size(); ++i) {
@@ -353,11 +383,15 @@ JourneyResult Planner::plan(const JourneyRequest& req) const {
             for (EdgeId e : g.out_edges(leg.from)) {
                 const auto& edge = g.edge(e);
                 if (edge.to != leg.to || edge.kind != EdgeKind::Road) continue;
-                r.road_options[i].push_back(
-                    {edge.road_mode, edge.time_min, edge.wait_min, std::round(edge.money), edge.distance_km});
+                const double ride_min = edge.time_min - edge.wait_min;
+                // Same ride the edge was priced with, so the leg fare is the cheapest quote of its mode.
+                const fares::Ride ride{g.node(leg.from).pos, g.node(leg.to).pos, node_name(g, *ds_, leg.from),
+                                       node_name(g, *ds_, leg.to), edge.distance_km, ride_min, ride_min / traffic,
+                                       req.hour};
+                auto quotes = fares_->quotes(edge.road_mode, ride);
+                r.road_options[i].insert(r.road_options[i].end(), quotes.begin(), quotes.end());
             }
-            std::sort(r.road_options[i].begin(), r.road_options[i].end(),
-                      [](const RoadOption& a, const RoadOption& b) { return a.fare_rs < b.fare_rs; });
+            fares::sort_quotes(r.road_options[i]);
         }
     }
 
@@ -432,13 +466,7 @@ json to_json(const JourneyResult& r, const data::Dataset& ds) {
         for (std::size_t li = 0; li < route.road_options.size(); ++li) {
             if (route.road_options[li].empty()) continue;
             json opts = json::array();
-            for (const auto& o : route.road_options[li]) {
-                opts.push_back({{"mode", graph::to_string(o.mode)},
-                                {"total_min", round1(o.total_min)},
-                                {"wait_min", round1(o.wait_min)},
-                                {"fare_rs", o.fare_rs},
-                                {"distance_km", round1(o.distance_km)}});
-            }
+            for (const auto& o : route.road_options[li]) opts.push_back(fares::to_json(o));
             j["legs"][li]["options"] = std::move(opts);
         }
         j["rank"] = i + 1;

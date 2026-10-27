@@ -29,6 +29,7 @@ Config Config::load(const std::filesystem::path& file) {
         c.cors_origin = j.value("cors_origin", c.cors_origin);
         c.log_level = j.value("log_level", c.log_level);
         c.transport_file = file.parent_path() / j.value("transport_file", std::string("transport.json"));
+        c.providers_file = file.parent_path() / j.value("providers_file", std::string("providers.json"));
 
         // Relative data paths are resolved against the config file's folder,
         // so the server works no matter which directory it is started from.
@@ -43,6 +44,7 @@ Config Config::load(const std::filesystem::path& file) {
     if (auto v = env("SAFAR_CORS_ORIGIN")) c.cors_origin = v;
     if (auto v = env("SAFAR_LOG_LEVEL")) c.log_level = v;
     if (auto v = env("SAFAR_TRANSPORT_FILE")) c.transport_file = v;
+    if (auto v = env("SAFAR_PROVIDERS_FILE")) c.providers_file = v;
 
     if (c.port <= 0 || c.port > 65535) {
         throw std::invalid_argument("port out of range: " + std::to_string(c.port));

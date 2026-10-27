@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "data/dataset.hpp"
+#include "fares/fare_engine.hpp"
 #include "fares/transport_config.hpp"
 #include "graph/graph.hpp"
 #include "journey/planner.hpp"
@@ -17,6 +18,7 @@ struct AppContext {
     std::shared_ptr<const fares::TransportConfig> transport;
     std::shared_ptr<const roads::RoadMatrix> roads;
     std::shared_ptr<const graph::Graph> transit;
+    std::shared_ptr<const fares::FareEngine> fares;
     std::shared_ptr<const journey::Planner> planner;
 
     // Throws with a clear message if any file is missing or inconsistent.

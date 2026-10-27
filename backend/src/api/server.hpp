@@ -30,6 +30,7 @@ private:
     void register_routes();
     void register_lab_routes();      // api/lab_routes.cpp
     void register_journey_routes();  // api/journey_routes.cpp
+    void register_fare_routes();     // api/fare_routes.cpp
     void register_middleware();
 
     Config config_;

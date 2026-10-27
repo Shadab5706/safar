@@ -1,0 +1,24 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', sans-serif;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-slate-50);
+}
+
+/* Leaflet sets its own font; match the app. */
+.leaflet-container {
+  font: inherit;
+  background: #e8eef0;
+}
+
+.leaflet-tooltip {
+  font-size: 12px;
+  font-weight: 500;
+}

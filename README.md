@@ -19,6 +19,29 @@ cd backend && ./build/safar_server config/server.json
 
 Then open http://localhost:8080/api/v1/health
 
+## Run the frontend
+
+Needs Node.js ≥ 22.12. With the backend running on :8080 (the dev server proxies `/api` to it;
+set `SAFAR_API` to point elsewhere):
+
+```bash
+cd frontend
+npm install
+npm run dev        # http://localhost:5173
+```
+
+`npm run lint`, `npm run typecheck`, `npm test` (Vitest) and `npm run build` are what CI runs.
+React + TypeScript (strict) + Vite + Tailwind, with Leaflet and OpenStreetMap tiles (no API key).
+
+The **Plan** screen has from/to autocomplete over places and metro stations, a departure time, mode
+toggles (walk, metro, cab, auto, bike) and a cheapest↔fastest slider. Each route card shows its
+tags, total time, arrival, fare, distance and changes; expand it for the timed step-by-step legs,
+every provider quote on cab/auto/bike legs with an "open in app" link, and the metro tickets per
+operator (official vs approximate fare). The selected route is drawn on the map leg by leg (metro in
+line colours, road legs dashed, walks dotted) over a faint layer of every metro line. After the
+first search, changing the modes, time or slider re-plans straight away. **About** lists the data
+sources, OSM attribution and which prices are estimates.
+
 ## Rebuild the data
 
 The processed data in `data/processed/` is committed, so this is only needed to refresh it.
@@ -68,7 +91,8 @@ never refitted.
 
 ## Status
 
-Phase 4 (per-provider fares) done: 80 tests. Next: Phase 5 (frontend). See PLAN.md §11.
+Phase 5 (web frontend: Plan screen, route cards, map, About) done: 80 backend tests + 30 frontend
+tests. Next: Phase 6 (Algorithm Lab, line closures, trip planner). See PLAN.md §11.
 
 Try it:
 

@@ -306,7 +306,7 @@ safar/
 | 2. Search core | graph, BFS/DFS/UCS/Greedy/A*, unit tests | A* = UCS cost on 100 random queries; tests pass |
 | 3. Journeys | multi-modal edges, Yen's k-paths, Pareto + tags, `/journeys` | Bennett → Hauz Khas returns 3+ sensible mixed routes |
 | 4. Fares | fare engine, adapters, collect samples, fit model, deep links | MAE per provider in a table; prices on every leg (built 2026-10-27; real samples still to collect) |
-| 5. Frontend | Plan screen + map + route cards | full journey flow works in the browser |
+| 5. Frontend | Plan screen + map + route cards | full journey flow works in the browser (built 2026-10-27) |
 | 6. Lab + extras | Algorithm Lab animation, disruptions, trip planner | all three demo-able |
 | 7. Polish | Docker, deploy, report, slides, viva prep | one-command run; report draft done |
 

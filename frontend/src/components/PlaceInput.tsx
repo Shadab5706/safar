@@ -10,6 +10,8 @@ interface Props {
   value: SearchResult | null
   onChange: (value: SearchResult | null) => void
   lineById: Map<string, MetroLine>
+  /** Only offer metro stations (the Algorithm Lab searches the metro graph). */
+  stationsOnly?: boolean
 }
 
 interface Found {
@@ -27,7 +29,7 @@ function subtitle(item: SearchResult, lineById: Map<string, MetroLine>): string 
 }
 
 /** Autocomplete over places and metro stations (WAI-ARIA combobox with a listbox popup). */
-export function PlaceInput({ label, placeholder, value, onChange, lineById }: Props) {
+export function PlaceInput({ label, placeholder, value, onChange, lineById, stationsOnly = false }: Props) {
   const id = useId()
   const listId = `${id}-list`
   const [text, setText] = useState(value?.name ?? '')
@@ -49,14 +51,14 @@ export function PlaceInput({ label, placeholder, value, onChange, lineById }: Pr
   useEffect(() => {
     if (debounced.length < 2) return
     const ctl = new AbortController()
-    searchPlaces(debounced, ctl.signal)
-      .then((items) => setFound({ query: debounced, items }))
+    searchPlaces(debounced, ctl.signal, stationsOnly ? 25 : 8)
+      .then((items) => setFound({ query: debounced, items: stationsOnly ? items.filter((i) => i.kind === 'station').slice(0, 8) : items }))
       .catch((err: unknown) => {
         if (isAbortError(err)) return
         setFound({ query: debounced, items: [], error: err instanceof Error ? err.message : 'Search failed' })
       })
     return () => ctl.abort()
-  }, [debounced])
+  }, [debounced, stationsOnly])
 
   const items = wanted ? found.items : []
   const loading = wanted && found.query !== query

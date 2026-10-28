@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { ApiError, endpointRef, placesPath, request } from './client'
+import { ApiError, closurePath, endpointRef, placesPath, request } from './client'
 
 const json = (body: unknown, status = 200) =>
   vi.fn<typeof fetch>().mockResolvedValue(new Response(JSON.stringify(body), { status }))
@@ -49,5 +49,12 @@ describe('paths', () => {
   it('prefixes endpoint refs with their kind', () => {
     expect(endpointRef({ kind: 'station', id: 'cyber-city' })).toBe('station:cyber-city')
     expect(endpointRef({ kind: 'place', id: 'cyber-city' })).toBe('place:cyber-city')
+  })
+})
+
+describe('closurePath', () => {
+  it('keeps the colons of a closure id and encodes the rest', () => {
+    expect(closurePath('segment:yellow:green-park:hauz-khas')).toBe('/disruptions/segment:yellow:green-park:hauz-khas')
+    expect(closurePath('station:a b')).toBe('/disruptions/station:a%20b')
   })
 })

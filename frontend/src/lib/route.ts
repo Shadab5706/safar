@@ -142,3 +142,14 @@ export function textOn(hex: string): '#000000' | '#ffffff' {
   // Contrast with black is (L + 0.05) / 0.05, with white 1.05 / (L + 0.05); they are equal at L ≈ 0.179.
   return lum > 0.179 ? '#000000' : '#ffffff'
 }
+
+/** Bounds around a set of points, or null for none. */
+export function boundsOf(points: readonly { lat: number; lng: number }[]): Bounds | null {
+  if (points.length === 0) return null
+  const lats = points.map((p) => p.lat)
+  const lngs = points.map((p) => p.lng)
+  return [
+    [Math.min(...lats), Math.min(...lngs)],
+    [Math.max(...lats), Math.max(...lngs)],
+  ]
+}

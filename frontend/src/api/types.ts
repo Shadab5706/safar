@@ -190,9 +190,147 @@ export interface JourneyRequest {
 export interface JourneyResponse {
   from: Endpoint
   to: Endpoint
+  closures: number
   depart: { at: string; hour: number; sunday_fares: boolean }
   fare_note: string
   value_of_time_rs_per_min: number
   stats: { candidates: number; distinct: number; pareto: number; searches: number }
   routes: Route[]
+}
+
+// ---- Line closures (GET/POST/DELETE /disruptions) ----
+
+export interface StationRef {
+  id: string
+  name: string
+  lat: number
+  lng: number
+}
+
+export type Closure =
+  | { id: string; type: 'station'; label: string; station: StationRef }
+  | {
+      id: string
+      type: 'segment'
+      label: string
+      line: { id: string; name: string; color: string }
+      from: StationRef
+      to: StationRef
+    }
+
+export type ClosureRequest =
+  | { type: 'station'; station: string }
+  | { type: 'segment'; line: string; from: string; to: string }
+
+export interface ClosureList {
+  items: Closure[]
+  version: number
+}
+
+export interface AddClosureResponse extends ClosureList {
+  closure: Closure
+  added: boolean
+}
+
+// ---- Algorithm Lab (POST /lab/compare) ----
+
+export type Algorithm = 'bfs' | 'dfs' | 'ucs' | 'greedy' | 'astar'
+
+export interface LabRequest {
+  from: string
+  to: string
+  algorithms?: Algorithm[]
+  include_expansion?: boolean
+  heuristic_speed_kmh?: number
+  boarding_penalty_min?: number
+}
+
+export interface LabItinerary {
+  legs: Leg[]
+  tickets: Ticket[]
+  total_min: number
+  fare_rs: number
+  distance_km: number
+  transfers: number
+  walk_min: number
+}
+
+export interface LabResult {
+  algorithm: Algorithm
+  found: boolean
+  cost: number
+  optimality_gap_pct?: number
+  stats: { nodes_expanded: number; nodes_generated: number; max_frontier: number; runtime_us: number }
+  itinerary?: LabItinerary
+  expansion?: string[]
+}
+
+export interface LabResponse {
+  from: { id: string; name: string }
+  to: { id: string; name: string }
+  optimal_cost: number | null
+  heuristic_speed_kmh: number
+  closures: number
+  results: LabResult[]
+}
+
+// ---- Trip planner (POST /trips/optimize) ----
+
+export type TripMethod = 'hill_climb' | 'simulated_annealing'
+
+export interface TripRequest {
+  stops: string[]
+  method?: TripMethod | 'both'
+  round_trip?: boolean
+  depart_at?: string
+  preference?: number
+  seed?: number
+  restarts?: number
+  iterations?: number
+}
+
+export interface TourTotals {
+  order: number[]
+  score: number
+  total_min: number
+  fare_rs: number
+}
+
+export interface CurvePoint {
+  evaluations: number
+  current: number
+  best: number
+  temperature?: number
+}
+
+export interface TripResult extends TourTotals {
+  method: TripMethod
+  evaluations: number
+  moves: number
+  runtime_ms: number
+  restarts?: number
+  accepted_worse?: number
+  gap_pct?: number
+  curve: CurvePoint[]
+}
+
+export interface TripLeg {
+  from: number
+  to: number
+  route: Route
+}
+
+export interface TripResponse {
+  stops: Endpoint[]
+  round_trip: boolean
+  depart: { at: string; hour: number; sunday_fares: boolean }
+  value_of_time_rs_per_min: number
+  matrix: { score: (number | null)[][]; total_min: (number | null)[][]; fare_rs: (number | null)[][] }
+  matrix_ms: number
+  input: TourTotals
+  optimum: (TourTotals & { evaluations: number; runtime_ms: number }) | null
+  results: TripResult[]
+  best: TourTotals & { method: TripMethod; legs: TripLeg[] }
+  closures: number
+  fare_note: string
 }

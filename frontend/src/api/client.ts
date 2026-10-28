@@ -1,11 +1,18 @@
 import type {
+  AddClosureResponse,
+  ClosureList,
+  ClosureRequest,
   Envelope,
   Health,
   JourneyRequest,
   JourneyResponse,
+  LabRequest,
+  LabResponse,
   MetroLine,
   MetroStation,
   SearchResult,
+  TripRequest,
+  TripResponse,
 } from './types'
 
 export const API_BASE = '/api/v1'
@@ -76,6 +83,35 @@ export function getMetroStations(signal?: AbortSignal): Promise<MetroStation[]> 
 
 export function getHealth(signal?: AbortSignal): Promise<Health> {
   return request<Health>('/health', { signal })
+}
+
+export function getClosures(signal?: AbortSignal): Promise<ClosureList> {
+  return request<ClosureList>('/disruptions', { signal })
+}
+
+export function addClosure(req: ClosureRequest): Promise<AddClosureResponse> {
+  return request<AddClosureResponse>('/disruptions', { method: 'POST', body: JSON.stringify(req) })
+}
+
+/** DELETE path for one closure; ids look like "station:<id>" or "segment:<line>:<a>:<b>". */
+export function closurePath(id: string): string {
+  return `/disruptions/${id.split(':').map(encodeURIComponent).join(':')}`
+}
+
+export function removeClosure(id: string): Promise<ClosureList> {
+  return request<ClosureList>(closurePath(id), { method: 'DELETE' })
+}
+
+export function clearClosures(): Promise<ClosureList> {
+  return request<ClosureList>('/disruptions', { method: 'DELETE' })
+}
+
+export function compareAlgorithms(req: LabRequest, signal?: AbortSignal): Promise<LabResponse> {
+  return request<LabResponse>('/lab/compare', { method: 'POST', body: JSON.stringify(req), signal })
+}
+
+export function optimizeTrip(req: TripRequest, signal?: AbortSignal): Promise<TripResponse> {
+  return request<TripResponse>('/trips/optimize', { method: 'POST', body: JSON.stringify(req), signal })
 }
 
 /** The endpoint string the journeys API accepts: "place:<id>" or "station:<id>". */

@@ -1,11 +1,13 @@
-import { CircleAlert } from 'lucide-react'
+import { CircleAlert, Construction } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ApiError, isAbortError, planJourney, searchPlaces } from '../api/client'
 import type { SearchResult } from '../api/types'
+import { ClosurePanel } from '../components/ClosurePanel'
 import { JourneyForm } from '../components/JourneyForm'
 import { MapLegend } from '../components/MapLegend'
 import { MapView } from '../components/MapView'
 import { Results, type ResultState } from '../components/Results'
+import type { ClosuresApi } from '../hooks/useClosures'
 import type { NetworkState } from '../hooks/useMetroNetwork'
 import { nextQuarterHour, toLocalInputValue } from '../lib/format'
 import { ALL_MODES, toJourneyRequest, type Query } from '../lib/query'
@@ -17,7 +19,7 @@ async function findExact(name: string, id: string): Promise<SearchResult | null>
   return items.find((p) => p.id === id) ?? null
 }
 
-export function PlanPage({ network }: { network: NetworkState }) {
+export function PlanPage({ network, closures }: { network: NetworkState; closures: ClosuresApi }) {
   const [query, setQuery] = useState<Query>(() => ({
     from: null,
     to: null,
@@ -58,6 +60,15 @@ export function PlanPage({ network }: { network: NetworkState }) {
         setResult({ status: 'error', code: e.code, message: e.message })
       })
   }, [])
+
+  // A station or section was closed or reopened: re-plan the current journey around it.
+  const seenVersion = useRef(closures.version)
+  useEffect(() => {
+    if (seenVersion.current === closures.version) return
+    const firstLoad = seenVersion.current === -1
+    seenVersion.current = closures.version
+    if (!firstLoad && searched.current) run(query)
+  }, [closures.version, query, run])
 
   useEffect(
     () => () => {
@@ -112,7 +123,14 @@ export function PlanPage({ network }: { network: NetworkState }) {
             lineById={lineById}
           />
         </section>
-        <div className="order-3 p-4 lg:flex-1">
+        <div className="order-3 space-y-3 p-4 lg:flex-1">
+          <ClosurePanel closures={closures} network={network.status === 'ready' ? network.network : null} />
+          {data && data.closures > 0 && (
+            <p role="status" className="flex items-center gap-2 rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-900">
+              <Construction className="size-4 shrink-0" aria-hidden="true" />
+              Routes avoid {data.closures === 1 ? '1 line closure' : `${data.closures} line closures`}.
+            </p>
+          )}
           <Results
             state={result}
             selected={selected}
@@ -138,6 +156,7 @@ export function PlanPage({ network }: { network: NetworkState }) {
           focusLeg={focusLeg}
           from={query.from}
           to={query.to}
+          closures={closures}
         />
         <MapLegend />
         {network.status === 'error' && (

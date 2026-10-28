@@ -228,9 +228,25 @@ walkable only from a station inside them (0.6 km).
 - Hill climbing (with random restarts) vs simulated annealing (geometric cooling schedule).
 - The UI plots the cost-per-iteration curve for both, so you can see SA escape local optima.
 
+**As built (Phase 6):** `backend/src/optimize/tour.*` on a cost matrix of planned journeys (one
+`Planner::plan` per ordered pair, leg cost = recommended route's score = minutes + ₹/value of time,
+so it is an asymmetric TSP with the start fixed, optional round trip). Hill climbing = steepest
+2-opt with random restarts (first climb from the entered order); SA = random 2-opt, T0 set so ~80%
+of uphill moves pass, cooled to T0/1000 over the run; exhaustive (n-1)! search for the optimum (n ≤
+10, 9! = 362,880 tours in a few ms). Curves use tours evaluated as the x axis for both methods.
+10 stops plan in ~250 ms (90 journeys). On the 8-stop sightseeing example, 8 restarts of hill
+climbing stall at +1.5% while SA reaches the optimum.
+
 ### 7.5 Disruptions
 Closing a station or segment adds it to a blocked set the search skips; then it re-plans. This
 shows the search adapting (and a cab bridging the gap).
+
+**As built (Phase 6):** `backend/src/disruption/closures.*`. A closed station blocks its Board,
+Alight and Transfer edges (trains run through, as DMRC does); a closed segment blocks the two Ride
+edges between neighbouring platforms of one line. The server keeps an immutable snapshot (edge mask
+over the shared graph, whose edge ids match every per-query copy) behind a mutex; the planner also
+skips closed stations as access stations. Example: closing Yellow Green Park – Hauz Khas raises the
+Rajiv Chowk → Hauz Khas optimum from 28 to 53 min (via Violet + Magenta).
 
 ---
 
@@ -307,7 +323,7 @@ safar/
 | 3. Journeys | multi-modal edges, Yen's k-paths, Pareto + tags, `/journeys` | Bennett → Hauz Khas returns 3+ sensible mixed routes |
 | 4. Fares | fare engine, adapters, collect samples, fit model, deep links | MAE per provider in a table; prices on every leg (built 2026-10-27; real samples still to collect) |
 | 5. Frontend | Plan screen + map + route cards | full journey flow works in the browser (built 2026-10-27) |
-| 6. Lab + extras | Algorithm Lab animation, disruptions, trip planner | all three demo-able |
+| 6. Lab + extras | Algorithm Lab animation, disruptions, trip planner | all three demo-able (built 2026-10-28) |
 | 7. Polish | Docker, deploy, report, slides, viva prep | one-command run; report draft done |
 
 Stretch idea if the teacher wants adversarial search covered: "Rush Hour" mode, where an

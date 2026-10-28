@@ -48,6 +48,26 @@ export function AboutPage() {
         </p>
       </Section>
 
+      <Section title="Algorithm Lab, closures and trips">
+        <p>
+          The <a href="#/lab" className="font-medium text-teal-800 underline underline-offset-2">Algorithm Lab</a> runs
+          breadth-first, depth-first, uniform-cost, greedy best-first and A* search on the same metro trip and replays
+          the order in which each one expands stations, next to its route cost, gap to the optimum, nodes expanded and
+          runtime.
+        </p>
+        <p>
+          Line closures are shared by every screen. A closed station is skipped: nobody can board, leave or change lines
+          there, but trains still run through, as on the real network. A closed section stops trains between two
+          neighbouring stations. The searches simply treat those edges as missing, so every route re-plans around them.
+        </p>
+        <p>
+          The <a href="#/trips" className="font-medium text-teal-800 underline underline-offset-2">Trip planner</a> plans
+          every pair of stops, then searches visiting orders with hill climbing (2-opt moves, random restarts) and
+          simulated annealing (geometric cooling). With up to ten stops the exact best order is also found by trying every
+          order, so each method&apos;s gap to it is shown.
+        </p>
+      </Section>
+
       <Section title="Which prices are estimates">
         <ul className="list-disc space-y-1.5 pl-5">
           <li>

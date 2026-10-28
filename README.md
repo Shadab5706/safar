@@ -88,17 +88,37 @@ never refitted.
 | `POST /api/v1/journeys` | multi-modal routes between two places/stations: walk + metro + cab/auto/bike, with time, fare, distance, tickets and tags (recommended, fastest, cheapest, fewest changes, most expensive). Every road leg lists per-provider quotes in `options` |
 | `GET /api/v1/fares/estimate?from=&to=&at=` | every provider's quote for one road trip (Uber Go / Premier / XL, Ola Mini / Prime, Rapido Bike / Auto / Cab, Delhi auto meter), cheapest first |
 | `POST /api/v1/lab/compare` | run BFS / DFS / UCS / Greedy / A* on one station-to-station query: route, cost, optimality gap, nodes expanded, runtime, expansion order |
+| `GET /api/v1/disruptions` | current line closures (`items`, `version`) |
+| `POST /api/v1/disruptions` | close a station `{"type":"station","station":"rajiv-chowk"}` or a section `{"type":"segment","line":"yellow","from":"green-park","to":"hauz-khas"}` (201; 200 with `"added": false` if already closed) |
+| `DELETE /api/v1/disruptions[/<id>]` | reopen one closure (`station:<id>`, `segment:<line>:<a>:<b>`) or all of them |
+| `POST /api/v1/trips/optimize` | best order to visit 3-10 stops (first = start, optional `round_trip`): hill climbing and/or simulated annealing on a matrix of planned journeys, with totals, each leg's route, convergence curves and the gap to the exact optimum |
+
+Closures are server state (in memory, at most 50): journeys, the Algorithm Lab and the trip planner
+all route around them. A closed station is skipped (no boarding, alighting or changing; trains
+run through), a closed section stops trains between two neighbouring stations.
 
 ## Status
 
-Phase 5 (web frontend: Plan screen, route cards, map, About) done: 80 backend tests + 30 frontend
-tests. Next: Phase 6 (Algorithm Lab, line closures, trip planner). See PLAN.md §11.
+Phase 6 (Algorithm Lab, line closures, trip planner) done: 100 backend tests + 48 frontend tests.
+Screens: Plan (`#/`), Algorithm Lab (`#/lab`), Trip planner (`#/trips`), About (`#/about`). Click a
+station or a line on any map to close or reopen it. Next: Phase 7 (polish, Docker, report). See
+PLAN.md §11.
 
 Try it:
 
 ```bash
 curl -s -X POST localhost:8080/api/v1/journeys \
   -d '{"from":"bennett-university","to":"hauz-khas-village","depart_at":"2026-10-27T09:00"}'
+```
+
+```bash
+curl -s -X POST localhost:8080/api/v1/disruptions \
+  -d '{"type":"segment","line":"yellow","from":"green-park","to":"hauz-khas"}'
+```
+
+```bash
+curl -s -X POST localhost:8080/api/v1/trips/optimize \
+  -d '{"stops":["connaught-place","india-gate","red-fort","qutub-minar","lotus-temple"]}'
 ```
 
 ```bash

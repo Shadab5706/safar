@@ -284,3 +284,127 @@ TEST_F(ApiTest, JourneyRoadLegsHaveProviderQuotesWithDeepLinks) {
     }
     EXPECT_TRUE(checked);
 }
+
+TEST_F(ApiTest, DisruptionsLifecycle) {
+    auto c = client();
+    int status = 0;
+    auto list = nlohmann::json::parse(c.Get("/api/v1/disruptions")->body);
+    EXPECT_TRUE(list["data"]["items"].empty()) << "every server starts with no closures";
+
+    auto added = post_json(c, "/api/v1/disruptions", {{"type", "station"}, {"station", "rajiv-chowk"}}, status);
+    EXPECT_EQ(status, 201);
+    EXPECT_TRUE(added["data"]["added"].get<bool>());
+    EXPECT_EQ(added["data"]["closure"]["id"], "station:rajiv-chowk");
+    EXPECT_EQ(added["data"]["closure"]["station"]["name"], "Rajiv Chowk");
+
+    auto again = post_json(c, "/api/v1/disruptions", {{"type", "station"}, {"station", "rajiv-chowk"}}, status);
+    EXPECT_EQ(status, 200);
+    EXPECT_FALSE(again["data"]["added"].get<bool>());
+
+    auto seg = post_json(c, "/api/v1/disruptions",
+                         {{"type", "segment"}, {"line", "yellow"}, {"from", "hauz-khas"}, {"to", "green-park"}}, status);
+    EXPECT_EQ(status, 201);
+    EXPECT_EQ(seg["data"]["closure"]["id"], "segment:yellow:green-park:hauz-khas");
+    EXPECT_EQ(seg["data"]["closure"]["line"]["color"].get<std::string>().front(), '#');
+    EXPECT_EQ(seg["data"]["items"].size(), 2u);
+
+    post_json(c, "/api/v1/disruptions", {{"type", "segment"}, {"line", "yellow"}, {"from", "rajiv-chowk"}, {"to", "hauz-khas"}},
+              status);
+    EXPECT_EQ(status, 400);
+    post_json(c, "/api/v1/disruptions", {{"type", "station"}, {"station", "atlantis"}}, status);
+    EXPECT_EQ(status, 404);
+    post_json(c, "/api/v1/disruptions", {{"type", "line"}}, status);
+    EXPECT_EQ(status, 400);
+    post_json(c, "/api/v1/disruptions", {{"type", "station"}}, status);
+    EXPECT_EQ(status, 400);
+
+    auto removed = c.Delete("/api/v1/disruptions/station:rajiv-chowk");
+    ASSERT_TRUE(removed);
+    EXPECT_EQ(removed->status, 200);
+    EXPECT_EQ(nlohmann::json::parse(removed->body)["data"]["items"].size(), 1u);
+    EXPECT_EQ(c.Delete("/api/v1/disruptions/station:rajiv-chowk")->status, 404);
+
+    auto cleared = c.Delete("/api/v1/disruptions");
+    EXPECT_EQ(cleared->status, 200);
+    EXPECT_TRUE(nlohmann::json::parse(cleared->body)["data"]["items"].empty());
+}
+
+TEST_F(ApiTest, LabAndJourneysRespectClosures) {
+    auto c = client();
+    int status = 0;
+    const nlohmann::json lab_req = {{"from", "rajiv-chowk"}, {"to", "hauz-khas"}, {"algorithms", {"ucs", "astar"}}};
+    auto open = post_json(c, "/api/v1/lab/compare", lab_req, status);
+    ASSERT_EQ(status, 200);
+    EXPECT_EQ(open["data"]["closures"], 0);
+
+    post_json(c, "/api/v1/disruptions", {{"type", "segment"}, {"line", "yellow"}, {"from", "green-park"}, {"to", "hauz-khas"}},
+              status);
+    ASSERT_EQ(status, 201);
+    auto cut = post_json(c, "/api/v1/lab/compare", lab_req, status);
+    ASSERT_EQ(status, 200);
+    EXPECT_EQ(cut["data"]["closures"], 1);
+    EXPECT_GT(cut["data"]["optimal_cost"].get<double>(), open["data"]["optimal_cost"].get<double>());
+    for (const auto& r : cut["data"]["results"]) EXPECT_EQ(r["optimality_gap_pct"], 0.0);
+
+    auto j = post_json(c, "/api/v1/journeys", {{"from", "station:rajiv-chowk"}, {"to", "station:hauz-khas"}}, status);
+    ASSERT_EQ(status, 200);
+    EXPECT_EQ(j["data"]["closures"], 1);
+    EXPECT_FALSE(j["data"]["routes"].empty());
+}
+
+TEST_F(ApiTest, TripsOptimizeFindsTheBestOrder) {
+    auto c = client();
+    int status = 0;
+    auto body = post_json(c, "/api/v1/trips/optimize",
+                          {{"stops", {"bennett-university", "india-gate", "qutub-minar", "station:hauz-khas", "red-fort"}},
+                           {"depart_at", "2026-10-27T10:00"}},
+                          status);
+    ASSERT_EQ(status, 200) << body.dump();
+    const auto& d = body["data"];
+    EXPECT_EQ(d["stops"].size(), 5u);
+    EXPECT_EQ(d["stops"][3]["type"], "station");
+    ASSERT_EQ(d["results"].size(), 2u);
+    EXPECT_EQ(d["results"][0]["method"], "hill_climb");
+    EXPECT_EQ(d["results"][1]["method"], "simulated_annealing");
+    ASSERT_TRUE(d["optimum"].is_object());
+    for (const auto& r : d["results"]) {
+        EXPECT_EQ(r["order"].size(), 5u);
+        EXPECT_EQ(r["order"][0], 0);
+        EXPECT_GE(r["gap_pct"].get<double>(), 0.0);
+        EXPECT_GE(r["score"].get<double>(), d["optimum"]["score"].get<double>());
+        EXPECT_FALSE(r["curve"].empty());
+    }
+    EXPECT_LE(d["best"]["score"].get<double>(), d["input"]["score"].get<double>());
+    ASSERT_EQ(d["best"]["legs"].size(), 4u);
+    for (const auto& leg : d["best"]["legs"]) {
+        EXPECT_FALSE(leg["route"]["legs"].empty());
+        EXPECT_TRUE(leg["route"]["summary"].is_string());
+    }
+    EXPECT_TRUE(d["matrix"]["score"][0][0].is_null());
+    EXPECT_GT(d["matrix"]["score"][0][1].get<double>(), 0.0);
+
+    auto round = post_json(c, "/api/v1/trips/optimize",
+                           {{"stops", {"india-gate", "red-fort", "qutub-minar"}}, {"method", "sa"}, {"round_trip", true}},
+                           status);
+    ASSERT_EQ(status, 200);
+    EXPECT_EQ(round["data"]["results"].size(), 1u);
+    EXPECT_EQ(round["data"]["best"]["legs"].size(), 3u) << "a round trip comes back to the start";
+}
+
+TEST_F(ApiTest, TripsOptimizeValidatesInput) {
+    auto c = client();
+    int status = 0;
+    post_json(c, "/api/v1/trips/optimize", {{"stops", {"india-gate", "red-fort"}}}, status);
+    EXPECT_EQ(status, 400);
+    post_json(c, "/api/v1/trips/optimize", {{"stops", {"india-gate", "red-fort", "india-gate"}}}, status);
+    EXPECT_EQ(status, 400);
+    post_json(c, "/api/v1/trips/optimize", {{"stops", {"india-gate", "red-fort", "atlantis"}}}, status);
+    EXPECT_EQ(status, 404);
+    post_json(c, "/api/v1/trips/optimize", {{"stops", {"india-gate", "red-fort", "qutub-minar"}}, {"method", "genetic"}},
+              status);
+    EXPECT_EQ(status, 400);
+    post_json(c, "/api/v1/trips/optimize", {{"stops", {"india-gate", "red-fort", "qutub-minar"}}, {"iterations", 5}}, status);
+    EXPECT_EQ(status, 400);
+    post_json(c, "/api/v1/trips/optimize", {{"stops", "india-gate"}}, status);
+    EXPECT_EQ(status, 400);
+}

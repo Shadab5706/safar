@@ -9,6 +9,7 @@
 //   "preference": 0.5,                   optional, 0 = cheapest ... 1 = fastest
 //   "max_results": 5                     optional, 1-8
 // }
+// Routes avoid the current line closures (GET /api/v1/disruptions).
 
 #include <string>
 
@@ -78,8 +79,11 @@ void Server::register_journey_routes() {
                 jr.max_results = m.get<std::size_t>();
             }
 
+            const auto closures = disruptions_.snapshot();
+            jr.closures = closures.get();
             const auto result = ctx_.planner->plan(jr);
             json data = journey::to_json(result, ds);
+            data["closures"] = closures->closures.size();
             data["depart"] = {{"at", depart.at}, {"hour", jr.hour}, {"sunday_fares", jr.sunday}};
             data["fare_note"] = fares::kEstimateNote;
             send_ok(res, t0, data);

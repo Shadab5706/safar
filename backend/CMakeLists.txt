@@ -34,6 +34,9 @@ add_library(safar_core
   src/api/journey_routes.cpp
   src/api/fare_routes.cpp
   src/api/params.cpp
+  src/api/disruption_routes.cpp
+  src/api/trip_routes.cpp
+  src/disruption/closures.cpp
   src/app/context.cpp
   src/data/dataset.cpp
   src/fares/transport_config.cpp
@@ -41,6 +44,7 @@ add_library(safar_core
   src/fares/fare_engine.cpp
   src/graph/graph.cpp
   src/journey/planner.cpp
+  src/optimize/tour.cpp
   src/roads/road_matrix.cpp
   src/search/search.cpp
   src/search/uninformed.cpp
@@ -81,7 +85,8 @@ if(SAFAR_BUILD_TESTS)
 
   enable_testing()
   add_executable(safar_tests tests/test_geo.cpp tests/test_dataset.cpp tests/test_search.cpp tests/test_journey.cpp
-                             tests/test_api.cpp tests/test_fares.cpp)
+                             tests/test_api.cpp tests/test_fares.cpp
+                             tests/test_disruptions.cpp tests/test_optimize.cpp)
   target_link_libraries(safar_tests PRIVATE safar_core GTest::gtest_main)
   target_compile_definitions(safar_tests PRIVATE
     SAFAR_TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/../data/processed"

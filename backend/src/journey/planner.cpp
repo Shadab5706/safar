@@ -232,10 +232,13 @@ JourneyResult Planner::plan(const JourneyRequest& req) const {
     out.destination = dest.node;
 
     // ---- 1. connect the endpoints to the network ----
+    const auto* closures = req.closures;
+    auto closed = [&](std::size_t si) { return closures && closures->station_closed(si); };
     std::vector<Point> origin_access, dest_access;
     if (req.modes.metro) {
         if (req.from.type == Endpoint::Type::Place) {
             for (auto si : access_stations(origin.pos)) {
+                if (closed(si)) continue;
                 const auto st = station_point(g, si);
                 if (st.node == dest.node) continue;
                 add_links(g, origin, st, req, true);
@@ -244,6 +247,7 @@ JourneyResult Planner::plan(const JourneyRequest& req) const {
         }
         if (req.to.type == Endpoint::Type::Place) {
             for (auto si : access_stations(dest.pos)) {
+                if (closed(si)) continue;
                 const auto st = station_point(g, si);
                 if (st.node == origin.node) continue;
                 add_links(g, st, dest, req, true);
@@ -253,11 +257,13 @@ JourneyResult Planner::plan(const JourneyRequest& req) const {
     }
     add_links(g, origin, dest, req, false);
 
-    std::vector<char> mask(g.edge_count(), 0);  // honours "no metro"
+    std::vector<char> mask(g.edge_count(), 0);  // honours "no metro" and line closures
     std::vector<char> transit_only(g.edge_count(), 0);  // walk + metro only
     for (EdgeId e = 0; e < g.edge_count(); ++e) {
         const auto kind = g.edge(e).kind;
         if (!req.modes.metro && kind == EdgeKind::Board) mask[e] = 1;
+        // The copy starts with the shared graph's edges, so the closure mask lines up.
+        if (closures && e < closures->blocked_edges.size() && closures->blocked_edges[e]) mask[e] = 1;
         transit_only[e] = mask[e] || kind == EdgeKind::Road;
     }
 

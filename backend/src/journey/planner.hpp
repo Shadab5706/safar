@@ -8,6 +8,7 @@
 #include <nlohmann/json.hpp>
 
 #include "data/dataset.hpp"
+#include "disruption/closures.hpp"
 #include "fares/fare_engine.hpp"
 #include "fares/transport_config.hpp"
 #include "graph/graph.hpp"
@@ -43,6 +44,9 @@ struct JourneyRequest {
     ModeSet modes;
     double preference = 0.5;  // 0 = cheapest ... 1 = fastest
     std::size_t max_results = 5;
+    // Line closures to route around (null = none). Closed stations are not used to
+    // get on or off the metro; the caller keeps the snapshot alive during plan().
+    const disruption::Snapshot* closures = nullptr;
 };
 
 // The same road leg priced by every provider and product (Uber Go, Rapido Auto, the

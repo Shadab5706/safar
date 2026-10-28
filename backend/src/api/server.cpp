@@ -23,12 +23,17 @@ std::string make_request_id() {
 }  // namespace
 
 Server::Server(Config config, AppContext ctx)
-    : config_(std::move(config)), ctx_(std::move(ctx)), started_at_(Clock::now()) {
+    : config_(std::move(config)),
+      ctx_(std::move(ctx)),
+      disruptions_(ctx_.dataset, ctx_.transit),
+      started_at_(Clock::now()) {
     register_middleware();
     register_routes();
     register_lab_routes();
     register_journey_routes();
     register_fare_routes();
+    register_disruption_routes();
+    register_trip_routes();
 }
 
 void Server::register_middleware() {

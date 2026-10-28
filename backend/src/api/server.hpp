@@ -8,6 +8,7 @@
 
 #include "api/response.hpp"
 #include "app/context.hpp"
+#include "disruption/closures.hpp"
 #include "util/config.hpp"
 
 namespace safar::api {
@@ -31,10 +32,14 @@ private:
     void register_lab_routes();      // api/lab_routes.cpp
     void register_journey_routes();  // api/journey_routes.cpp
     void register_fare_routes();     // api/fare_routes.cpp
+    void register_disruption_routes();  // api/disruption_routes.cpp
+    void register_trip_routes();        // api/trip_routes.cpp
     void register_middleware();
 
     Config config_;
     AppContext ctx_;
+    // Line closures are server state, not loaded data: every Server starts with none.
+    disruption::Store disruptions_;
     httplib::Server http_;
     std::chrono::steady_clock::time_point started_at_;
 };

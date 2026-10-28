@@ -8,6 +8,7 @@
 //   "heuristic_speed_kmh": 110,                     optional, lower = inadmissible heuristic
 //   "boarding_penalty_min": 0                       optional, extra minutes per train boarded
 // }
+// Every algorithm skips the edges the current line closures block.
 
 #include <cmath>
 #include <string>
@@ -84,6 +85,8 @@ void Server::register_lab_routes() {
             opt.heuristic_speed_kmh = optional_number(body, "heuristic_speed_kmh", 0, 1, 1000);
             opt.cost.boarding_penalty = optional_number(body, "boarding_penalty_min", 0, 0, 120);
             opt.record_expansion = body.value("include_expansion", true);
+            const auto closures = disruptions_.snapshot();
+            if (!closures->empty()) opt.blocked_edges = &closures->blocked_edges;
 
             // UCS is always run as the reference for the optimal cost.
             search::SearchOptions ref_opt = opt;
@@ -121,6 +124,7 @@ void Server::register_lab_routes() {
                 {"to", {{"id", to.id}, {"name", to.name}}},
                 {"optimal_cost", reference.found ? json(round2(reference.cost)) : json(nullptr)},
                 {"heuristic_speed_kmh", round2(search::Heuristic(g, goal, opt).speed_kmh())},
+                {"closures", closures->closures.size()},
                 {"results", std::move(results)},
             });
         } catch (const BadRequest& e) {

@@ -118,20 +118,20 @@ No keys or secrets are needed anywhere.
 ## Deploy to Render (free)
 
 [`render.yaml`](render.yaml) is a Render Blueprint for two free Docker web services in Singapore:
-`safar-api` (the backend) and `safar-web` (nginx + frontend). Free services sleep after 15 minutes
+`safar-delhi-api` (the backend) and `safar-delhi` (nginx + frontend). Free services sleep after 15 minutes
 without traffic, so the first request after a pause takes about a minute.
 
 1. Push this repository to GitHub (Render deploys from a Git host).
 2. Sign in at [render.com](https://render.com) with GitHub.
 3. Click **New → Blueprint**, pick the repository and keep the branch you want to deploy.
 4. Render reads `render.yaml` and asks for two values. Enter the URLs the services will get:
-   `SAFAR_API_URL` = `https://safar-api.onrender.com` and
-   `SAFAR_CORS_ORIGIN` = `https://safar-web.onrender.com`. Click **Apply**.
+   `SAFAR_API_URL` = `https://safar-delhi-api.onrender.com` and
+   `SAFAR_CORS_ORIGIN` = `https://safar-delhi.onrender.com`. Click **Apply**.
 5. Wait for both builds (the API build compiles and tests the server, about 5-10 minutes).
 6. Open each service in the dashboard and check its URL. If Render added a suffix because a name
-   was taken (e.g. `safar-api-x7k2.onrender.com`), go to **safar-web → Environment**, fix
-   `SAFAR_API_URL` (and `SAFAR_CORS_ORIGIN` on safar-api), and save; Render redeploys.
-7. Open the `safar-web` URL and plan *Bennett University → Hauz Khas Village*.
+   was taken (e.g. `safar-delhi-api-x7k2.onrender.com`), go to **safar-delhi → Environment**, fix
+   `SAFAR_API_URL` (and `SAFAR_CORS_ORIGIN` on safar-delhi-api), and save; Render redeploys.
+7. Open the `safar-delhi` URL and plan *Bennett University → Hauz Khas Village*.
 
 Pushes to the deployed branch redeploy automatically; the build filters in `render.yaml` only
 rebuild the service whose files changed. Line closures are kept in memory, so they reset when the

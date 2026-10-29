@@ -7,7 +7,7 @@
 
 services:
   - type: web
-    name: safar-api
+    name: safar-delhi-api
     runtime: docker
     plan: free
     region: singapore
@@ -24,11 +24,11 @@ services:
     envVars:
       - key: PORT          # the port Render routes to; the image listens on 8080
         value: "8080"
-      - key: SAFAR_CORS_ORIGIN   # the web service's URL, e.g. https://safar-web.onrender.com
+      - key: SAFAR_CORS_ORIGIN   # the web service's URL, e.g. https://safar-delhi.onrender.com
         sync: false
 
   - type: web
-    name: safar-web
+    name: safar-delhi
     runtime: docker
     plan: free
     region: singapore
@@ -43,5 +43,5 @@ services:
     envVars:
       - key: PORT
         value: "8080"
-      - key: SAFAR_API_URL       # the API service's URL, e.g. https://safar-api.onrender.com
+      - key: SAFAR_API_URL       # the API service's URL, e.g. https://safar-delhi-api.onrender.com
         sync: false

@@ -239,7 +239,7 @@ TEST_F(ApiTest, FaresEstimateListsEveryProvider) {
         if (q["provider"] == "uber") {
             uber_link = q["deep_link"]["url"].get<std::string>().rfind("https://m.uber.com/ul/?action=setPickup", 0) == 0;
         }
-        if (q["provider"] == "delhi_auto") EXPECT_TRUE(q["deep_link"].is_null());
+        if (q["provider"] == "delhi_auto") { EXPECT_TRUE(q["deep_link"].is_null()); }
     }
     EXPECT_TRUE(uber_link);
 }

@@ -78,7 +78,7 @@ void expect_valid_path(const Graph& g, const search::SearchResult& r, NodeId sta
     EXPECT_EQ(g.edge(r.path.back()).to, goal);
     double sum = 0;
     for (std::size_t i = 0; i < r.path.size(); ++i) {
-        if (i > 0) EXPECT_EQ(g.edge(r.path[i - 1]).to, g.edge(r.path[i]).from);
+        if (i > 0) { EXPECT_EQ(g.edge(r.path[i - 1]).to, g.edge(r.path[i]).from); }
         sum += cost.edge_cost(g.edge(r.path[i]));
     }
     EXPECT_NEAR(sum, r.cost, 1e-9);

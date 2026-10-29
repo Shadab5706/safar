@@ -124,7 +124,7 @@ TEST(Yen, PathsAreSortedDistinctAndLoopless) {
     EXPECT_NEAR(paths[0].cost, search::a_star(g, s, t).cost, 1e-9);
     std::set<std::vector<graph::EdgeId>> distinct;
     for (std::size_t i = 0; i < paths.size(); ++i) {
-        if (i > 0) EXPECT_GE(paths[i].cost, paths[i - 1].cost - 1e-9);
+        if (i > 0) { EXPECT_GE(paths[i].cost, paths[i - 1].cost - 1e-9); }
         EXPECT_TRUE(distinct.insert(paths[i].path).second);
         std::set<graph::NodeId> visited{s};
         for (auto e : paths[i].path) EXPECT_TRUE(visited.insert(g.edge(e).to).second) << "loop in path " << i;
@@ -152,8 +152,8 @@ TEST(Planner, BennettToHauzKhasVillageGivesMixedRoutes) {
     EXPECT_TRUE(mixed) << "expected at least one cab/auto/bike + metro route";
     for (const char* t : {"recommended", "fastest", "cheapest"}) EXPECT_TRUE(tags.count(t)) << t;
     for (const auto& route : r.routes) {
-        if (has_tag(route, "fastest")) EXPECT_DOUBLE_EQ(route.itinerary.total_min, min_time);
-        if (has_tag(route, "cheapest")) EXPECT_DOUBLE_EQ(route.itinerary.fare_rs, min_fare);
+        if (has_tag(route, "fastest")) { EXPECT_DOUBLE_EQ(route.itinerary.total_min, min_time); }
+        if (has_tag(route, "cheapest")) { EXPECT_DOUBLE_EQ(route.itinerary.fare_rs, min_fare); }
     }
 }
 
@@ -269,7 +269,7 @@ TEST(Planner, DirectCabIsAlwaysShownAndCanBeMostExpensive) {
     ASSERT_NE(direct, r.routes.end());
     EXPECT_TRUE(has_tag(*direct, "most_expensive"));
     for (const auto& route : r.routes) {
-        if (has_tag(route, "recommended")) EXPECT_FALSE(route.dominated);
+        if (has_tag(route, "recommended")) { EXPECT_FALSE(route.dominated); }
     }
 }
 
@@ -278,6 +278,6 @@ TEST(Planner, NobodyWalksIntoTheAirportFromOutside) {
     req.preference = 0;
     for (const auto& route : ctx().planner->plan(req).routes) {
         const auto& last = route.itinerary.legs.back();
-        if (last.kind == search::Leg::Kind::Walk) EXPECT_LE(last.distance_km, 0.6 * 1.3 + 1e-9);
+        if (last.kind == search::Leg::Kind::Walk) { EXPECT_LE(last.distance_km, 0.6 * 1.3 + 1e-9); }
     }
 }

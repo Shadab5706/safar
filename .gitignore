@@ -15,4 +15,3 @@ dist/
 .vscode/
 .idea/
 # local dev-server config for the desktop app (absolute paths)
-.claude/launch.json

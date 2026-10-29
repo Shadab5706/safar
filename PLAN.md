@@ -307,7 +307,7 @@ safar/
 │   └── fare_samples.csv   real fare quotes collected for calibration
 ├── scripts/               Python: build_metro_graph, fit_fares, prefetch_road_matrix
 ├── docs/                  report, architecture diagrams, screenshots, slides
-├── docker/                Dockerfiles + docker-compose.yml
+├── docker/                Dockerfiles + nginx config (docker-compose.yml, render.yaml at the root)
 └── .github/workflows/     CI: build + test backend and frontend
 ```
 
@@ -324,7 +324,7 @@ safar/
 | 4. Fares | fare engine, adapters, collect samples, fit model, deep links | MAE per provider in a table; prices on every leg (built 2026-10-27; real samples still to collect) |
 | 5. Frontend | Plan screen + map + route cards | full journey flow works in the browser (built 2026-10-27) |
 | 6. Lab + extras | Algorithm Lab animation, disruptions, trip planner | all three demo-able (built 2026-10-28) |
-| 7. Polish | Docker, deploy, report, slides, viva prep | one-command run; report draft done |
+| 7. Polish | Docker, deploy, report, slides, viva prep | one-command run; report draft done (Docker, compose, Render Blueprint, CI image job built 2026-10-29) |
 
 Stretch idea if the teacher wants adversarial search covered: "Rush Hour" mode, where an
 adversary closes the segment that hurts your route most and the planner picks the route with the

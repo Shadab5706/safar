@@ -1,0 +1,58 @@
+# Safar web server: serves the built frontend and proxies /api to the C++ backend.
+# The nginx image runs envsubst on this file at startup, so ${SAFAR_API_URL} and
+# ${NGINX_LOCAL_RESOLVERS} come from the container environment (nginx's own $vars are left alone).
+
+server {
+    listen 8080;
+    server_name _;
+    server_tokens off;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # Re-resolve the backend's name instead of caching it at startup, so nginx starts
+    # even if the backend is still booting and follows it if its address changes.
+    resolver ${NGINX_LOCAL_RESOLVERS} valid=30s ipv6=off;
+
+    gzip on;
+    gzip_min_length 1024;
+    gzip_types text/css application/javascript application/json image/svg+xml;
+
+    # Inherited by every location below (none of them set their own add_header).
+    # The referrer policy must keep sending the origin: the OSM tile servers require it.
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    location = /healthz {
+        access_log off;
+        default_type text/plain;
+        return 200 "ok\n";
+    }
+
+    location /api/ {
+        set $api_upstream "${SAFAR_API_URL}";
+        proxy_pass $api_upstream;
+        proxy_http_version 1.1;
+        proxy_set_header Host $proxy_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_ssl_server_name on;
+        proxy_connect_timeout 10s;
+        # A free-tier host may need ~a minute to wake a sleeping backend.
+        proxy_read_timeout 90s;
+        client_max_body_size 64k;
+    }
+
+    # Vite puts content-hashed files here, so they can be cached for good.
+    location /assets/ {
+        expires 1y;
+        try_files $uri =404;
+    }
+
+    # The app uses hash routes (#/lab, #/trips), so everything else is index.html.
+    location / {
+        expires -1;
+        try_files $uri $uri/ /index.html;
+    }
+}

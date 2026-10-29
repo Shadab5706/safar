@@ -1,0 +1,31 @@
+# Run the whole app:  docker compose up --build   ->  http://localhost:8080
+# Change the port with SAFAR_WEB_PORT (e.g. SAFAR_WEB_PORT=3000 docker compose up).
+name: safar
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    image: safar-backend:latest
+    environment:
+      SAFAR_LOG_LEVEL: ${SAFAR_LOG_LEVEL:-info}
+      # The browser only talks to nginx (same origin), so this matters only if
+      # another site calls the API directly.
+      SAFAR_CORS_ORIGIN: ${SAFAR_CORS_ORIGIN:-http://localhost:8080}
+    restart: unless-stopped
+    # Not published on the host: all traffic goes through the web container.
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+    image: safar-web:latest
+    environment:
+      SAFAR_API_URL: http://backend:8080
+    ports:
+      - "${SAFAR_WEB_PORT:-8080}:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped

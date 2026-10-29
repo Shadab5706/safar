@@ -35,3 +35,43 @@ jobs:
         run: npm test
       - name: Build
         run: npm run build
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build backend image (compiles and runs the unit tests)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/backend.Dockerfile
+          build-args: BUILD_JOBS=4
+          tags: safar-backend:latest
+          load: true
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
+      - name: Build web image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/frontend.Dockerfile
+          tags: safar-web:latest
+          load: true
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,mode=max,scope=web
+      - name: Start the stack
+        run: docker compose up -d --no-build --wait --wait-timeout 120
+      - name: Smoke test through nginx
+        run: |
+          curl -fsS localhost:8080/healthz
+          curl -fsS localhost:8080/ | grep -q '<div id="root">'
+          curl -fsS localhost:8080/api/v1/health
+          curl -fsS -X POST localhost:8080/api/v1/journeys -H 'Content-Type: application/json' \
+            -d '{"from":"bennett-university","to":"hauz-khas-village","depart_at":"2026-10-27T09:00"}' \
+            | python3 -c 'import json, sys; n = len(json.load(sys.stdin)["data"]["routes"]); print(n, "routes"); assert n >= 3'
+      - name: Container logs
+        if: failure()
+        run: docker compose logs
+      - name: Stop
+        if: always()
+        run: docker compose down

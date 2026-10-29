@@ -1,0 +1,12 @@
+# Both images build from the repo root; keep the context small and free of host binaries.
+.git
+.github
+**/.DS_Store
+**/node_modules
+frontend/dist
+backend/build
+build
+data/raw
+docs
+*.sqlite
+.env

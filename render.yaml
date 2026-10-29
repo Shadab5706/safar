@@ -1,0 +1,47 @@
+# Render Blueprint: two free Docker web services, deployed from this repo.
+# Steps are in README.md ("Deploy to Render"). Nothing here holds a secret.
+#
+# Free web services cannot receive private-network traffic, so the web service's nginx
+# reaches the API over its public https URL (SAFAR_API_URL), and both values below are
+# asked for when the Blueprint is created.
+
+services:
+  - type: web
+    name: safar-api
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerContext: .
+    dockerfilePath: ./docker/backend.Dockerfile
+    healthCheckPath: /api/v1/health
+    buildFilter:
+      paths:
+        - backend/**
+        - data/processed/**
+        - data/fare_samples.csv
+        - scripts/fit_fares.py
+        - docker/backend.Dockerfile
+    envVars:
+      - key: PORT          # the port Render routes to; the image listens on 8080
+        value: "8080"
+      - key: SAFAR_CORS_ORIGIN   # the web service's URL, e.g. https://safar-web.onrender.com
+        sync: false
+
+  - type: web
+    name: safar-web
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerContext: .
+    dockerfilePath: ./docker/frontend.Dockerfile
+    healthCheckPath: /healthz
+    buildFilter:
+      paths:
+        - frontend/**
+        - docker/frontend.Dockerfile
+        - docker/nginx/**
+    envVars:
+      - key: PORT
+        value: "8080"
+      - key: SAFAR_API_URL       # the API service's URL, e.g. https://safar-api.onrender.com
+        sync: false

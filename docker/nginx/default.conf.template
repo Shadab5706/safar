@@ -30,6 +30,14 @@ server {
         return 200 "ok\n";
     }
 
+    # Tells the browser the API's own address, so it can wake a sleeping free-tier
+    # backend directly: requests through this proxy don't wake it.
+    location = /wake.json {
+        default_type application/json;
+        expires -1;
+        return 200 '{"api":"${SAFAR_API_URL}"}';
+    }
+
     location /api/ {
         set $api_upstream "${SAFAR_API_URL}";
         proxy_pass $api_upstream;

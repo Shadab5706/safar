@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { getHealth, wakeApi } from './api/client'
+import { ServerWaking } from './components/ServerWaking'
 import { useClosures } from './hooks/useClosures'
 import { useMetroNetwork } from './hooks/useMetroNetwork'
 import { useHashRoute, type Page } from './hooks/useHashRoute'
@@ -21,6 +23,12 @@ export default function App() {
   // Screens mount on first visit and then stay mounted, so switching tabs keeps their state.
   const [visited, setVisited] = useState<ReadonlySet<Page>>(() => new Set([page]))
   if (!visited.has(page)) setVisited(new Set([...visited, page]))
+
+  // Start a sleeping server as soon as the page opens, so it is up by the time a search is sent.
+  useEffect(() => {
+    void wakeApi()
+    getHealth().catch(() => {})
+  }, [])
 
   return (
     <div className="flex min-h-dvh flex-col bg-slate-50 text-slate-900 lg:h-dvh">
@@ -46,6 +54,7 @@ export default function App() {
               <li key={item.page}>
                 <a
                   href={item.href}
+                  aria-label={item.label}
                   aria-current={page === item.page ? 'page' : undefined}
                   className={`block rounded-md px-2 py-1.5 text-sm font-medium sm:px-3 focus-visible:outline-2 focus-visible:outline-white ${
                     page === item.page ? 'bg-white/15 text-white' : 'text-teal-50 hover:bg-white/10'
@@ -65,6 +74,7 @@ export default function App() {
           </ul>
         </nav>
       </header>
+      <ServerWaking />
       <main id="main" tabIndex={-1} className="flex-1 focus:outline-none lg:min-h-0">
         {visited.has('plan') && (
           <div hidden={page !== 'plan'} className="lg:h-full">

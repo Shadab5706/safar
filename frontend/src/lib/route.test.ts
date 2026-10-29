@@ -11,6 +11,8 @@ import {
   routeChain,
   sortQuotes,
   textOn,
+  timeShares,
+  uiLegColor,
 } from './route'
 
 const at = (id: string, lat: number, lng: number): Endpoint => ({ id, name: id, type: 'station', lat, lng })
@@ -129,5 +131,24 @@ describe('journey request', () => {
     expect(preferenceLabel(0)).toBe('Cheapest')
     expect(preferenceLabel(0.5)).toBe('Balanced')
     expect(preferenceLabel(1)).toBe('Fastest')
+  })
+})
+
+describe('time bar helpers', () => {
+  it('splits the journey time by leg, and the shares add up to 1', () => {
+    const shares = timeShares(route)
+    expect(shares.map((s) => s.index)).toEqual([0, 1, 2, 3])
+    expect(shares.reduce((a, s) => a + s.share, 0)).toBeCloseTo(1, 6)
+    expect(shares[1]!.share).toBeCloseTo(51.5 / 95.8, 6)
+  })
+
+  it('returns nothing for a route without timed legs', () => {
+    expect(timeShares({ ...route, legs: [{ ...legs[2]!, total_min: 0 }] })).toEqual([])
+  })
+
+  it('uses a theme token for the near-black cab colour only', () => {
+    expect(uiLegColor({ ...legs[0]!, mode: 'cab' } as Leg)).toBe('var(--mode-cab)')
+    expect(uiLegColor(legs[0]!)).toBe(legStyle(legs[0]!).color)
+    expect(uiLegColor(legs[1]!)).toBe('#00B5E2')
   })
 })

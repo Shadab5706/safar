@@ -12,29 +12,29 @@ export function ProviderQuotes({ options, mode }: { options: FareQuote[]; mode: 
   const quotes = sortQuotes(options, mode)
   if (quotes.length === 0) return null
   return (
-    <div className="mt-2 rounded-lg border border-slate-200 bg-slate-50/70">
-      <p className="border-b border-slate-200 px-3 py-1.5 text-xs text-slate-600">
-        <span className="font-semibold text-amber-800">Estimated prices.</span> Open the app for the live fare.
+    <div className="mt-2.5 overflow-hidden rounded-xl border border-line bg-surface">
+      <p className="border-b border-line bg-subtle px-3 py-2 text-xs text-muted">
+        <span className="font-semibold text-warn-ink">Estimated prices.</span> Open the app for the live fare.
       </p>
-      <ul className="divide-y divide-slate-200">
+      <ul className="divide-y divide-line">
         {quotes.map((q) => (
-          <li key={`${q.provider}:${q.product}`} className="px-3 py-2">
+          <li key={`${q.provider}:${q.product}`} className="px-3 py-2.5">
             <div className="flex items-baseline justify-between gap-3">
-              <p className="min-w-0 text-sm font-medium text-slate-900">
+              <p className="min-w-0 text-sm font-medium text-ink">
                 {q.product_name}
                 {q.mode !== mode && (
-                  <span className="ml-1.5 rounded bg-slate-200 px-1 py-px text-[11px] font-medium whitespace-nowrap text-slate-600">
+                  <span className="ml-1.5 rounded-md bg-subtle-2 px-1.5 py-px text-[11px] font-medium whitespace-nowrap text-muted">
                     {modeLabel(q.mode)}
                   </span>
                 )}
               </p>
-              <p className="shrink-0 text-sm font-semibold text-slate-900 tabular-nums">
+              <p className="shrink-0 text-sm font-semibold text-ink tabular-nums">
                 {formatRupees(q.fare_rs)}
-                <span className="ml-1 text-[11px] font-medium text-amber-800">est.</span>
+                <span className="ml-1 text-[11px] font-medium text-warn-ink">est.</span>
               </p>
             </div>
             <div className="mt-0.5 flex items-center justify-between gap-3">
-              <p className="min-w-0 text-xs text-slate-500">
+              <p className="min-w-0 text-xs text-muted">
                 {formatRupeeRange(q.fare_range_rs)}
                 {' · '}
                 {q.deep_link ? `pickup ~${formatDuration(q.pickup_eta_min)}` : 'hail on the street, pay by meter'}
@@ -47,13 +47,13 @@ export function ProviderQuotes({ options, mode }: { options: FareQuote[]; mode: 
                   rel="noopener noreferrer"
                   aria-label={`${linkLabel(q)}: ${q.product_name}${q.deep_link.prefilled ? ' with pickup and drop filled in' : ''} (opens in a new tab)`}
                   title={q.deep_link.documented ? undefined : 'This link format is not officially documented by the provider'}
-                  className="inline-flex shrink-0 items-center gap-1 rounded-md border border-slate-300 bg-white px-2 py-0.5 text-xs font-medium text-teal-800 hover:border-teal-600 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-teal-600"
+                  className="inline-flex h-8 shrink-0 items-center gap-1 rounded-full bg-brand-soft px-3 text-xs font-semibold text-brand-ink transition-colors hover:bg-brand hover:text-on-brand focus-visible:outline-2 focus-visible:outline-brand pointer-coarse:h-11"
                 >
                   {linkLabel(q)}
                   <ExternalLink className="size-3" aria-hidden="true" />
                 </a>
               ) : (
-                <span className="shrink-0 text-xs text-slate-500">Govt meter</span>
+                <span className="shrink-0 text-xs text-muted">Govt meter</span>
               )}
             </div>
           </li>

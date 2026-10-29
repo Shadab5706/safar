@@ -103,7 +103,8 @@ npm run dev        # http://localhost:5173
 
 ### Configuration
 
-The frontend always calls a same-origin `/api/v1`, so the same build works behind any host. The
+The website calls a same-origin `/api/v1`, so the same build works behind any host; a mobile-app
+build can point at the live API with `VITE_API_BASE` (see [docs/MOBILE_APP.md](docs/MOBILE_APP.md)). The
 server reads `backend/config/server.json`; every key can be overridden by an environment variable.
 
 | Variable | Default | What it does |
@@ -115,6 +116,7 @@ server reads `backend/config/server.json`; every key can be overridden by an env
 | `SAFAR_DATA_DIR` | `data/processed` | folder with `metro.json`, `places.json`, `road_matrix.json` |
 | `SAFAR_API_URL` | `http://backend:8080` | web container only: where nginx proxies `/api` |
 | `SAFAR_WEB_PORT` | `8080` | Compose only: host port for the web container |
+| `VITE_API_BASE` | `/api/v1` | frontend build only: API root, e.g. `https://safar-delhi-api.onrender.com/api/v1` for an app build |
 
 No keys or secrets are needed anywhere.
 
@@ -144,6 +146,11 @@ API service sleeps or redeploys.
 
 ## Using the app
 
+**Home** opens with a from/to search, three example trips and a quick tour; it hands the trip to
+**Plan**. On phones the screens sit behind a bottom tab bar (Home, Plan, Lab, Trips) and results
+slide up in a sheet over the map that you drag or tap between peek, half and full height; on larger
+screens a top bar and a side panel take their place. Light and dark mode follow the system setting.
+
 The **Plan** screen has from/to autocomplete over places and metro stations, a departure time, mode
 toggles (walk, metro, cab, auto, bike) and a cheapest↔fastest slider. Each route card shows its
 tags, total time, arrival, fare, distance and changes; expand it for the timed step-by-step legs,
@@ -153,8 +160,13 @@ line colours, road legs dashed, walks dotted) over a faint layer of every metro 
 first search, changing the modes, time or slider re-plans straight away. **About** lists the data
 sources, OSM attribution and which prices are estimates.
 
-Screens: Plan (`#/`), Algorithm Lab (`#/lab`), Trip planner (`#/trips`), About (`#/about`). Click a
-station or a line on any map to close or reopen it.
+Screens: Home (`#/`), Plan (`#/plan`), Algorithm Lab (`#/lab`), Trip planner (`#/trips`), About
+(`#/about`). Click a station or a line on any map to close or reopen it.
+
+Safar installs as an app: Chrome and Edge show **Install app** (Android and desktop), and on iPhone
+use Safari's Share → Add to Home Screen. A service worker keeps the app shell so it opens instantly;
+it never caches API answers. To ship it to the Play Store or App Store, see
+[docs/MOBILE_APP.md](docs/MOBILE_APP.md).
 
 ## API
 

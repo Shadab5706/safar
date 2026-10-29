@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { ApiError, closurePath, endpointRef, isWaking, placesPath, request, resetWakeUrl } from './client'
+import { ApiError, closurePath, directWakeUrl, endpointRef, isWaking, placesPath, request, resetWakeUrl, resolveApiBase } from './client'
 
 const json = (body: unknown, status = 200) =>
   vi.fn<typeof fetch>().mockResolvedValue(new Response(JSON.stringify(body), { status }))
@@ -126,5 +126,18 @@ describe('request while the server is waking up', () => {
     ctrl.abort()
     await expect(pending).rejects.toMatchObject({ name: 'AbortError' })
     expect(isWaking()).toBe(false)
+  })
+})
+
+describe('API base', () => {
+  it('defaults to the site proxy and accepts a full address for an app build', () => {
+    expect(resolveApiBase(undefined)).toBe('/api/v1')
+    expect(resolveApiBase('  ')).toBe('/api/v1')
+    expect(resolveApiBase('https://safar-delhi-api.onrender.com/api/v1/')).toBe('https://safar-delhi-api.onrender.com/api/v1')
+  })
+
+  it('pings the health URL directly only for an absolute base', () => {
+    expect(directWakeUrl('/api/v1')).toBeNull()
+    expect(directWakeUrl('https://api.example.com/api/v1')).toBe('https://api.example.com/api/v1/health')
   })
 })

@@ -1,5 +1,6 @@
 import { endpointRef } from '../api/client'
 import type { JourneyRequest, Mode, SearchResult } from '../api/types'
+import type { ExampleTrip } from './examples'
 
 export const ALL_MODES: readonly Mode[] = ['walk', 'metro', 'cab', 'auto', 'bike']
 
@@ -32,3 +33,8 @@ export function toJourneyRequest(q: Query): JourneyRequest | null {
     max_results: 6,
   }
 }
+
+/** What the home page hands to the planner: a start and destination, or an example trip to look up. */
+export type PlanIntent =
+  | { id: number; from: SearchResult | null; to: SearchResult | null }
+  | { id: number; example: ExampleTrip }

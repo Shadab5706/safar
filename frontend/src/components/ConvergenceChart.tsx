@@ -42,20 +42,20 @@ export function ConvergenceChart({ results, optimum }: Props) {
 
   return (
     <figure className="min-w-0">
-      <figcaption id={`${id}-cap`} className="mb-1 text-xs font-semibold text-slate-800">
+      <figcaption id={`${id}-cap`} className="mb-1 text-xs font-semibold text-ink-2">
         Convergence: tour cost vs tours evaluated
       </figcaption>
-      <ul className="mb-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-slate-700">
+      <ul className="mb-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-ink-2">
         {results.map((r) => (
           <li key={r.method} className="flex items-center gap-1.5">
             <span className="inline-block h-0.5 w-4 rounded-full" style={{ background: methodInfo(r.method).color }} aria-hidden="true" />
             {methodInfo(r.method).label}
           </li>
         ))}
-        <li className="flex items-center gap-1.5 text-slate-500">solid = best so far, faint = current tour</li>
+        <li className="flex items-center gap-1.5 text-muted">solid = best so far, faint = current tour</li>
         {optimum !== null && (
-          <li className="flex items-center gap-1.5 text-slate-500">
-            <span className="inline-block w-4 border-t-2 border-dashed border-slate-500" aria-hidden="true" />
+          <li className="flex items-center gap-1.5 text-muted">
+            <span className="inline-block w-4 border-t-2 border-dashed border-faint" aria-hidden="true" />
             exact optimum
           </li>
         )}
@@ -76,27 +76,27 @@ export function ConvergenceChart({ results, optimum }: Props) {
           </desc>
           {yTicks.map((t) => (
             <g key={`y${t}`}>
-              <line x1={M.left} x2={W - M.right} y1={y(t)} y2={y(t)} stroke="#e2e8f0" strokeWidth={1} />
-              <text x={M.left - 6} y={y(t)} dy="0.32em" textAnchor="end" fontSize={10} fill="#64748b">
+              <line x1={M.left} x2={W - M.right} y1={y(t)} y2={y(t)} stroke="var(--line)" strokeWidth={1} />
+              <text x={M.left - 6} y={y(t)} dy="0.32em" textAnchor="end" fontSize={10} fill="var(--muted)">
                 {fmt(t)}
               </text>
             </g>
           ))}
           {xTicks.map((t) => (
-            <text key={`x${t}`} x={x(t)} y={H - M.bottom + 14} textAnchor="middle" fontSize={10} fill="#64748b">
+            <text key={`x${t}`} x={x(t)} y={H - M.bottom + 14} textAnchor="middle" fontSize={10} fill="var(--muted)">
               {fmt(t)}
             </text>
           ))}
-          <line x1={M.left} x2={W - M.right} y1={H - M.bottom} y2={H - M.bottom} stroke="#94a3b8" strokeWidth={1} />
-          <text x={M.left + plotW / 2} y={H - 4} textAnchor="middle" fontSize={10} fill="#475569">
+          <line x1={M.left} x2={W - M.right} y1={H - M.bottom} y2={H - M.bottom} stroke="var(--line-strong)" strokeWidth={1} />
+          <text x={M.left + plotW / 2} y={H - 4} textAnchor="middle" fontSize={10} fill="var(--ink-2)">
             tours evaluated
           </text>
-          <text transform={`translate(11 ${M.top + (H - M.top - M.bottom) / 2}) rotate(-90)`} textAnchor="middle" fontSize={10} fill="#475569">
+          <text transform={`translate(11 ${M.top + (H - M.top - M.bottom) / 2}) rotate(-90)`} textAnchor="middle" fontSize={10} fill="var(--ink-2)">
             cost (min-equivalent)
           </text>
 
           {optimum !== null && (
-            <line x1={M.left} x2={W - M.right} y1={y(optimum)} y2={y(optimum)} stroke="#64748b" strokeWidth={1.5} strokeDasharray="5 4" />
+            <line x1={M.left} x2={W - M.right} y1={y(optimum)} y2={y(optimum)} stroke="var(--muted)" strokeWidth={1.5} strokeDasharray="5 4" />
           )}
           {results.map((r) => (
             <path key={`c-${r.method}`} d={linePath(r.curve, 'current', x, y)} fill="none" stroke={methodInfo(r.method).color} strokeWidth={1.25} strokeOpacity={0.35} />
@@ -107,9 +107,9 @@ export function ConvergenceChart({ results, optimum }: Props) {
 
           {hover && (
             <g pointerEvents="none">
-              <line x1={hoverPx} x2={hoverPx} y1={M.top} y2={H - M.bottom} stroke="#334155" strokeWidth={1} strokeDasharray="2 3" />
+              <line x1={hoverPx} x2={hoverPx} y1={M.top} y2={H - M.bottom} stroke="var(--muted)" strokeWidth={1} strokeDasharray="2 3" />
               {hover.map(({ r, p }) =>
-                p ? <circle key={r.method} cx={hoverPx} cy={y(p.best)} r={4} fill={methodInfo(r.method).color} stroke="#ffffff" strokeWidth={2} /> : null,
+                p ? <circle key={r.method} cx={hoverPx} cy={y(p.best)} r={4} fill={methodInfo(r.method).color} stroke="var(--surface)" strokeWidth={2} /> : null,
               )}
             </g>
           )}
@@ -126,7 +126,7 @@ export function ConvergenceChart({ results, optimum }: Props) {
         {hover && hoverX !== null && (
           <div
             role="tooltip"
-            className="pointer-events-none absolute top-2 z-10 rounded-md bg-slate-900 px-2.5 py-1.5 text-[11px] text-white shadow"
+            className="pointer-events-none absolute top-2 z-10 rounded-md bg-ink px-2.5 py-1.5 text-[11px] text-on-brand shadow"
             style={hoverPx > W / 2 ? { right: `${((W - hoverPx) / W) * 100 + 2}%` } : { left: `${(hoverPx / W) * 100 + 2}%` }}
           >
             <p className="font-semibold tabular-nums">{Math.round(hoverX)} tours</p>

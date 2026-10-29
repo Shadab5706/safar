@@ -41,26 +41,26 @@ export function ClosurePanel({ closures, network }: Props) {
   }
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white">
+    <div className="rounded-control border border-line bg-surface">
       <button
         type="button"
         aria-expanded={open}
         aria-controls={`${id}-body`}
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-slate-800 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-teal-700"
+        className="flex min-h-11 w-full items-center gap-2 rounded-control px-3.5 py-2 text-left text-sm font-semibold text-ink-2 transition-colors hover:bg-subtle focus-visible:outline-2 focus-visible:outline-brand"
       >
-        <Construction className="size-4 text-slate-500" aria-hidden="true" />
+        <Construction className="size-4 text-muted" aria-hidden="true" />
         Line closures
         {count > 0 ? (
-          <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-bold text-red-800">{count} active</span>
+          <span className="rounded-full bg-danger-soft px-2 py-0.5 text-xs font-bold text-danger-ink">{count} active</span>
         ) : (
-          <span className="text-xs font-normal text-slate-500">none</span>
+          <span className="text-xs font-normal text-muted">none</span>
         )}
-        <ChevronDown className={`ml-auto size-4 text-slate-500 transition-transform ${open ? 'rotate-180' : ''}`} aria-hidden="true" />
+        <ChevronDown className={`ml-auto size-4 text-muted transition-transform ${open ? 'rotate-180' : ''}`} aria-hidden="true" />
       </button>
 
       {closures.error && (
-        <div role="alert" className="mx-3 mb-2 flex items-start gap-2 rounded-md bg-red-50 px-2.5 py-2 text-xs text-red-900">
+        <div role="alert" className="mx-3 mb-2 flex items-start gap-2 rounded-md bg-danger-soft px-2.5 py-2 text-xs text-danger-ink">
           <CircleAlert className="mt-px size-4 shrink-0" aria-hidden="true" />
           <span className="flex-1">{closures.error}</span>
           {closures.status === 'error' ? (
@@ -68,15 +68,15 @@ export function ClosurePanel({ closures, network }: Props) {
               Retry
             </button>
           ) : (
-            <button type="button" onClick={closures.dismissError} aria-label="Dismiss" className="rounded p-0.5 hover:bg-red-100">
+            <button type="button" onClick={closures.dismissError} aria-label="Dismiss" className="rounded p-0.5 hover:bg-danger-soft">
               <X className="size-3.5" aria-hidden="true" />
             </button>
           )}
         </div>
       )}
 
-      <div id={`${id}-body`} hidden={!open} className="space-y-3 border-t border-slate-100 px-3 pt-2 pb-3">
-        <p className="text-xs text-slate-600">
+      <div id={`${id}-body`} hidden={!open} className="space-y-3 border-t border-line px-3 pt-2 pb-3">
+        <p className="text-xs text-muted">
           Click a station or a line on the map to close it. A closed station is skipped (trains run through without
           stopping); a closed section cuts the line. Every route re-plans around them.
         </p>
@@ -84,7 +84,7 @@ export function ClosurePanel({ closures, network }: Props) {
         {count > 0 && (
           <ul className="space-y-1.5" aria-label="Active closures">
             {closures.items.map((c) => (
-              <li key={c.id} className="flex items-center gap-2 text-xs text-slate-800">
+              <li key={c.id} className="flex items-center gap-2 text-xs text-ink-2">
                 <span
                   className="inline-block h-1.5 w-4 shrink-0 rounded-full"
                   style={{ background: c.type === 'segment' ? c.line.color : CLOSED_COLOR }}
@@ -95,7 +95,7 @@ export function ClosurePanel({ closures, network }: Props) {
                   type="button"
                   disabled={closures.pending}
                   onClick={() => closures.reopen(c.id)}
-                  className="rounded-md px-2 py-1 font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-teal-700 disabled:opacity-50"
+                  className="rounded-md px-2 py-1 font-semibold text-brand-ink hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-brand disabled:opacity-50"
                 >
                   Reopen
                 </button>
@@ -108,7 +108,7 @@ export function ClosurePanel({ closures, network }: Props) {
             type="button"
             disabled={closures.pending}
             onClick={closures.reopenAll}
-            className="text-xs font-semibold text-teal-800 underline disabled:opacity-50"
+            className="text-xs font-semibold text-brand-ink underline disabled:opacity-50"
           >
             Reopen everything
           </button>
@@ -121,7 +121,7 @@ export function ClosurePanel({ closures, network }: Props) {
             submit()
           }}
         >
-          <label className="text-xs font-semibold text-slate-600">
+          <label className="text-xs font-semibold text-muted">
             Line
             <select
               value={lineId}
@@ -130,7 +130,7 @@ export function ClosurePanel({ closures, network }: Props) {
                 setTarget('')
               }}
               disabled={lines.length === 0}
-              className="mt-1 block w-full rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm font-normal text-slate-900"
+              className="mt-1 block h-10 w-full rounded-lg border border-line-strong bg-surface px-2.5 text-sm font-normal text-ink"
             >
               <option value="">Choose a line</option>
               {lines.map((l) => (
@@ -140,13 +140,13 @@ export function ClosurePanel({ closures, network }: Props) {
               ))}
             </select>
           </label>
-          <label className="text-xs font-semibold text-slate-600">
+          <label className="text-xs font-semibold text-muted">
             Close
             <select
               value={target}
               onChange={(e) => setTarget(e.target.value)}
               disabled={!line}
-              className="mt-1 block w-full rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm font-normal text-slate-900 disabled:bg-slate-50"
+              className="mt-1 block h-10 w-full rounded-lg border border-line-strong bg-surface px-2.5 text-sm font-normal text-ink disabled:bg-subtle"
             >
               <option value="">{line ? 'Station or section' : 'Pick a line first'}</option>
               {choices.map((c) => (
@@ -159,7 +159,7 @@ export function ClosurePanel({ closures, network }: Props) {
           <button
             type="submit"
             disabled={!target || closures.pending}
-            className="rounded-md bg-red-700 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700 disabled:opacity-40"
+            className="h-10 rounded-full bg-danger px-4 text-sm font-semibold text-white hover:bg-danger-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger disabled:opacity-40"
           >
             Close
           </button>

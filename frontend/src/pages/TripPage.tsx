@@ -5,10 +5,12 @@ import type { MetroStation, SearchResult, TripMethod, TripRequest, TripResponse 
 import { BaseMap, type StationAction } from '../components/BaseMap'
 import { ClosurePanel } from '../components/ClosurePanel'
 import { ConvergenceChart } from '../components/ConvergenceChart'
+import { MapScreen } from '../components/MapScreen'
 import { PlaceInput } from '../components/PlaceInput'
 import { TripLayer, type TripStop } from '../components/TripLayer'
 import type { ClosuresApi } from '../hooks/useClosures'
 import type { NetworkState } from '../hooks/useMetroNetwork'
+import type { Snap } from '../lib/sheet'
 import { formatDuration, formatRupees, nextQuarterHour, toLocalInputValue } from '../lib/format'
 import { preferenceLabel } from '../lib/query'
 import { boundsOf } from '../lib/route'
@@ -42,7 +44,7 @@ function IconButton({ label, onClick, disabled, children }: { label: string; onC
       title={label}
       onClick={onClick}
       disabled={disabled}
-      className="inline-flex size-7 items-center justify-center rounded text-slate-600 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-teal-700 disabled:opacity-30"
+      className="inline-flex size-7 items-center justify-center rounded text-muted hover:bg-subtle focus-visible:outline-2 focus-visible:outline-brand disabled:opacity-30"
     >
       {children}
     </button>
@@ -57,6 +59,7 @@ export function TripPage({ network, closures }: { network: NetworkState; closure
   const [departAt, setDepartAt] = useState(() => toLocalInputValue(nextQuarterHour(new Date())))
   const [preference, setPreference] = useState(0.5)
   const [state, setState] = useState<TripState>({ status: 'idle' })
+  const [snap, setSnap] = useState<Snap>('full')
   const [adderKey, setAdderKey] = useState(0)
   const [notice, setNotice] = useState<string | null>(null)
   const inflight = useRef<AbortController | null>(null)
@@ -86,7 +89,10 @@ export function TripPage({ network, closures }: { network: NetworkState; closure
           : { status: 'loading', previous: null, previousKey: '' },
     )
     optimizeTrip(req, ctl.signal)
-      .then((data) => setState({ status: 'success', data, key }))
+      .then((data) => {
+        setState({ status: 'success', data, key })
+        setSnap('half')
+      })
       .catch((err: unknown) => {
         if (isAbortError(err)) return
         const e = err instanceof ApiError ? err : new ApiError('unknown', 'Something went wrong. Please try again.')
@@ -161,13 +167,17 @@ export function TripPage({ network, closures }: { network: NetworkState; closure
   const ready = stops.length >= MIN_STOPS
 
   return (
-    <div className="flex flex-col lg:grid lg:h-full lg:min-h-0 lg:grid-cols-[minmax(360px,480px)_1fr]">
-      <div className="contents lg:flex lg:min-h-0 lg:flex-col lg:overflow-y-auto lg:border-r lg:border-slate-200">
-        <section aria-labelledby="trip-heading" className="order-1 border-b border-slate-200 bg-white p-4">
-          <h1 id="trip-heading" className="mb-1 text-base font-bold text-slate-900">
+    <MapScreen
+      label="Trip planner"
+      snap={snap}
+      onSnap={setSnap}
+      panel={
+      <div className="space-y-4 p-4 lg:p-5">
+        <section aria-labelledby="trip-heading">
+          <h1 id="trip-heading" className="mb-1 text-lg font-semibold tracking-tight text-ink">
             Trip planner
           </h1>
-          <p className="mb-3 text-xs text-slate-600">
+          <p className="mb-3 text-xs text-muted">
             Add {MIN_STOPS} to {MAX_STOPS} stops. The first one is where you start; Safar finds the order that visits the
             rest for the least time and money.
           </p>
@@ -190,25 +200,25 @@ export function TripPage({ network, closures }: { network: NetworkState; closure
                 lineById={net?.lineById ?? NO_LINES}
               />
               {notice && (
-                <p role="status" className="mt-1 text-xs text-amber-800">
+                <p role="status" className="mt-1 text-xs text-warn-ink">
                   {notice}
                 </p>
               )}
             </div>
 
             {stops.length > 0 && (
-              <ol className="divide-y divide-slate-100 rounded-lg border border-slate-200" aria-label="Stops as entered">
+              <ol className="divide-y divide-line rounded-lg border border-line" aria-label="Stops as entered">
                 {stops.map((s, i) => (
                   <li key={keyOf(s)} className="flex items-center gap-2 px-2 py-1.5">
                     <span
-                      className={`flex size-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-white ${i === 0 ? 'bg-teal-700' : 'bg-slate-700'}`}
+                      className={`flex size-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-on-brand ${i === 0 ? 'bg-brand' : 'bg-ink'}`}
                       aria-hidden="true"
                     >
                       {i === 0 ? 'S' : i + 1}
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm text-slate-900">{s.name}</span>
-                      <span className="block text-[11px] text-slate-500">{i === 0 ? 'Start' : s.kind === 'station' ? 'Metro station' : 'Place'}</span>
+                      <span className="block truncate text-sm text-ink">{s.name}</span>
+                      <span className="block text-[11px] text-muted">{i === 0 ? 'Start' : s.kind === 'station' ? 'Metro station' : 'Place'}</span>
                     </span>
                     <IconButton label={`Move ${s.name} up`} onClick={() => setStops((c) => moveItem(c, i, i - 1))} disabled={i === 0}>
                       <ArrowUp className="size-3.5" aria-hidden="true" />
@@ -225,21 +235,21 @@ export function TripPage({ network, closures }: { network: NetworkState; closure
             )}
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <label className="block text-xs font-semibold tracking-wide text-slate-600 uppercase">
+              <label className="block text-xs font-semibold tracking-wide text-muted uppercase">
                 Leave at
                 <input
                   type="datetime-local"
                   value={departAt}
                   onChange={(e) => setDepartAt(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-normal tracking-normal text-slate-900"
+                  className="mt-1 w-full h-11 rounded-control border border-line-strong bg-surface px-3 text-sm font-normal tracking-normal text-ink"
                 />
               </label>
-              <label className="block text-xs font-semibold tracking-wide text-slate-600 uppercase">
+              <label className="block text-xs font-semibold tracking-wide text-muted uppercase">
                 Search method
                 <select
                   value={method}
                   onChange={(e) => setMethod(e.target.value as TripMethod | 'both')}
-                  className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-normal tracking-normal text-slate-900 normal-case"
+                  className="mt-1 block w-full h-11 rounded-control border border-line-strong bg-surface px-3 text-sm font-normal tracking-normal text-ink normal-case"
                 >
                   <option value="both">Compare both</option>
                   {METHODS.map((m) => (
@@ -253,10 +263,10 @@ export function TripPage({ network, closures }: { network: NetworkState; closure
 
             <div>
               <div className="mb-1 flex items-baseline justify-between">
-                <label htmlFor="trip-preference" className="text-xs font-semibold tracking-wide text-slate-600 uppercase">
+                <label htmlFor="trip-preference" className="text-xs font-semibold tracking-wide text-muted uppercase">
                   Priority
                 </label>
-                <span className="text-xs font-medium text-teal-800" aria-hidden="true">
+                <span className="text-xs font-medium text-brand-ink" aria-hidden="true">
                   {preferenceLabel(preference)}
                 </span>
               </div>
@@ -269,23 +279,23 @@ export function TripPage({ network, closures }: { network: NetworkState; closure
                 value={preference}
                 onChange={(e) => setPreference(Number(e.target.value))}
                 aria-valuetext={preferenceLabel(preference)}
-                className="w-full accent-teal-700"
+                className="w-full accent-brand"
               />
-              <div className="flex justify-between text-xs text-slate-500" aria-hidden="true">
+              <div className="flex justify-between text-xs text-muted" aria-hidden="true">
                 <span>Cheapest</span>
                 <span>Fastest</span>
               </div>
             </div>
 
-            <label className="flex items-center gap-2 text-sm text-slate-800">
-              <input type="checkbox" checked={roundTrip} onChange={(e) => setRoundTrip(e.target.checked)} className="size-4 accent-teal-700" />
+            <label className="flex items-center gap-2 text-sm text-ink-2">
+              <input type="checkbox" checked={roundTrip} onChange={(e) => setRoundTrip(e.target.checked)} className="size-4 accent-brand" />
               Come back to the start at the end
             </label>
 
             <button
               type="submit"
               disabled={!ready || busy}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-teal-700 px-4 py-2.5 text-[15px] font-semibold text-white shadow-sm hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 disabled:opacity-50"
+              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-brand px-4 text-base font-semibold text-on-brand shadow-card transition hover:bg-brand-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-50"
             >
               {busy ? <LoaderCircle className="size-4 animate-spin" aria-hidden="true" /> : <RouteIcon className="size-4" aria-hidden="true" />}
               {busy ? 'Planning every leg…' : ready ? 'Find the best order' : `Add at least ${MIN_STOPS} stops`}
@@ -293,11 +303,11 @@ export function TripPage({ network, closures }: { network: NetworkState; closure
           </form>
         </section>
 
-        <div className="order-3 space-y-3 p-4 lg:flex-1">
+        <div className="space-y-3">
           <ClosurePanel closures={closures} network={net} />
 
           {state.status === 'error' && (
-            <div role="alert" className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-900">
+            <div role="alert" className="flex items-start gap-2 rounded-card border border-danger-line bg-danger-soft p-4 text-sm text-danger-ink">
               <CircleAlert className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
               <div className="flex-1">
                 <p>{state.message}</p>
@@ -313,15 +323,15 @@ export function TripPage({ network, closures }: { network: NetworkState; closure
           {data && saved ? (
             <div className={busy ? 'space-y-4 opacity-60 transition-opacity' : 'space-y-4'} aria-busy={busy}>
               {stale && (
-                <p role="status" className="rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-900">
+                <p role="status" className="rounded-md bg-warn-soft px-3 py-2 text-xs text-warn-ink">
                   The stops or options changed since this plan. Press “Find the best order” to update it.
                 </p>
               )}
-              <section aria-labelledby="trip-best" className="rounded-lg border border-slate-200 bg-white p-3">
-                <h2 id="trip-best" className="text-sm font-bold text-slate-900">
+              <section aria-labelledby="trip-best" className="rounded-card border border-line bg-surface p-4 shadow-card">
+                <h2 id="trip-best" className="text-sm font-bold text-ink">
                   Best order
                 </h2>
-                <p className="mt-0.5 text-xs text-slate-600">
+                <p className="mt-0.5 text-xs text-muted">
                   {formatDuration(data.best.total_min)} · {formatRupees(data.best.fare_rs)} in fares
                   {saved.pct > 0
                     ? ` · ${saved.pct}% lower cost than the order you entered (${saved.min > 0 ? `${formatDuration(saved.min)} faster` : 'same time'}${saved.rs > 0 ? `, ${formatRupees(saved.rs)} cheaper` : ''})`
@@ -334,17 +344,17 @@ export function TripPage({ network, closures }: { network: NetworkState; closure
                     return (
                       <li key={`${si}-${pos}`} className="relative pb-2 pl-8">
                         <span
-                          className={`absolute top-0 left-0 flex size-6 items-center justify-center rounded-full text-[11px] font-bold text-white ${pos === 0 ? 'bg-teal-700' : 'bg-slate-800'}`}
+                          className={`absolute top-0 left-0 flex size-6 items-center justify-center rounded-full text-[11px] font-bold text-on-brand ${pos === 0 ? 'bg-brand' : 'bg-ink'}`}
                           aria-hidden="true"
                         >
                           {pos + 1}
                         </span>
-                        <p className="text-sm font-medium text-slate-900">
+                        <p className="text-sm font-medium text-ink">
                           <span className="sr-only">Stop {pos + 1}: </span>
                           {stop.name}
                         </p>
                         {leg && (
-                          <p className="mt-0.5 border-l-2 border-dashed border-slate-300 py-1 pl-3 text-xs text-slate-600">
+                          <p className="mt-0.5 border-l-2 border-dashed border-line-strong py-1 pl-3 text-xs text-muted">
                             {leg.route.summary} · {formatDuration(leg.route.total_min)} · {formatRupees(leg.route.fare_rs)}
                             {leg.to === data.best.order[0] && data.round_trip ? ` · back to ${data.stops[leg.to]?.name}` : ''}
                           </p>
@@ -356,13 +366,13 @@ export function TripPage({ network, closures }: { network: NetworkState; closure
               </section>
 
               <section aria-labelledby="trip-methods">
-                <h2 id="trip-methods" className="mb-2 text-sm font-bold text-slate-900">
+                <h2 id="trip-methods" className="mb-2 text-sm font-bold text-ink">
                   How the searches did
                 </h2>
-                <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+                <div className="overflow-x-auto rounded-lg border border-line bg-surface">
                   <table className="w-full min-w-[420px] text-left text-xs">
                     <caption className="sr-only">Local search results per method</caption>
-                    <thead className="bg-slate-50 text-[11px] tracking-wide text-slate-600 uppercase">
+                    <thead className="bg-subtle text-[11px] tracking-wide text-muted uppercase">
                       <tr>
                         <th scope="col" className="px-2 py-1.5 font-semibold">Method</th>
                         <th scope="col" className="px-2 py-1.5 text-right font-semibold">Cost</th>
@@ -371,20 +381,20 @@ export function TripPage({ network, closures }: { network: NetworkState; closure
                         <th scope="col" className="px-2 py-1.5 text-right font-semibold">Time</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 tabular-nums">
+                    <tbody className="divide-y divide-line tabular-nums">
                       {data.results.map((r) => (
                         <tr key={r.method}>
-                          <th scope="row" className="px-2 py-1.5 font-medium text-slate-900">
+                          <th scope="row" className="px-2 py-1.5 font-medium text-ink">
                             <span className="inline-flex items-center gap-1.5">
                               <span className="size-2.5 rounded-full" style={{ background: methodInfo(r.method).color }} aria-hidden="true" />
                               {methodInfo(r.method).label}
                             </span>
-                            <span className="block pl-4 text-[11px] font-normal text-slate-500">
+                            <span className="block pl-4 text-[11px] font-normal text-muted">
                               {r.method === 'hill_climb' ? `${r.restarts} climbs, ${r.moves} moves` : `${r.moves} moves, ${r.accepted_worse} uphill`}
                             </span>
                           </th>
                           <td className="px-2 py-1.5 text-right">{r.score.toFixed(1)}</td>
-                          <td className={`px-2 py-1.5 text-right ${r.gap_pct === 0 ? 'font-semibold text-teal-800' : ''}`}>
+                          <td className={`px-2 py-1.5 text-right ${r.gap_pct === 0 ? 'font-semibold text-brand-ink' : ''}`}>
                             {r.gap_pct === undefined ? '–' : r.gap_pct === 0 ? 'optimal' : `+${r.gap_pct.toFixed(1)}%`}
                           </td>
                           <td className="px-2 py-1.5 text-right">{r.evaluations.toLocaleString('en-IN')}</td>
@@ -392,7 +402,7 @@ export function TripPage({ network, closures }: { network: NetworkState; closure
                         </tr>
                       ))}
                       {data.optimum && (
-                        <tr className="text-slate-600">
+                        <tr className="text-muted">
                           <th scope="row" className="px-2 py-1.5 font-medium">
                             Every order (exact)
                           </th>
@@ -407,11 +417,11 @@ export function TripPage({ network, closures }: { network: NetworkState; closure
                 </div>
               </section>
 
-              <section aria-label="Convergence chart" className="rounded-lg border border-slate-200 bg-white p-3">
+              <section aria-label="Convergence chart" className="rounded-card border border-line bg-surface p-4 shadow-card">
                 <ConvergenceChart results={data.results} optimum={data.optimum?.score ?? null} />
               </section>
 
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-muted">
                 Cost of a leg = minutes + rupees ÷ ₹{data.value_of_time_rs_per_min} per minute (your priority
                 setting). Each leg is the recommended journey from the planner; {data.stops.length * (data.stops.length - 1)}{' '}
                 journeys planned in {Math.round(data.matrix_ms)} ms
@@ -421,10 +431,10 @@ export function TripPage({ network, closures }: { network: NetworkState; closure
             </div>
           ) : (
             state.status !== 'error' && (
-              <div className="rounded-lg border border-dashed border-slate-300 bg-white p-5 text-center">
-                <MapPinned className="mx-auto size-8 text-teal-700" aria-hidden="true" />
-                <p className="mt-2 text-sm font-semibold text-slate-900">Visit several places in one day</p>
-                <p className="mt-1 text-xs text-slate-600">
+              <div className="rounded-card border border-dashed border-line-strong bg-surface p-6 text-center">
+                <MapPinned className="mx-auto size-8 text-brand-ink" aria-hidden="true" />
+                <p className="mt-2 text-sm font-semibold text-ink">Visit several places in one day</p>
+                <p className="mt-1 text-xs text-muted">
                   Hill climbing and simulated annealing search for the visiting order with the lowest total cost, and the
                   chart shows how each one converges.
                 </p>
@@ -432,7 +442,7 @@ export function TripPage({ network, closures }: { network: NetworkState; closure
                   type="button"
                   onClick={() => void loadExample()}
                   disabled={busy}
-                  className="mt-3 rounded-md px-3 py-1.5 text-sm font-semibold text-teal-800 hover:bg-teal-50 disabled:opacity-50"
+                  className="mt-3 rounded-md px-3 py-1.5 text-sm font-semibold text-brand-ink hover:bg-brand-soft disabled:opacity-50"
                 >
                   Try a Delhi sightseeing day (8 stops)
                 </button>
@@ -441,18 +451,20 @@ export function TripPage({ network, closures }: { network: NetworkState; closure
           )}
         </div>
       </div>
-
-      <section aria-label="Map" className="relative order-2 h-[55vh] min-h-80 lg:order-none lg:h-full">
+      }
+      map={
+        <>
         <BaseMap network={net} closures={closures} stationActions={stationActions} bounds={bounds} fitKey={fitKey}>
           <TripLayer key={fitKey} stops={mapStops} legs={mapLegs} />
         </BaseMap>
         {network.status === 'error' && (
-          <div role="status" className="absolute top-3 right-3 left-14 z-[1000] flex items-center gap-2 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-900 shadow sm:left-auto">
+          <div role="status" className="absolute top-20 right-3 left-3 z-[1000] flex items-center gap-2 rounded-xl border border-warn-line bg-warn-soft px-3 py-2 text-xs text-warn-ink shadow-card lg:top-3 lg:left-auto">
             <CircleAlert className="size-4 shrink-0" aria-hidden="true" />
             Metro map unavailable: {network.message}
           </div>
         )}
-      </section>
-    </div>
+        </>
+      }
+    />
   )
 }

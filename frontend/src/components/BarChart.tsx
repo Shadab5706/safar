@@ -23,8 +23,8 @@ export function BarChart({ title, note, rows }: Props) {
   return (
     <figure className="min-w-0">
       <figcaption className="mb-1.5">
-        <span className="text-xs font-semibold text-slate-800">{title}</span>
-        {note && <span className="ml-1.5 text-[11px] text-slate-500">{note}</span>}
+        <span className="text-xs font-semibold text-ink-2">{title}</span>
+        {note && <span className="ml-1.5 text-[11px] text-muted">{note}</span>}
       </figcaption>
       <ul className="space-y-1">
         {rows.map((r) => (
@@ -34,7 +34,7 @@ export function BarChart({ title, note, rows }: Props) {
             onMouseEnter={() => setHover(r.key)}
             onMouseLeave={() => setHover((h) => (h === r.key ? null : h))}
           >
-            <span className="truncate text-[11px] font-medium text-slate-700">{r.label}</span>
+            <span className="truncate text-[11px] font-medium text-ink-2">{r.label}</span>
             <span className="flex min-w-0 items-center gap-1.5">
               <span className="h-3 min-w-0 flex-1" aria-hidden="true">
                 <span
@@ -46,12 +46,12 @@ export function BarChart({ title, note, rows }: Props) {
                   }}
                 />
               </span>
-              <span className="w-16 shrink-0 text-right text-[11px] tabular-nums text-slate-800">{r.valueLabel}</span>
+              <span className="w-16 shrink-0 text-right text-[11px] tabular-nums text-ink-2">{r.valueLabel}</span>
             </span>
             {hover === r.key && r.detail && (
               <span
                 role="tooltip"
-                className="pointer-events-none absolute -top-7 left-14 z-10 rounded bg-slate-900 px-2 py-1 text-[11px] whitespace-nowrap text-white shadow"
+                className="pointer-events-none absolute -top-7 left-14 z-10 rounded bg-ink px-2 py-1 text-[11px] whitespace-nowrap text-on-brand shadow"
               >
                 {r.detail}
               </span>

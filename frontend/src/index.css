@@ -1,18 +1,182 @@
 @import 'tailwindcss';
 
-@theme {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', sans-serif;
+/*
+ * Design tokens. Components use the semantic names (bg-surface, text-ink, border-line,
+ * bg-brand…) and never raw palette colours, so light and dark mode come from one place.
+ * Dark mode follows the system setting.
+ */
+:root {
+  color-scheme: light dark;
+
+  --canvas: #f4f6f8;
+  --surface: #ffffff;
+  --subtle: #f1f4f7;
+  --subtle-2: #e6ebf0;
+  --line: #e2e7ec;
+  --line-strong: #c9d2db;
+  --ink: #0b1220;
+  --ink-2: #2a3546;
+  --muted: #586374;
+  --faint: #8b95a3;
+
+  --brand: #0d7064;
+  --brand-strong: #095a50;
+  --brand-soft: #e5f3f0;
+  --brand-ink: #0a5f55;
+  --on-brand: #ffffff;
+  --accent: #f2a516;
+
+  --warn-soft: #fff6e5;
+  --warn-line: #f2d7a6;
+  --warn-ink: #874a05;
+  --danger: #c4262e;
+  --danger-strong: #a11d24;
+  --danger-soft: #fdeded;
+  --danger-line: #f3c3c3;
+  --danger-ink: #8f1a20;
+  --ok-ink: #0f7a3d;
+  --mode-cab: #1e293b;
+
+  --shadow-card-c: 0 1px 2px rgb(15 23 42 / 0.04), 0 1px 3px rgb(15 23 42 / 0.06);
+  --shadow-lift-c: 0 6px 16px -4px rgb(15 23 42 / 0.1), 0 2px 4px -2px rgb(15 23 42 / 0.06);
+  --shadow-pop-c: 0 18px 40px -12px rgb(15 23 42 / 0.25), 0 4px 10px -4px rgb(15 23 42 / 0.08);
+  --hero-glow: radial-gradient(60rem 30rem at 85% -10%, rgb(13 112 100 / 0.16), transparent 60%),
+    radial-gradient(40rem 24rem at -10% 10%, rgb(242 165 22 / 0.12), transparent 60%);
+
+  --tab-h: 4rem;
+  --bar-h: 3.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --canvas: #080c11;
+    --surface: #10161d;
+    --subtle: #161e27;
+    --subtle-2: #1d2731;
+    --line: #222c37;
+    --line-strong: #344251;
+    --ink: #eef2f6;
+    --ink-2: #cdd5de;
+    --muted: #9aa5b3;
+    --faint: #6c7886;
+
+    --brand: #35bfae;
+    --brand-strong: #5ad0c1;
+    --brand-soft: #0f2a28;
+    --brand-ink: #62d6c7;
+    --on-brand: #04201c;
+    --accent: #f7bb3d;
+
+    --warn-soft: #261d0e;
+    --warn-line: #574116;
+    --warn-ink: #f3c672;
+    --danger: #e5484d;
+    --danger-strong: #ee6a6e;
+    --danger-soft: #2b1416;
+    --danger-line: #5a2428;
+    --danger-ink: #f5a3a5;
+    --ok-ink: #5dd39e;
+    --mode-cab: #cbd5e1;
+
+    --shadow-card-c: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-lift-c: 0 6px 16px -4px rgb(0 0 0 / 0.5);
+    --shadow-pop-c: 0 18px 40px -12px rgb(0 0 0 / 0.7), 0 0 0 1px rgb(255 255 255 / 0.04);
+    --hero-glow: radial-gradient(60rem 30rem at 85% -10%, rgb(53 191 174 / 0.16), transparent 60%),
+      radial-gradient(40rem 24rem at -10% 10%, rgb(247 187 61 / 0.08), transparent 60%);
+  }
+}
+
+@theme inline {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-subtle: var(--subtle);
+  --color-subtle-2: var(--subtle-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-ink: var(--brand-ink);
+  --color-on-brand: var(--on-brand);
+  --color-accent: var(--accent);
+  --color-warn-soft: var(--warn-soft);
+  --color-warn-line: var(--warn-line);
+  --color-warn-ink: var(--warn-ink);
+  --color-danger: var(--danger);
+  --color-danger-strong: var(--danger-strong);
+  --color-danger-soft: var(--danger-soft);
+  --color-danger-line: var(--danger-line);
+  --color-danger-ink: var(--danger-ink);
+  --color-ok-ink: var(--ok-ink);
+
+  --shadow-card: var(--shadow-card-c);
+  --shadow-lift: var(--shadow-lift-c);
+  --shadow-pop: var(--shadow-pop-c);
+
+  --radius-card: 1rem;
+  --radius-control: 0.75rem;
+
+  --ease-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  --animate-rise: rise 0.45s var(--ease-soft) both;
+  --animate-fade: fade 0.3s ease-out both;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+  }
 }
 
 html {
   -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  font-feature-settings: 'cv11', 'ss01';
 }
 
 body {
-  background: var(--color-slate-50);
+  background: var(--canvas);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Leaflet sets its own font; match the app. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Safe areas for notched phones and an installed (standalone) app. */
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.px-safe {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* ---- Leaflet, themed to match ---- */
 .leaflet-container {
   font: inherit;
   background: #e8eef0;
@@ -21,4 +185,63 @@ body {
 .leaflet-tooltip {
   font-size: 12px;
   font-weight: 500;
+}
+
+.leaflet-control-attribution {
+  font-size: 11px;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-pop-c);
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 14px;
+}
+
+.leaflet-bar {
+  border: 1px solid var(--line) !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: var(--shadow-lift-c) !important;
+}
+.leaflet-bar a {
+  width: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  background: var(--surface) !important;
+  color: var(--ink) !important;
+  border-color: var(--line) !important;
+}
+.leaflet-bar a:hover {
+  background: var(--subtle) !important;
+}
+.leaflet-touch .leaflet-bar a {
+  width: 44px !important;
+  height: 44px !important;
+  line-height: 44px !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .leaflet-container {
+    background: #0e1418;
+  }
+  /* Darken the OSM tiles only; route and metro lines on top keep their colours. */
+  .leaflet-tile-pane {
+    filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.88) saturate(0.55);
+  }
+  .leaflet-control-attribution {
+    background: rgb(16 22 29 / 0.8) !important;
+    color: var(--muted) !important;
+  }
+  .leaflet-control-attribution a {
+    color: var(--brand-ink) !important;
+  }
+  .leaflet-tooltip {
+    background: var(--surface);
+    color: var(--ink);
+    border-color: var(--line);
+  }
 }

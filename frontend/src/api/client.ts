@@ -15,7 +15,21 @@ import type {
   TripResponse,
 } from './types'
 
-export const API_BASE = '/api/v1'
+/**
+ * The API root. A build can point it elsewhere with VITE_API_BASE (a mobile app uses the full
+ * https://… address of the live API); the website itself uses its own /api/v1 proxy.
+ */
+export function resolveApiBase(raw: string | undefined): string {
+  const base = raw?.trim().replace(/\/+$/, '')
+  return base ? base : '/api/v1'
+}
+
+export const API_BASE = resolveApiBase(import.meta.env.VITE_API_BASE)
+
+/** The health URL to ping when the API base is an absolute address, or null for a same-site proxy. */
+export function directWakeUrl(base: string): string | null {
+  return /^https?:\/\//.test(base) ? `${base}/health` : null
+}
 
 /** An error from the API (its `code`) or from the network (`network`, `bad_response`). */
 export class ApiError extends Error {
@@ -70,6 +84,8 @@ export function resetWakeUrl() {
 }
 
 function apiWakeUrl(fetchFn: typeof fetch): Promise<string | null> {
+  const direct = directWakeUrl(API_BASE)
+  if (direct) return (wakeUrl ??= Promise.resolve(direct))
   wakeUrl ??= fetchFn('/wake.json', { cache: 'no-store' })
     .then((r) => (r.ok ? (r.json() as Promise<{ api?: unknown }>) : null))
     .then((j) => (typeof j?.api === 'string' && j.api.startsWith('https://') ? `${j.api.replace(/\/$/, '')}${API_BASE}/health` : null))

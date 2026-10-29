@@ -25,6 +25,21 @@ export function legColor(leg: Leg): string {
   }
 }
 
+/**
+ * Leg colour for the page itself (not the map): the cab colour is near-black, so on screen it
+ * comes from a token that turns light in dark mode.
+ */
+export function uiLegColor(leg: Leg): string {
+  return leg.kind === 'road' && leg.mode === 'cab' ? 'var(--mode-cab)' : legColor(leg)
+}
+
+/** Each timed leg's share of the whole journey (0..1), for the little time bar on a route card. */
+export function timeShares(route: Route): { index: number; share: number }[] {
+  const total = route.legs.reduce((sum, leg) => sum + Math.max(0, leg.total_min), 0)
+  if (total <= 0) return []
+  return route.legs.flatMap((leg, index) => (leg.total_min > 0 ? [{ index, share: leg.total_min / total }] : []))
+}
+
 /** Map style per leg: metro solid in its line colour, road dashed, walking dotted. */
 export function legStyle(leg: Leg): LegStyle {
   const color = legColor(leg)

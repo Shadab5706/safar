@@ -6,9 +6,11 @@ import { BaseMap, type StationAction } from '../components/BaseMap'
 import { ClosurePanel } from '../components/ClosurePanel'
 import { ExpansionLayer } from '../components/ExpansionLayer'
 import { LabResults } from '../components/LabResults'
+import { MapScreen } from '../components/MapScreen'
 import { PlaceInput } from '../components/PlaceInput'
 import type { ClosuresApi } from '../hooks/useClosures'
 import type { NetworkState } from '../hooks/useMetroNetwork'
+import type { Snap } from '../lib/sheet'
 import { usePlayer } from '../hooks/usePlayer'
 import { ALGORITHMS, algorithmInfo, expansionFrames, framesUpTo } from '../lib/lab'
 import { boundsOf } from '../lib/route'
@@ -41,6 +43,7 @@ export function LabPage({ network, closures }: { network: NetworkState; closures
   const [algos, setAlgos] = useState<Algorithm[]>(() => ALGORITHMS.map((a) => a.id))
   const [heuristic, setHeuristic] = useState<number>(0)
   const [state, setState] = useState<LabState>({ status: 'idle' })
+  const [snap, setSnap] = useState<Snap>('full')
   const [active, setActive] = useState<Algorithm>('astar')
   const [formError, setFormError] = useState<string | null>(null)
   const inflight = useRef<AbortController | null>(null)
@@ -82,6 +85,7 @@ export function LabPage({ network, closures }: { network: NetworkState; closures
       )
         .then((d) => {
           setState({ status: 'success', data: d })
+          setSnap('half')
           setActive((a) => (d.results.some((r) => r.algorithm === a) ? a : (d.results[0]?.algorithm ?? 'astar')))
           if (autoplay) restart()
         })
@@ -134,13 +138,17 @@ export function LabPage({ network, closures }: { network: NetworkState; closures
   const busy = state.status === 'loading'
 
   return (
-    <div className="flex flex-col lg:grid lg:h-full lg:min-h-0 lg:grid-cols-[minmax(360px,480px)_1fr]">
-      <div className="contents lg:flex lg:min-h-0 lg:flex-col lg:overflow-y-auto lg:border-r lg:border-slate-200">
-        <section aria-labelledby="lab-heading" className="order-1 border-b border-slate-200 bg-white p-4">
-          <h1 id="lab-heading" className="mb-1 text-base font-bold text-slate-900">
+    <MapScreen
+      label="Algorithm Lab"
+      snap={snap}
+      onSnap={setSnap}
+      panel={
+      <div className="space-y-4 p-4 lg:p-5">
+        <section aria-labelledby="lab-heading">
+          <h1 id="lab-heading" className="mb-1 text-lg font-semibold tracking-tight text-ink">
             Algorithm Lab
           </h1>
-          <p className="mb-3 text-xs text-slate-600">
+          <p className="mb-3 text-xs text-muted">
             Run five search algorithms on the same metro trip and watch the order in which each one explores the network.
           </p>
           <form
@@ -154,7 +162,7 @@ export function LabPage({ network, closures }: { network: NetworkState; closures
             <PlaceInput label="From station" placeholder="e.g. Samaypur Badli" value={from} onChange={setFrom} lineById={net?.lineById ?? NO_LINES} stationsOnly />
             <PlaceInput label="To station" placeholder="e.g. Botanical Garden" value={to} onChange={setTo} lineById={net?.lineById ?? NO_LINES} stationsOnly />
             <fieldset>
-              <legend className="mb-1.5 text-xs font-semibold tracking-wide text-slate-600 uppercase">Algorithms</legend>
+              <legend className="mb-1.5 text-xs font-semibold tracking-wide text-muted uppercase">Algorithms</legend>
               <div className="flex flex-wrap gap-1.5">
                 {ALGORITHMS.map((a) => {
                   const on = algos.includes(a.id)
@@ -165,8 +173,8 @@ export function LabPage({ network, closures }: { network: NetworkState; closures
                       aria-pressed={on}
                       title={a.label}
                       onClick={() => toggle(a.id)}
-                      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-teal-600 ${
-                        on ? 'border-teal-700 bg-teal-50 text-teal-900' : 'border-slate-300 bg-white text-slate-500'
+                      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand ${
+                        on ? 'border-brand bg-brand-soft text-brand-ink' : 'border-line-strong bg-surface text-muted'
                       }`}
                     >
                       <span className="size-2.5 rounded-full" style={{ background: on ? a.color : '#cbd5e1' }} aria-hidden="true" />
@@ -176,12 +184,12 @@ export function LabPage({ network, closures }: { network: NetworkState; closures
                 })}
               </div>
             </fieldset>
-            <label className="block text-xs font-semibold tracking-wide text-slate-600 uppercase">
+            <label className="block text-xs font-semibold tracking-wide text-muted uppercase">
               Heuristic (A* and Greedy)
               <select
                 value={heuristic}
                 onChange={(e) => setHeuristic(Number(e.target.value))}
-                className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-normal tracking-normal text-slate-900 normal-case"
+                className="mt-1 block w-full h-11 rounded-control border border-line-strong bg-surface px-3 text-sm font-normal tracking-normal text-ink normal-case"
               >
                 {HEURISTICS.map((h) => (
                   <option key={h.value} value={h.value}>
@@ -191,7 +199,7 @@ export function LabPage({ network, closures }: { network: NetworkState; closures
               </select>
             </label>
             {formError && (
-              <p role="alert" className="text-xs text-red-700">
+              <p role="alert" className="text-xs text-danger-ink">
                 {formError}
               </p>
             )}
@@ -199,7 +207,7 @@ export function LabPage({ network, closures }: { network: NetworkState; closures
               <button
                 type="submit"
                 disabled={busy}
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-teal-700 px-4 py-2.5 text-[15px] font-semibold text-white shadow-sm hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 disabled:opacity-60"
+                className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-control bg-brand px-4 text-base font-semibold text-on-brand shadow-card transition hover:bg-brand-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-60"
               >
                 {busy ? <LoaderCircle className="size-4 animate-spin" aria-hidden="true" /> : <Play className="size-4" aria-hidden="true" />}
                 {busy ? 'Running…' : 'Run comparison'}
@@ -208,10 +216,10 @@ export function LabPage({ network, closures }: { network: NetworkState; closures
           </form>
         </section>
 
-        <div className="order-3 space-y-3 p-4 lg:flex-1">
+        <div className="space-y-3">
           <ClosurePanel closures={closures} network={net} />
           {state.status === 'error' && (
-            <div role="alert" className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-900">
+            <div role="alert" className="flex items-start gap-2 rounded-card border border-danger-line bg-danger-soft p-4 text-sm text-danger-ink">
               <CircleAlert className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
               <div className="flex-1">
                 <p>{state.message}</p>
@@ -237,10 +245,10 @@ export function LabPage({ network, closures }: { network: NetworkState; closures
             </div>
           ) : (
             state.status !== 'error' && (
-              <div className="rounded-lg border border-dashed border-slate-300 bg-white p-5 text-center">
-                <FlaskConical className="mx-auto size-8 text-teal-700" aria-hidden="true" />
-                <p className="mt-2 text-sm font-semibold text-slate-900">Compare BFS, DFS, UCS, Greedy and A*</p>
-                <p className="mt-1 text-xs text-slate-600">
+              <div className="rounded-card border border-dashed border-line-strong bg-surface p-6 text-center">
+                <FlaskConical className="mx-auto size-8 text-brand-ink" aria-hidden="true" />
+                <p className="mt-2 text-sm font-semibold text-ink">Compare BFS, DFS, UCS, Greedy and A*</p>
+                <p className="mt-1 text-xs text-muted">
                   Pick two stations (or click them on the map), then run. Each algorithm's exploration plays on the map,
                   with its route cost, nodes expanded and runtime side by side.
                 </p>
@@ -248,7 +256,7 @@ export function LabPage({ network, closures }: { network: NetworkState; closures
                   type="button"
                   onClick={example}
                   disabled={!net || busy}
-                  className="mt-3 rounded-md px-3 py-1.5 text-sm font-semibold text-teal-800 hover:bg-teal-50 disabled:opacity-50"
+                  className="mt-3 rounded-md px-3 py-1.5 text-sm font-semibold text-brand-ink hover:bg-brand-soft disabled:opacity-50"
                 >
                   Try Samaypur Badli → Botanical Garden
                 </button>
@@ -257,8 +265,9 @@ export function LabPage({ network, closures }: { network: NetworkState; closures
           )}
         </div>
       </div>
-
-      <section aria-label="Map" className="relative order-2 h-[55vh] min-h-80 lg:order-none lg:h-full">
+      }
+      map={
+        <>
         <BaseMap network={net} closures={closures} stationActions={stationActions} bounds={bounds} fitKey={fitKey}>
           <ExpansionLayer
             key={`${data?.from.id}:${data?.to.id}:${active}`}
@@ -272,22 +281,23 @@ export function LabPage({ network, closures }: { network: NetworkState; closures
           />
         </BaseMap>
         {data && result && (
-          <div className="pointer-events-none absolute top-3 right-3 z-[1000] rounded-lg bg-white/95 px-3 py-1.5 text-xs shadow" aria-hidden="true">
+          <div className="pointer-events-none absolute top-8 left-3 z-[1000] rounded-xl border border-line bg-surface/95 px-3 py-1.5 text-xs shadow-card lg:top-3 lg:right-3 lg:left-auto" aria-hidden="true">
             <span className="mr-1.5 inline-block size-2.5 rounded-full align-middle" style={{ background: color }} />
-            <span className="font-semibold text-slate-900">{algorithmInfo(result.algorithm).short}</span>
-            <span className="text-slate-600 tabular-nums">
+            <span className="font-semibold text-ink">{algorithmInfo(result.algorithm).short}</span>
+            <span className="text-muted tabular-nums">
               {' '}
               · {visible} stations · node {expansion.length ? player.step + 1 : 0}/{expansion.length}
             </span>
           </div>
         )}
         {network.status === 'error' && (
-          <div role="status" className="absolute top-3 right-3 left-14 z-[1000] flex items-center gap-2 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-900 shadow sm:left-auto">
+          <div role="status" className="absolute top-20 right-3 left-3 z-[1000] flex items-center gap-2 rounded-xl border border-warn-line bg-warn-soft px-3 py-2 text-xs text-warn-ink shadow-card lg:top-3 lg:left-auto">
             <CircleAlert className="size-4 shrink-0" aria-hidden="true" />
             Metro map unavailable: {network.message}
           </div>
         )}
-      </section>
-    </div>
+        </>
+      }
+    />
   )
 }

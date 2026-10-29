@@ -14,6 +14,54 @@ interface Props {
   lineById: Map<string, MetroLine>
 }
 
+/** Start and end fields joined by a little route line, with a swap button between them. */
+export function EndpointFields({
+  from,
+  to,
+  onChange,
+  lineById,
+}: {
+  from: SearchResult | null
+  to: SearchResult | null
+  onChange: (patch: { from?: SearchResult | null; to?: SearchResult | null }) => void
+  lineById: Map<string, MetroLine>
+}) {
+  return (
+    <div role="group" aria-label="Start and destination" className="flex items-center gap-2">
+      <div className="relative min-w-0 flex-1 space-y-2.5">
+      <span className="pointer-events-none absolute top-6 bottom-6 left-[1.2rem] z-10 border-l-2 border-dotted border-line-strong" aria-hidden="true" />
+      <PlaceInput
+        label="From"
+        hideLabel
+        placeholder="Starting point"
+        value={from}
+        onChange={(v) => onChange({ from: v })}
+        lineById={lineById}
+        leading={<span className="block size-3 rounded-full border-[3px] border-brand bg-surface" />}
+      />
+      <PlaceInput
+        label="To"
+        hideLabel
+        placeholder="Destination"
+        value={to}
+        onChange={(v) => onChange({ to: v })}
+        lineById={lineById}
+        leading={<span className="block size-3 rounded-full bg-accent ring-[3px] ring-accent/25" />}
+      />
+      </div>
+      <button
+        type="button"
+        onClick={() => onChange({ from: to, to: from })}
+        aria-label="Swap start and destination"
+        title="Swap"
+        className="grid size-10 shrink-0 place-items-center rounded-full border border-line bg-surface text-muted shadow-card transition hover:border-brand hover:text-brand-ink focus-visible:outline-2 focus-visible:outline-brand active:scale-95 pointer-coarse:size-11"
+      >
+        <ArrowUpDown className="size-4" aria-hidden="true" />
+      </button>
+    </div>
+  )
+}
+
 export function JourneyForm({ query, onChange, onSubmit, busy, lineById }: Props) {
   const noModes = query.modes.length === 0
   const canSubmit = !!query.from && !!query.to && !noModes
@@ -30,50 +78,12 @@ export function JourneyForm({ query, onChange, onSubmit, busy, lineById }: Props
   }
 
   return (
-    <form onSubmit={submit} aria-label="Plan a journey" className="space-y-4">
-      <div className="relative space-y-3">
-        <PlaceInput
-          label="From"
-          placeholder="Bennett University, a metro station…"
-          value={query.from}
-          onChange={(from: SearchResult | null) => onChange({ from })}
-          lineById={lineById}
-        />
-        <button
-          type="button"
-          onClick={() => onChange({ from: query.to, to: query.from })}
-          aria-label="Swap from and to"
-          className="absolute top-[72px] right-0 z-10 inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-teal-600"
-        >
-          <ArrowUpDown className="size-3.5" aria-hidden="true" />
-          Swap
-        </button>
-        <PlaceInput
-          label="To"
-          placeholder="Hauz Khas Village, Cyber Hub…"
-          value={query.to}
-          onChange={(to: SearchResult | null) => onChange({ to })}
-          lineById={lineById}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="depart-at" className="mb-1 block text-xs font-semibold tracking-wide text-slate-600 uppercase">
-          Depart at
-        </label>
-        <input
-          id="depart-at"
-          type="datetime-local"
-          required
-          value={query.departAt}
-          onChange={(e) => e.target.value && onChange({ departAt: e.target.value }, { delay: 500 })}
-          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-[15px] text-slate-900 shadow-sm focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 focus:outline-none"
-        />
-      </div>
+    <form onSubmit={submit} aria-label="Plan a journey" className="space-y-5">
+      <EndpointFields from={query.from} to={query.to} onChange={onChange} lineById={lineById} />
 
       <fieldset>
-        <legend className="mb-1.5 text-xs font-semibold tracking-wide text-slate-600 uppercase">Travel by</legend>
-        <div className="flex flex-wrap gap-1.5">
+        <legend className="mb-2 text-xs font-semibold tracking-wide text-muted uppercase">Travel by</legend>
+        <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
           {ALL_MODES.map((mode) => {
             const on = query.modes.includes(mode)
             return (
@@ -82,10 +92,10 @@ export function JourneyForm({ query, onChange, onSubmit, busy, lineById }: Props
                 type="button"
                 aria-pressed={on}
                 onClick={() => toggleMode(mode)}
-                className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-teal-600 ${
+                className={`inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand pointer-coarse:h-11 ${
                   on
-                    ? 'border-teal-700 bg-teal-700 text-white hover:bg-teal-800'
-                    : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400 hover:text-slate-900'
+                    ? 'border-transparent bg-brand-soft text-brand-ink'
+                    : 'border-line bg-surface text-muted hover:border-line-strong hover:text-ink'
                 }`}
               >
                 <ModeIcon mode={mode} className="size-4" />
@@ -95,48 +105,59 @@ export function JourneyForm({ query, onChange, onSubmit, busy, lineById }: Props
           })}
         </div>
         {noModes && (
-          <p role="alert" className="mt-1.5 text-xs text-red-700">
+          <p role="alert" className="mt-1.5 text-xs text-danger-ink">
             Pick at least one way to travel.
           </p>
         )}
       </fieldset>
 
-      <div>
-        <div className="mb-1 flex items-baseline justify-between">
-          <label htmlFor="preference" className="text-xs font-semibold tracking-wide text-slate-600 uppercase">
-            Preference
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+        <div>
+          <label htmlFor="depart-at" className="mb-2 block text-xs font-semibold tracking-wide text-muted uppercase">
+            Leave at
           </label>
-          <span className="text-xs font-medium text-teal-800" aria-hidden="true">
-            {preferenceLabel(query.preference)}
-          </span>
+          <input
+            id="depart-at"
+            type="datetime-local"
+            required
+            value={query.departAt}
+            onChange={(e) => e.target.value && onChange({ departAt: e.target.value }, { delay: 500 })}
+            className="h-11 w-full rounded-control border border-line-strong bg-surface px-3 text-[15px] text-ink focus:border-brand focus:ring-4 focus:ring-brand/15 focus:outline-none"
+          />
         </div>
-        <input
-          id="preference"
-          type="range"
-          min={0}
-          max={1}
-          step={0.05}
-          value={query.preference}
-          aria-valuetext={preferenceLabel(query.preference)}
-          onChange={(e) => onChange({ preference: Number(e.target.value) }, { delay: 400 })}
-          className="w-full accent-teal-700"
-        />
-        <div className="flex justify-between text-xs text-slate-500" aria-hidden="true">
-          <span>Cheapest</span>
-          <span>Fastest</span>
+        <div>
+          <div className="mb-2 flex items-baseline justify-between">
+            <label htmlFor="preference" className="text-xs font-semibold tracking-wide text-muted uppercase">
+              Preference
+            </label>
+            <span className="text-xs font-semibold text-brand-ink" aria-hidden="true">
+              {preferenceLabel(query.preference)}
+            </span>
+          </div>
+          <input
+            id="preference"
+            type="range"
+            min={0}
+            max={1}
+            step={0.05}
+            value={query.preference}
+            aria-valuetext={preferenceLabel(query.preference)}
+            onChange={(e) => onChange({ preference: Number(e.target.value) }, { delay: 400 })}
+            className="h-6 w-full accent-brand"
+          />
+          <div className="flex justify-between text-xs text-muted" aria-hidden="true">
+            <span>Cheapest</span>
+            <span>Fastest</span>
+          </div>
         </div>
       </div>
 
       <button
         type="submit"
         disabled={!canSubmit || busy}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-teal-700 px-4 py-2.5 text-[15px] font-semibold text-white shadow-sm hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-600"
+        className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-brand px-4 text-base font-semibold text-on-brand shadow-card transition hover:bg-brand-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-subtle-2 disabled:text-muted disabled:shadow-none"
       >
-        {busy ? (
-          <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
-        ) : (
-          <Search className="size-4" aria-hidden="true" />
-        )}
+        {busy ? <LoaderCircle className="size-4 animate-spin" aria-hidden="true" /> : <Search className="size-4" aria-hidden="true" />}
         {busy ? 'Finding routes…' : 'Find routes'}
       </button>
     </form>

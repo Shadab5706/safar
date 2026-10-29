@@ -1,5 +1,5 @@
 import { LoaderCircle, MapPin, TrainFront, X } from 'lucide-react'
-import { useEffect, useId, useState, type KeyboardEvent } from 'react'
+import { useEffect, useId, useState, type KeyboardEvent, type ReactNode } from 'react'
 import { isAbortError, searchPlaces } from '../api/client'
 import type { MetroLine, SearchResult } from '../api/types'
 import { useDebounced } from '../hooks/useDebounced'
@@ -12,6 +12,10 @@ interface Props {
   lineById: Map<string, MetroLine>
   /** Only offer metro stations (the Algorithm Lab searches the metro graph). */
   stationsOnly?: boolean
+  /** Icon shown inside the field, on the left. */
+  leading?: ReactNode
+  /** Keep the label for screen readers only (the field sits in a labelled group). */
+  hideLabel?: boolean
 }
 
 interface Found {
@@ -29,7 +33,7 @@ function subtitle(item: SearchResult, lineById: Map<string, MetroLine>): string 
 }
 
 /** Autocomplete over places and metro stations (WAI-ARIA combobox with a listbox popup). */
-export function PlaceInput({ label, placeholder, value, onChange, lineById, stationsOnly = false }: Props) {
+export function PlaceInput({ label, placeholder, value, onChange, lineById, stationsOnly = false, leading, hideLabel = false }: Props) {
   const id = useId()
   const listId = `${id}-list`
   const [text, setText] = useState(value?.name ?? '')
@@ -96,10 +100,11 @@ export function PlaceInput({ label, placeholder, value, onChange, lineById, stat
 
   return (
     <div className="relative">
-      <label htmlFor={id} className="mb-1 block text-xs font-semibold tracking-wide text-slate-600 uppercase">
+      <label htmlFor={id} className={hideLabel ? 'sr-only' : 'mb-1.5 block text-xs font-semibold tracking-wide text-muted uppercase'}>
         {label}
       </label>
       <div className="relative">
+        {leading && <span className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center">{leading}</span>}
         <input
           id={id}
           type="text"
@@ -121,11 +126,13 @@ export function PlaceInput({ label, placeholder, value, onChange, lineById, stat
           onFocus={() => setOpen(true)}
           onBlur={() => setOpen(false)}
           onKeyDown={onKeyDown}
-          className="w-full rounded-lg border border-slate-300 bg-white py-2.5 pr-9 pl-3 text-[15px] text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 focus:outline-none"
+          className={`h-12 w-full rounded-control border border-line-strong bg-surface pr-11 text-base text-ink shadow-card transition-colors placeholder:text-faint hover:border-faint focus:border-brand focus:ring-4 focus:ring-brand/15 focus:outline-none ${leading ? 'pl-10' : 'pl-3.5'}`}
         />
-        <span className="absolute inset-y-0 right-2 flex items-center">
+        <span className="absolute inset-y-0 right-1 flex items-center">
           {loading ? (
-            <LoaderCircle className="size-4 animate-spin text-slate-400" aria-hidden="true" />
+            <span className="grid size-10 place-items-center">
+              <LoaderCircle className="size-4 animate-spin text-faint" aria-hidden="true" />
+            </span>
           ) : text ? (
             <button
               type="button"
@@ -134,7 +141,7 @@ export function PlaceInput({ label, placeholder, value, onChange, lineById, stat
                 setText('')
                 onChange(null)
               }}
-              className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+              className="grid size-10 place-items-center rounded-full text-faint hover:bg-subtle hover:text-ink-2 focus-visible:outline-2 focus-visible:outline-brand"
             >
               <X className="size-4" aria-hidden="true" />
             </button>
@@ -146,7 +153,7 @@ export function PlaceInput({ label, placeholder, value, onChange, lineById, stat
         role="listbox"
         aria-label={`${label} suggestions`}
         hidden={!showList}
-        className="absolute z-[1000] mt-1 max-h-72 w-full overflow-y-auto rounded-lg border border-slate-200 bg-white py-1 shadow-lg"
+        className="absolute z-[1200] mt-1.5 max-h-72 w-full animate-fade overflow-y-auto rounded-control border border-line bg-surface p-1 shadow-pop"
       >
         {items.map((item, i) => (
           <li
@@ -157,16 +164,16 @@ export function PlaceInput({ label, placeholder, value, onChange, lineById, stat
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => choose(item)}
             onMouseEnter={() => setActive(i)}
-            className={`flex cursor-pointer items-start gap-2.5 px-3 py-2 ${i === active ? 'bg-teal-50' : ''}`}
+            className={`flex min-h-11 cursor-pointer items-start gap-2.5 rounded-lg px-3 py-2 ${i === active ? 'bg-brand-soft' : ''}`}
           >
             {item.kind === 'station' ? (
-              <TrainFront className="mt-0.5 size-4 shrink-0 text-slate-500" aria-hidden="true" />
+              <TrainFront className="mt-0.5 size-4 shrink-0 text-muted" aria-hidden="true" />
             ) : (
-              <MapPin className="mt-0.5 size-4 shrink-0 text-slate-500" aria-hidden="true" />
+              <MapPin className="mt-0.5 size-4 shrink-0 text-muted" aria-hidden="true" />
             )}
             <span className="min-w-0">
-              <span className="block truncate text-sm font-medium text-slate-900">{item.name}</span>
-              <span className="flex items-center gap-1.5 truncate text-xs text-slate-500">
+              <span className="block truncate text-sm font-medium text-ink">{item.name}</span>
+              <span className="flex items-center gap-1.5 truncate text-xs text-muted">
                 {item.kind === 'station' &&
                   item.lines.map((l) => (
                     <span
@@ -182,7 +189,7 @@ export function PlaceInput({ label, placeholder, value, onChange, lineById, stat
           </li>
         ))}
         {!loading && items.length === 0 && (
-          <li role="presentation" className="px-3 py-2 text-sm text-slate-500">
+          <li role="presentation" className="px-3 py-2 text-sm text-muted">
             {found.error ?? 'No places or stations match.'}
           </li>
         )}

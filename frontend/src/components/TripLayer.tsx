@@ -18,8 +18,8 @@ function stopIcon(label: string, start: boolean) {
     className: '',
     iconSize: [26, 26],
     iconAnchor: [13, 13],
-    html: `<span class="flex size-[26px] items-center justify-center rounded-full border-2 border-white text-xs font-bold text-white shadow ${
-      start ? 'bg-teal-700' : 'bg-slate-800'
+    html: `<span class="flex size-[26px] items-center justify-center rounded-full border-2 border-surface text-xs font-bold text-on-brand shadow ${
+      start ? 'bg-brand' : 'bg-ink'
     }">${label}</span>`,
   })
 }

@@ -14,22 +14,22 @@ function useHealth(): Health | null {
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-5">
-      <h2 className="mb-2 text-base font-bold text-slate-900">{title}</h2>
-      <div className="space-y-2 text-sm leading-relaxed text-slate-700">{children}</div>
+    <section className="rounded-card border border-line bg-surface p-5 shadow-card sm:p-6">
+      <h2 className="mb-2 text-base font-semibold tracking-tight text-ink">{title}</h2>
+      <div className="space-y-2 text-sm leading-relaxed text-ink-2">{children}</div>
     </section>
   )
 }
 
-const ext = { target: '_blank', rel: 'noopener noreferrer', className: 'font-medium text-teal-800 underline underline-offset-2' }
+const ext = { target: '_blank', rel: 'noopener noreferrer', className: 'font-medium text-brand-ink underline underline-offset-2' }
 
 export function AboutPage() {
   const health = useHealth()
   return (
-    <div className="mx-auto max-w-3xl space-y-4 p-4 sm:p-6">
+    <div className="mx-auto max-w-3xl space-y-4 px-4 pt-8 pb-12 sm:px-6">
       <header>
-        <h1 className="text-2xl font-bold text-slate-900">About Safar</h1>
-        <p className="mt-1 text-slate-600">
+        <h1 className="text-3xl font-semibold tracking-tight text-ink">About Safar</h1>
+        <p className="mt-1 text-muted">
           A journey planner for Delhi-NCR that combines metro, cab, auto, bike taxi and walking into one trip, and shows
           the time, distance and price of every route.
         </p>
@@ -50,7 +50,7 @@ export function AboutPage() {
 
       <Section title="Algorithm Lab, closures and trips">
         <p>
-          The <a href="#/lab" className="font-medium text-teal-800 underline underline-offset-2">Algorithm Lab</a> runs
+          The <a href="#/lab" className="font-medium text-brand-ink underline underline-offset-2">Algorithm Lab</a> runs
           breadth-first, depth-first, uniform-cost, greedy best-first and A* search on the same metro trip and replays
           the order in which each one expands stations, next to its route cost, gap to the optimum, nodes expanded and
           runtime.
@@ -61,7 +61,7 @@ export function AboutPage() {
           neighbouring stations. The searches simply treat those edges as missing, so every route re-plans around them.
         </p>
         <p>
-          The <a href="#/trips" className="font-medium text-teal-800 underline underline-offset-2">Trip planner</a> plans
+          The <a href="#/trips" className="font-medium text-brand-ink underline underline-offset-2">Trip planner</a> plans
           every pair of stops, then searches visiting orders with hill climbing (2-opt moves, random restarts) and
           simulated annealing (geometric cooling). With up to ten stops the exact best order is also found by trying every
           order, so each method&apos;s gap to it is shown.
@@ -72,16 +72,16 @@ export function AboutPage() {
         <ul className="list-disc space-y-1.5 pl-5">
           <li>
             <strong>Delhi Metro (DMRC):</strong> the official fare slabs from 25 Aug 2025, including Sunday fares. Shown
-            as <span className="font-medium text-emerald-700">Official fare</span>.
+            as <span className="font-medium text-ok-ink">Official fare</span>.
           </li>
           <li>
             <strong>Airport Express, Noida Metro, Rapid Metro Gurugram and Namo Bharat:</strong> approximate fares,
-            shown as <span className="font-medium text-amber-800">Approx. fare</span>. One ticket is bought per
+            shown as <span className="font-medium text-warn-ink">Approx. fare</span>. One ticket is bought per
             operator.
           </li>
           <li>
             <strong>Uber, Ola and Rapido:</strong> estimates from rate cards, because these services have no public
-            price API. Every such price is marked <span className="font-medium text-amber-800">est.</span> with a
+            price API. Every such price is marked <span className="font-medium text-warn-ink">est.</span> with a
             likely range, and an <em>Open in app</em> link shows the live fare. Uber links fill in pickup and drop;
             Ola&apos;s link format is unofficial; Rapido opens its website.
           </li>
@@ -123,14 +123,14 @@ export function AboutPage() {
           <li>Cab, auto and bike rate cards: approximate published rates, to be refitted from real app quotes.</li>
         </ul>
         {health && (
-          <p className="pt-1 text-xs text-slate-500">
+          <p className="pt-1 text-xs text-muted">
             Loaded now: {health.data.lines} metro lines, {health.data.stations} stations, {health.data.places} places,{' '}
             {health.data.road_pairs.toLocaleString('en-IN')} road trips · server v{health.version}
           </p>
         )}
       </Section>
 
-      <p className="pb-4 text-center text-xs text-slate-500">
+      <p className="pb-4 text-center text-xs text-muted">
         Safar is a student project for the Application of AI course (CSET381) at Bennett University. Plans are a guide:
         check the operator&apos;s app before you travel.
       </p>

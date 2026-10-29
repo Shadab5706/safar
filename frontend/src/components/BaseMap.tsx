@@ -1,8 +1,10 @@
 import { latLngBounds, type LatLng as LeafletLatLng } from 'leaflet'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
-import { CircleMarker, MapContainer, Pane, Polyline, Popup, TileLayer, Tooltip, useMap } from 'react-leaflet'
+import { AttributionControl, CircleMarker, MapContainer, Pane, Polyline, Popup, TileLayer, Tooltip, useMap, ZoomControl } from 'react-leaflet'
 import type { LatLng, MetroStation } from '../api/types'
 import type { ClosuresApi } from '../hooks/useClosures'
+import { useMapInset } from '../hooks/useMapInset'
+import { DESKTOP, useMediaQuery } from '../hooks/useMediaQuery'
 import type { MetroNetwork } from '../hooks/useMetroNetwork'
 import { CLOSED_COLOR, networkSegments, segmentClosureId, stationClosureId, type NetworkSegment } from '../lib/closures'
 import type { Bounds } from '../lib/route'
@@ -28,6 +30,7 @@ interface Props {
 /** Re-fit the view whenever `fitKey` changes, and keep Leaflet's size in sync with its box. */
 function ViewController({ bounds, fitKey }: { bounds: Bounds | null; fitKey: string }) {
   const map = useMap()
+  const inset = useMapInset()
   useEffect(() => {
     const el = map.getContainer()
     const ro = new ResizeObserver(() => map.invalidateSize())
@@ -38,7 +41,7 @@ function ViewController({ bounds, fitKey }: { bounds: Bounds | null; fitKey: str
     if (!bounds) return
     const b = latLngBounds(bounds)
     if (b.getNorthEast().equals(b.getSouthWest())) map.setView(b.getCenter(), 14)
-    else map.fitBounds(b, { padding: [36, 36], maxZoom: 15 })
+    else map.fitBounds(b, { paddingTopLeft: [36, 56], paddingBottomRight: [36, 36 + inset], maxZoom: 15 })
     // bounds is derived from fitKey; refitting on every render would fight the user's panning.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, fitKey])
@@ -54,8 +57,8 @@ function PopupButton({ onClick, children, danger }: { onClick: () => void; child
     <button
       type="button"
       onClick={onClick}
-      className={`w-full rounded-md px-2.5 py-1.5 text-left text-xs font-semibold focus-visible:outline-2 focus-visible:outline-teal-700 ${
-        danger ? 'bg-red-50 text-red-800 hover:bg-red-100' : 'bg-slate-100 text-slate-800 hover:bg-slate-200'
+      className={`w-full rounded-md px-2.5 py-1.5 text-left text-xs font-semibold focus-visible:outline-2 focus-visible:outline-brand ${
+        danger ? 'bg-danger-soft text-danger-ink hover:bg-danger-soft' : 'bg-subtle text-ink-2 hover:bg-subtle-2'
       }`}
     >
       {children}
@@ -95,9 +98,9 @@ function NetworkLayer({
       <Popup position={[s.lat, s.lng]} eventHandlers={{ remove: () => setSelected(null) }}>
         <div className="w-52 space-y-2">
           <div>
-            <p className="text-sm font-bold text-slate-900">{s.name}</p>
-            <p className="text-xs text-slate-600">{lineNames(s)}</p>
-            {closed && <p className="mt-1 text-xs font-semibold text-red-800">Closed: trains run through without stopping</p>}
+            <p className="text-sm font-bold text-ink">{s.name}</p>
+            <p className="text-xs text-muted">{lineNames(s)}</p>
+            {closed && <p className="mt-1 text-xs font-semibold text-danger-ink">Closed: trains run through without stopping</p>}
           </div>
           {stationActions?.(s).map((a) => (
             <PopupButton key={a.label} onClick={() => done(a.onClick)}>
@@ -124,11 +127,11 @@ function NetworkLayer({
       <Popup position={at} eventHandlers={{ remove: () => setSelected(null) }}>
         <div className="w-56 space-y-2">
           <div>
-            <p className="text-sm font-bold text-slate-900">{segment.line.name}</p>
-            <p className="text-xs text-slate-600">
+            <p className="text-sm font-bold text-ink">{segment.line.name}</p>
+            <p className="text-xs text-muted">
               {segment.a.name} – {segment.b.name}
             </p>
-            {closed && <p className="mt-1 text-xs font-semibold text-red-800">Closed: no trains on this section</p>}
+            {closed && <p className="mt-1 text-xs font-semibold text-danger-ink">Closed: no trains on this section</p>}
           </div>
           <PopupButton
             danger={!closed}
@@ -201,7 +204,7 @@ function NetworkLayer({
               pathOptions={
                 closed
                   ? { color: CLOSED_COLOR, weight: 3, opacity: 1, fillColor: '#fee2e2', fillOpacity: 1 }
-                  : { color: '#475569', weight: 1, opacity: 0.5, fillColor: '#ffffff', fillOpacity: 0.9 }
+                  : { color: 'var(--muted)', weight: 1, opacity: 0.6, fillColor: 'var(--surface)', fillOpacity: 0.95 }
               }
               eventHandlers={interactive ? { click: () => setSelected({ kind: 'station', station: s }) } : undefined}
             >
@@ -219,8 +222,9 @@ function NetworkLayer({
 
 /** The Delhi map with the metro network, shared by every screen. */
 export function BaseMap({ network, closures, stationActions, bounds, fitKey, children }: Props) {
+  const desktop = useMediaQuery(DESKTOP)
   return (
-    <MapContainer center={DELHI} zoom={10} minZoom={8} maxZoom={18} zoomControl className="size-full" attributionControl>
+    <MapContainer center={DELHI} zoom={10} minZoom={8} maxZoom={18} zoomControl={false} attributionControl={false} className="size-full">
       <TileLayer
         url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
         maxZoom={19}
@@ -229,6 +233,9 @@ export function BaseMap({ network, closures, stationActions, bounds, fitKey, chi
       {network && <NetworkLayer network={network} closures={closures} stationActions={stationActions} />}
       {children}
       <ViewController bounds={bounds} fitKey={fitKey} />
+      {/* Phones pinch to zoom, and the bottom sheet would cover the attribution, so it moves up. */}
+      {desktop && <ZoomControl position="topleft" />}
+      <AttributionControl key={desktop ? 'desktop' : 'phone'} position={desktop ? 'bottomright' : 'topright'} prefix={desktop ? undefined : false} />
     </MapContainer>
   )
 }

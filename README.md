@@ -4,6 +4,9 @@ AI multi-modal journey planner for Delhi-NCR. It combines metro, cab, auto, bike
 into one trip, and shows the time, distance and price of every route. The routing is done with
 classic AI search (BFS, DFS, UCS, Greedy, A*) and local search (hill climbing, simulated annealing).
 
+**Live demo: <https://safar-delhi.onrender.com>** (free hosting: after 15 minutes without visitors it
+sleeps, and the first search takes about a minute to wake it up).
+
 See [PLAN.md](PLAN.md) for the full design and milestones.
 
 ## Project summary
@@ -133,8 +136,10 @@ without traffic, so the first request after a pause takes about a minute.
    `SAFAR_API_URL` (and `SAFAR_CORS_ORIGIN` on safar-delhi-api), and save; Render redeploys.
 7. Open the `safar-delhi` URL and plan *Bennett University → Hauz Khas Village*.
 
-Pushes to the deployed branch redeploy automatically; the build filters in `render.yaml` only
-rebuild the service whose files changed. Line closures are kept in memory, so they reset when the
+If Render is connected to your GitHub account, pushes to the deployed branch redeploy
+automatically and the build filters in `render.yaml` only rebuild the service whose files changed.
+If the Blueprint was created from the public repository URL instead, redeploy with **Manual sync**
+on the Blueprint (or **Manual Deploy** on a service). Line closures are kept in memory, so they reset when the
 API service sleeps or redeploys.
 
 ## Using the app

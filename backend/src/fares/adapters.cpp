@@ -26,6 +26,14 @@ bool RateCard::is_night(int hour) const {
     return night_from <= night_to ? (hour >= night_from && hour < night_to) : (hour >= night_from || hour < night_to);
 }
 
+double RateCard::airport_charge(geo::LatLng pickup) const {
+    if (airport_pickup <= 0) return 0;
+    for (const auto& z : airports) {
+        if (geo::haversine_km(pickup, z.pos) <= z.radius_km) return airport_pickup;
+    }
+    return 0;
+}
+
 double RateCardProvider::fare(const Ride& ride) const {
     const auto& c = card_;
     const double stuck_min = std::max(0.0, ride.ride_min - ride.free_flow_min);
@@ -33,7 +41,7 @@ double RateCardProvider::fare(const Ride& ride) const {
                            c.waiting_per_min * stuck_min;
     const int hour = std::clamp(ride.hour, 0, 23);
     const double night = c.is_night(hour) ? 1.0 + c.night_pct / 100.0 : 1.0;
-    return std::max(c.min_fare, metered) * c.surge[static_cast<std::size_t>(hour)] * night;
+    return (std::max(c.min_fare, metered) + c.airport_charge(ride.pickup)) * c.surge[static_cast<std::size_t>(hour)] * night;
 }
 
 Quote RateCardProvider::quote(const Ride& ride) const {
@@ -49,6 +57,7 @@ Quote RateCardProvider::quote(const Ride& ride) const {
     q.fare_low_rs = std::round(f * (1.0 - card_.range_pct));
     q.fare_high_rs = std::round(f * (1.0 + card_.range_pct));
     q.surge = card_.surge[static_cast<std::size_t>(std::clamp(ride.hour, 0, 23))];
+    q.airport_pickup_rs = std::round(card_.airport_charge(ride.pickup) * q.surge);
     q.pickup_eta_min = card_.pickup_min;
     q.ride_min = ride.ride_min;
     q.distance_km = ride.km;
@@ -120,6 +129,7 @@ nlohmann::json to_json(const Quote& q) {
             {"fare_rs", q.fare_rs},
             {"fare_range_rs", {q.fare_low_rs, q.fare_high_rs}},
             {"surge", round2(q.surge)},
+            {"airport_pickup_rs", q.airport_pickup_rs},
             {"pickup_eta_min", round1(q.pickup_eta_min)},
             {"ride_min", round1(q.ride_min)},
             {"total_min", round1(q.total_min())},

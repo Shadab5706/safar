@@ -75,7 +75,7 @@ export default function App() {
     main.current?.scrollTo({ top: 0 })
   }, [page])
 
-  function startPlan(next: { from: SearchResult | null; to: SearchResult | null } | { example: ExampleTrip }) {
+  function startPlan(next: { from: SearchResult | null; to: SearchResult | null } | { example: ExampleTrip } | { ask: string }) {
     setIntent({ id: nextIntent.current++, ...next })
     window.location.hash = hrefFor('plan')
   }
@@ -159,6 +159,7 @@ export default function App() {
               install={install}
               onPlan={(from, to) => startPlan({ from, to })}
               onExample={(example) => startPlan({ example })}
+              onAsk={(ask) => startPlan({ ask })}
             />
           </div>
         )}

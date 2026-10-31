@@ -11,6 +11,7 @@ AppContext AppContext::load(const Config& config) {
     ctx.transit = std::make_shared<const graph::Graph>(graph::build_transit_graph(*ctx.dataset, {}, ctx.transport.get()));
     ctx.fares = std::make_shared<const fares::FareEngine>(fares::FareEngine::load(config.providers_path(), ctx.transport));
     ctx.planner = std::make_shared<const journey::Planner>(ctx.dataset, ctx.transport, ctx.roads, ctx.transit, ctx.fares);
+    ctx.assistant = std::make_shared<const assistant::Assistant>(assistant::Assistant::load(config.assistant_path(), ctx.dataset));
     return ctx;
 }
 

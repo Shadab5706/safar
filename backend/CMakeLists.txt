@@ -36,6 +36,12 @@ add_library(safar_core
   src/api/params.cpp
   src/api/disruption_routes.cpp
   src/api/trip_routes.cpp
+  src/api/assistant_routes.cpp
+  src/assistant/text.cpp
+  src/assistant/classifier.cpp
+  src/assistant/assistant.cpp
+  src/assistant/rank.cpp
+  src/assistant/reply.cpp
   src/disruption/closures.cpp
   src/app/context.cpp
   src/data/dataset.cpp
@@ -86,7 +92,7 @@ if(SAFAR_BUILD_TESTS)
   enable_testing()
   add_executable(safar_tests tests/test_geo.cpp tests/test_dataset.cpp tests/test_search.cpp tests/test_journey.cpp
                              tests/test_api.cpp tests/test_fares.cpp
-                             tests/test_disruptions.cpp tests/test_optimize.cpp)
+                             tests/test_disruptions.cpp tests/test_optimize.cpp tests/test_assistant.cpp)
   target_link_libraries(safar_tests PRIVATE safar_core GTest::gtest_main)
   target_compile_definitions(safar_tests PRIVATE
     SAFAR_TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/../data/processed"

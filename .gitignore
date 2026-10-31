@@ -9,6 +9,7 @@ data/raw/*
 # frontend
 node_modules/
 dist/
+*.tsbuildinfo
 # env / editor
 .env
 .DS_Store

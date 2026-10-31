@@ -12,11 +12,12 @@ import {
 } from 'lucide-react'
 import { useState, type FormEvent, type ReactNode } from 'react'
 import type { SearchResult } from '../api/types'
+import { AskBox } from '../components/AskBox'
 import { EndpointFields } from '../components/JourneyForm'
 import { ModeIcon } from '../components/ModeIcon'
 import type { NetworkState } from '../hooks/useMetroNetwork'
 import { EXAMPLE_TRIPS, type ExampleTrip } from '../lib/examples'
-import { modeLabel } from '../lib/format'
+import { formatRupeeRange, modeLabel } from '../lib/format'
 import { ALL_MODES } from '../lib/query'
 
 const NO_LINES = new Map()
@@ -25,6 +26,8 @@ interface Props {
   network: NetworkState
   onPlan: (from: SearchResult | null, to: SearchResult | null) => void
   onExample: (trip: ExampleTrip) => void
+  /** A trip typed or spoken in the visitor's own words, for Ask Safar. */
+  onAsk: (text: string) => void
   install: (() => Promise<void>) | null
 }
 
@@ -90,7 +93,7 @@ const ENTRIES = [
   },
 ]
 
-export function HomePage({ network, onPlan, onExample, install }: Props) {
+export function HomePage({ network, onPlan, onExample, onAsk, install }: Props) {
   const [from, setFrom] = useState<SearchResult | null>(null)
   const [to, setTo] = useState<SearchResult | null>(null)
   const lineById = network.status === 'ready' ? network.network.lineById : NO_LINES
@@ -139,38 +142,43 @@ export function HomePage({ network, onPlan, onExample, install }: Props) {
             )}
           </div>
 
-          <form
-            onSubmit={submit}
-            aria-label="Find routes"
-            className="animate-rise rounded-[1.5rem] border border-line bg-surface p-4 shadow-pop [animation-delay:80ms] sm:p-6"
-          >
+          <div className="animate-rise rounded-[1.5rem] border border-line bg-surface p-4 shadow-pop [animation-delay:80ms] sm:p-6">
             <h2 className="mb-3 text-sm font-semibold text-ink">Where are you going?</h2>
-            <EndpointFields
-              from={from}
-              to={to}
-              onChange={(patch) => {
-                if ('from' in patch) setFrom(patch.from ?? null)
-                if ('to' in patch) setTo(patch.to ?? null)
-              }}
-              lineById={lineById}
-            />
-            <button
-              type="submit"
-              disabled={!from && !to}
-              className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-brand px-4 text-base font-semibold text-on-brand shadow-card transition hover:bg-brand-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-subtle-2 disabled:text-muted disabled:shadow-none"
-            >
-              Find routes
-              <ArrowRight className="size-4" aria-hidden="true" />
-            </button>
-            <div className="mt-4 flex flex-wrap items-center gap-1.5">
-              {ALL_MODES.map((m) => (
-                <span key={m} className="grid size-8 place-items-center rounded-full bg-subtle text-muted" title={modeLabel(m)}>
-                  <ModeIcon mode={m} className="size-4" />
-                </span>
-              ))}
-              <span className="ml-1 text-xs text-muted">Choose modes and time on the next screen.</span>
+            <AskBox size="lg" onAsk={onAsk} label="Ask Safar" placeholder="Bennett to Hauz Khas under ₹300" />
+            <p className="mt-2 text-xs text-muted">Type or tap the mic. Say a budget, a time limit, or "cheapest" or "fastest".</p>
+            <div className="my-4 flex items-center gap-3 text-xs font-medium text-faint" aria-hidden="true">
+              <span className="h-px flex-1 bg-line" />
+              or choose places
+              <span className="h-px flex-1 bg-line" />
             </div>
-          </form>
+            <form onSubmit={submit} aria-label="Find routes">
+              <EndpointFields
+                from={from}
+                to={to}
+                onChange={(patch) => {
+                  if ('from' in patch) setFrom(patch.from ?? null)
+                  if ('to' in patch) setTo(patch.to ?? null)
+                }}
+                lineById={lineById}
+              />
+              <button
+                type="submit"
+                disabled={!from && !to}
+                className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-brand px-4 text-base font-semibold text-on-brand shadow-card transition hover:bg-brand-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-subtle-2 disabled:text-muted disabled:shadow-none"
+              >
+                Find routes
+                <ArrowRight className="size-4" aria-hidden="true" />
+              </button>
+              <div className="mt-4 flex flex-wrap items-center gap-1.5">
+                {ALL_MODES.map((m) => (
+                  <span key={m} className="grid size-8 place-items-center rounded-full bg-subtle text-muted" title={modeLabel(m)}>
+                    <ModeIcon mode={m} className="size-4" />
+                  </span>
+                ))}
+                <span className="ml-1 text-xs text-muted">Choose modes and time on the next screen.</span>
+              </div>
+            </form>
+          </div>
         </div>
       </section>
 
@@ -195,6 +203,10 @@ export function HomePage({ network, onPlan, onExample, install }: Props) {
                   <span className="block truncate text-sm font-semibold text-ink">{trip.from.name}</span>
                   <span className="block truncate text-sm font-semibold text-ink">{trip.to.name}</span>
                   <span className="mt-1 block text-xs text-muted">{trip.note}</span>
+                  <span className="mt-1.5 block text-xs text-ink-2">
+                    {trip.cab.name} fair price{' '}
+                    <span className="font-semibold text-ink tabular-nums">{formatRupeeRange(trip.cab.fair)}</span>
+                  </span>
                 </span>
                 <ArrowRight className="size-4 shrink-0 text-faint transition-transform group-hover:translate-x-0.5 group-hover:text-brand-ink" aria-hidden="true" />
               </button>

@@ -85,7 +85,7 @@ void Server::register_journey_routes() {
             json data = journey::to_json(result, ds);
             data["closures"] = closures->closures.size();
             data["depart"] = {{"at", depart.at}, {"hour", jr.hour}, {"sunday_fares", jr.sunday}};
-            data["fare_note"] = fares::kEstimateNote;
+            data["fare_note"] = fares::kFairPriceNote;
             send_ok(res, t0, data);
         } catch (const BadRequest& e) {
             send_error(res, e.status, e.code, e.message);

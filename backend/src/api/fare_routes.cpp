@@ -55,7 +55,7 @@ void Server::register_fare_routes() {
                        {"traffic_factor", ctx_.transport->traffic[static_cast<std::size_t>(depart.hour)]},
                        {"road_data", trip.from_osrm ? "osrm" : "straight_line_estimate"}}},
                      {"quotes", std::move(quotes)},
-                     {"note", fares::kEstimateNote}});
+                     {"note", fares::kFairPriceNote}});
         } catch (const BadRequest& e) {
             send_error(res, e.status, e.code, e.message);
         }

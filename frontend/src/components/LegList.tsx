@@ -28,8 +28,7 @@ function LegDetail({ leg }: { leg: Leg }) {
           </p>
           <p className="text-xs text-muted">
             {formatDistance(leg.distance_km)} · {formatDuration(leg.ride_min)} ride · ~{formatDuration(leg.wait_min)}{' '}
-            pickup · from <span className="font-medium text-ink-2">{formatRupees(leg.fare_rs)}</span>{' '}
-            <span className="text-warn-ink">est.</span>
+            pickup · fair price from <span className="font-medium text-ink-2">{formatRupees(leg.fare_rs)}</span>
           </p>
           <ProviderQuotes options={leg.options} mode={leg.mode} />
         </>

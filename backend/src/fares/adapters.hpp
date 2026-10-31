@@ -5,15 +5,24 @@
 #include <optional>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "fares/provider.hpp"
 
 namespace safar::fares {
 
+// Where a ride counts as an airport pickup (providers.json "airport_zones").
+struct AirportZone {
+    std::string name;
+    geo::LatLng pos;
+    double radius_km = 1.5;
+};
+
 // Rate card of one product, from backend/config/providers.json.
 //   metered = base + per_km * max(0, km - base_km) + per_min * ride_min
 //             + waiting_per_min * (minutes stuck in traffic)
-//   fare    = max(min_fare, metered) * surge[hour] * (1 + night_pct / 100 at night)
+//   fare    = (max(min_fare, metered) + airport_pickup if picked up in an airport zone)
+//             * surge[hour] * (1 + night_pct / 100 at night)
 struct RateCard {
     std::string basis = "approximate";  // approximate | fitted | govt_rate_card
     double base = 0, base_km = 0, per_km = 0, per_min = 0, min_fare = 0;
@@ -21,11 +30,15 @@ struct RateCard {
     double night_pct = 0;
     int night_from = 23, night_to = 5;  // night window [from, to), wraps past midnight
     double pickup_min = 5;              // average wait for the vehicle to arrive
-    double range_pct = 0.15;            // fare range shown is fare * (1 -/+ range_pct)
+    double range_pct = 0.15;            // fair price range shown is fare * (1 -/+ range_pct)
+    double airport_pickup = 0;          // extra for a pickup at an airport (parking, entry, demand)
+    std::vector<AirportZone> airports;  // where airport_pickup applies
     std::array<double, 24> surge{};     // multiplier by hour of day
 
     RateCard() { surge.fill(1.0); }
     bool is_night(int hour) const;
+    // The airport_pickup a ride starting here pays: 0 outside every airport zone.
+    double airport_charge(geo::LatLng pickup) const;
 };
 
 struct ProductInfo {

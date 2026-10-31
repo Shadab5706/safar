@@ -17,6 +17,8 @@ struct Config {
     std::filesystem::path providers_path() const {
         return providers_file.empty() ? transport_file.parent_path() / "providers.json" : providers_file;
     }
+    // Ask Safar's aliases and training sentences, next to transport_file.
+    std::filesystem::path assistant_path() const { return transport_file.parent_path() / "assistant.json"; }
 
     // Reads a JSON config file (missing keys keep their defaults), then applies
     // SAFAR_HOST / SAFAR_PORT / SAFAR_DATA_DIR / SAFAR_CORS_ORIGIN / SAFAR_LOG_LEVEL,

@@ -22,16 +22,20 @@ operator and every Uber / Ola / Rapido / auto-meter quote on the road legs.
   top-speed heuristic is the production router; Yen's k-shortest paths and a sweep over the
   value of time give the alternatives, and a Pareto filter keeps only routes that are not worse on
   both time and money.
+- **Ask Safar.** Type or say a trip in plain words ("Bennett to Hauz Khas under ₹300", "fastest
+  way from CP to the airport", Hinglish too). Its own parser and Naive Bayes intent classifier pick
+  out the places, budget, time limit, departure and modes; the best match comes first, then the
+  routes within the limit, then the rest. Follow-ups ("make it under 150", "way back") keep context.
 - **Algorithm Lab.** Runs BFS, DFS, UCS, Greedy best-first and A* on the same query and animates
   how each one expands the map, with the route cost, optimality gap, nodes expanded and runtime.
 - **Trip planner.** Orders 3 to 10 stops (a travelling-salesman problem) with hill climbing and
   simulated annealing, plots both convergence curves and reports the gap to the exact optimum.
 - **Line closures.** Close a station or a section on any map; every planner routes around it.
-- **Prices.** Official DMRC fare slabs; cab, auto and bike fares from rate cards that can be
-  re-fitted by least squares on real quotes (`scripts/fit_fares.py`), each with a link to the
-  provider's app for the live price.
-- **Engineering.** C++20 backend (cpp-httplib, nlohmann/json, spdlog) with 100 GoogleTest tests,
-  React + TypeScript + Vite + Tailwind + Leaflet frontend with 48 Vitest tests, Docker images for
+- **Prices.** Official DMRC fare slabs; a fair price range for every cab, auto and bike ride, from
+  rate cards fitted by least squares to the average fares of real trips (`scripts/fit_fares.py`),
+  with the extra an airport pickup costs. A quote above the range is surge or overpricing.
+- **Engineering.** C++20 backend (cpp-httplib, nlohmann/json, spdlog) with 130 GoogleTest tests,
+  React + TypeScript + Vite + Tailwind + Leaflet frontend with 82 Vitest tests, Docker images for
   both, and CI that builds, tests and smoke-tests everything on every push.
 
 ## Screenshots
@@ -146,7 +150,8 @@ API service sleeps or redeploys.
 
 ## Using the app
 
-**Home** opens with a from/to search, three example trips and a quick tour; it hands the trip to
+**Home** opens with Ask Safar (type or speak a trip), a from/to search, six popular trips with their
+fair cab price and a quick tour; it hands the trip to
 **Plan**. On phones the screens sit behind a bottom tab bar (Home, Plan, Lab, Trips) and results
 slide up in a sheet over the map that you drag or tap between peek, half and full height; on larger
 screens a top bar and a side panel take their place. Light and dark mode follow the system setting.
@@ -154,11 +159,11 @@ screens a top bar and a side panel take their place. Light and dark mode follow 
 The **Plan** screen has from/to autocomplete over places and metro stations, a departure time, mode
 toggles (walk, metro, cab, auto, bike) and a cheapest↔fastest slider. Each route card shows its
 tags, total time, arrival, fare, distance and changes; expand it for the timed step-by-step legs,
-every provider quote on cab/auto/bike legs with an "open in app" link, and the metro tickets per
+every provider's fair price range on cab/auto/bike legs ("pay up to ₹X") with an "open in app" link, and the metro tickets per
 operator (official vs approximate fare). The selected route is drawn on the map leg by leg (metro in
 line colours, road legs dashed, walks dotted) over a faint layer of every metro line. After the
 first search, changing the modes, time or slider re-plans straight away. **About** lists the data
-sources, OSM attribution and which prices are estimates.
+sources, OSM attribution and where each price comes from.
 
 Screens: Home (`#/`), Plan (`#/plan`), Algorithm Lab (`#/lab`), Trip planner (`#/trips`), About
 (`#/about`). Click a station or a line on any map to close or reopen it.
@@ -177,7 +182,8 @@ it never caches API answers. To ship it to the Play Store or App Store, see
 | `GET /api/v1/metro/lines` | every line with colour, operator and station order |
 | `GET /api/v1/metro/stations[/<id>]` | station coordinates and the lines serving them |
 | `POST /api/v1/journeys` | multi-modal routes between two places/stations: walk + metro + cab/auto/bike, with time, fare, distance, tickets and tags (recommended, fastest, cheapest, fewest changes, most expensive). Every road leg lists per-provider quotes in `options` |
-| `GET /api/v1/fares/estimate?from=&to=&at=` | every provider's quote for one road trip (Uber Go / Premier / XL, Ola Mini / Prime, Rapido Bike / Auto / Cab, Delhi auto meter), cheapest first |
+| `GET /api/v1/fares/estimate?from=&to=&at=` | every provider's quote for one road trip (Uber Go / Premier / XL, Ola Mini / Prime, Rapido Bike / Auto / Cab, Delhi auto meter), cheapest first; `fare_range_rs` is the fair price, `airport_pickup_rs` the airport part of it |
+| `POST /api/v1/assistant` | Ask Safar: `{"message": "...", "context"?: {...}, "now"?: "YYYY-MM-DDTHH:MM"}` → a reply, what was understood (places, objective, budget, time limit, departure, modes), the routes re-ranked for the request with `match` notes, suggestions, and a `context` to send with the next message |
 | `POST /api/v1/lab/compare` | run BFS / DFS / UCS / Greedy / A* on one station-to-station query: route, cost, optimality gap, nodes expanded, runtime, expansion order |
 | `GET /api/v1/disruptions` | current line closures (`items`, `version`) |
 | `POST /api/v1/disruptions` | close a station `{"type":"station","station":"rajiv-chowk"}` or a section `{"type":"segment","line":"yellow","from":"green-park","to":"hauz-khas"}` (201; 200 with `"added": false` if already closed) |
@@ -209,6 +215,10 @@ curl -s -X POST localhost:8080/api/v1/trips/optimize \
 curl -s 'localhost:8080/api/v1/fares/estimate?from=bennett-university&to=station:pari-chowk&at=2026-10-27T18:30'
 ```
 
+```bash
+curl -s -X POST localhost:8080/api/v1/assistant -d '{"message":"fastest way from cp to the airport under 300"}'
+```
+
 ## Rebuild the data
 
 The processed data in `data/processed/` is committed, so this is only needed to refresh it.
@@ -222,26 +232,32 @@ python3 scripts/prefetch_road_matrix.py # real road km + drive times from OSRM -
 
 ## Calibrate cab / auto / bike fares
 
-Uber, Ola and Rapido have no public price API, so their fares are estimates from rate cards in
-`backend/config/providers.json`. To make them data-driven, check the apps on real trips and add one
-row per quote to `data/fare_samples.csv`:
+Cab, auto and bike prices come from rate cards in `backend/config/providers.json`, fitted to real
+fares in `data/fare_samples.csv`, one row per fare:
 
 ```
-provider,product,from,to,km,minutes,hour,quoted_fare,date,source
-uber,go,Bennett University,Pari Chowk metro,7.4,16,9,178,2026-10-20,app
+provider,product,from,to,km,minutes,hour,quoted_fare,date,source,airport_pickup
+uber,go,New Delhi,Delhi Airport (DEL),19,37,,404,2026-11-01,uber_route_average,
+uber,go,Delhi Airport (DEL),Gurgaon,20,39,,870,2026-11-01,uber_route_average,yes
 ```
 
-`km` / `minutes` are what the app shows for the trip, `hour` is 0-23, `source` is `app` (rows marked
-`example` are illustrative and ignored). Then fit `fare / surge(hour) = base + per_km·km + per_min·min`
-per product with least squares:
+The shipped rows are Uber's published past-month average fare per route and ride option (its
+`uber.com/global/en/r/routes/<route>/` pages, read 1 Nov 2026), with the route's average distance
+and time. `hour` is 0-23 for a single quote read off an app (`source` `app`) or blank for an all-day
+average; `airport_pickup` is `yes` when the ride starts at an airport. Rows marked `example` are
+illustrative and ignored. The fit is
+`fare / surge(hour) = base + per_km·km + per_min·min + airport_pickup·[airport]` per product, least
+squares with every coefficient ≥ 0:
 
 ```bash
-python3 scripts/fit_fares.py --dry-run   # print the MAE table only
-python3 scripts/fit_fares.py             # also write the fitted values into providers.json
+python3 scripts/fit_fares.py --dry-run --keep base --keep per_min   # print the MAE table only
+python3 scripts/fit_fares.py --keep base --keep per_min             # also write providers.json
 ```
 
-A product needs at least 3 quotes (8+ recommended). Fitted cards get `"basis": "fitted"` and a `fit`
-block with the sample count, MAE and date. The Delhi auto meter is the government rate card and is
+`--keep` holds a coefficient at its current value: every route average is a 17-46 km ride, so they
+say little about the flag-down fare, and distance and time rise together on them. The shipped Uber
+cards fit those averages within 5-8% (MAPE). A product needs at least 4 fares (8+ recommended). Fitted cards get `"basis": "fitted"` and a `fit`
+block with the sample count, MAE and date; their fair range is the fit's typical error, at least ±10%. The Delhi auto meter is the government rate card and is
 never refitted.
 
 ## Fares and data sources
@@ -249,10 +265,14 @@ never refitted.
 Fares: DMRC slabs are the official ones from 25 Aug 2025. Airport Express, NMRC, Rapid Metro and
 Namo Bharat fares are approximate (`"verified": false` in `backend/config/transport.json`).
 
-Cab, auto and bike quotes are **estimates** (`"source": "estimate"` on every quote) from the rate
-cards in `backend/config/providers.json`: hand-set approximations (`"basis": "approximate"`) until
-refitted from real quotes (`"fitted"`), plus the Delhi govt auto meter card (`"govt_rate_card"`,
-2022 notification, not re-checked against the gazette). The search prices each road edge with the
+Cab, auto and bike quotes are priced from the rate cards in `backend/config/providers.json`, not
+live from the apps (`"source": "estimate"` on every quote): Uber Go, Premier and XL are fitted to
+Uber's published route averages (`"basis": "fitted"`); Ola and Rapido use typical Delhi-NCR rates
+(`"approximate"`) with the airport pickup charge of the closest Uber card; the Delhi auto meter is
+the government rate card (`"govt_rate_card"`, notified Jan 2023: ₹30 for the first 1.5 km, ₹11/km,
+25% at night). Each quote's `fare_range_rs` is its fair price: what the ride typically costs at
+that hour. Rides starting within an `airport_zones` circle (IGI T1, T2/T3) add the product's
+`airport_pickup`. The search prices each road edge with the
 cheapest product of that vehicle type; the route then lists every product. Each quote has a
 `deep_link` to see the live price: Uber's documented universal link (pickup and drop filled in),
 Ola's web/app link (filled in, but the format is undocumented: `"documented": false`), and the
@@ -264,4 +284,5 @@ Map and road data © OpenStreetMap contributors (ODbL). Road times via OSRM.
 ## Status
 
 Phases 0-7 done (data, search core, multi-modal journeys, fares, web app, Algorithm Lab, closures,
-trip planner, Docker, deploy config). 100 backend tests + 48 frontend tests. See PLAN.md §11.
+trip planner, Docker, deploy config), plus Ask Safar (typed or spoken trip requests) and fair price
+ranges fitted to real trip fares. 130 backend tests + 82 frontend tests. See PLAN.md §11.

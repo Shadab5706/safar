@@ -1,6 +1,8 @@
-import { CircleAlert, Construction, Pencil } from 'lucide-react'
+import { CircleAlert, Construction, Pencil, Search, Sparkles } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ApiError, isAbortError, planJourney, searchPlaces } from '../api/client'
+import { ApiError, askAssistant, isAbortError, planJourney, searchPlaces } from '../api/client'
+import type { AssistantContext } from '../api/types'
+import { AssistantChat, type ChatTurn } from '../components/AssistantChat'
 import { ClosurePanel } from '../components/ClosurePanel'
 import { JourneyForm } from '../components/JourneyForm'
 import { MapLegend } from '../components/MapLegend'
@@ -9,6 +11,7 @@ import { MapView } from '../components/MapView'
 import { Results, type ResultState } from '../components/Results'
 import type { ClosuresApi } from '../hooks/useClosures'
 import type { NetworkState } from '../hooks/useMetroNetwork'
+import { endpointToResult, preferenceFor, understoodChips } from '../lib/assistant'
 import { findPlace, type ExampleTrip } from '../lib/examples'
 import { formatClock, nextQuarterHour, toLocalInputValue } from '../lib/format'
 import { ALL_MODES, toJourneyRequest, type PlanIntent, type Query } from '../lib/query'
@@ -41,6 +44,14 @@ export function PlanPage({ network, closures, intent }: Props) {
   const inflight = useRef<AbortController | null>(null)
   const timer = useRef<number | undefined>(undefined)
   const searched = useRef(false)
+  // Ask Safar: plan by typing or speaking instead of filling in the form.
+  const [tab, setTab] = useState<'ask' | 'form'>('ask')
+  const [turns, setTurns] = useState<ChatTurn[]>([])
+  const [asking, setAsking] = useState(false)
+  const conversation = useRef<AssistantContext | null>(null)
+  const nextTurn = useRef(1)
+  const askInflight = useRef<AbortController | null>(null)
+  const metro = network.status === 'ready' ? network.network : null
 
   const run = useCallback((q: Query) => {
     const req = toJourneyRequest(q)
@@ -72,6 +83,57 @@ export function PlanPage({ network, closures, intent }: Props) {
       })
   }, [])
 
+  // Keep the conversation short on screen: the last few exchanges are what matter.
+  const addTurn = useCallback((turn: Omit<ChatTurn, 'id'>) => {
+    setTurns((t) => [...t, { ...turn, id: nextTurn.current++ }].slice(-8))
+  }, [])
+
+  // echo = show the message in the conversation (off when a hand-over is sent again after a remount).
+  const ask = useCallback(
+    (text: string, echo = true) => {
+      askInflight.current?.abort()
+      const ctl = new AbortController()
+      askInflight.current = ctl
+      if (echo) addTurn({ who: 'user', text })
+      setAsking(true)
+      askAssistant({ message: text, context: conversation.current, now: toLocalInputValue(new Date()) }, ctl.signal)
+        .then((res) => {
+          conversation.current = res.context
+          const u = res.understood
+          addTurn({ who: 'bot', text: res.reply, chips: understoodChips(u, new Date()), notes: u.notes, suggestions: res.suggestions })
+          if (!res.journey) return
+          // The assistant planned the trip: show its routes, best match first, and mirror it in the form.
+          const journey = res.journey
+          inflight.current?.abort()
+          window.clearTimeout(timer.current)
+          searched.current = true
+          setQuery((q) => ({
+            ...q,
+            from: u.from ? endpointToResult(u.from, metro) : q.from,
+            to: u.to ? endpointToResult(u.to, metro) : q.to,
+            departAt: journey.depart.at,
+            modes: [...u.modes],
+            preference: preferenceFor(u.objective),
+          }))
+          setResult({ status: 'success', data: journey })
+          setSelected(0)
+          setExpanded(null)
+          setFocusLeg(null)
+          setEditing(false)
+          setSnap('half')
+        })
+        .catch((err: unknown) => {
+          if (isAbortError(err)) return
+          const e = err instanceof ApiError ? err : new ApiError('unknown', 'Something went wrong. Please try again.')
+          addTurn({ who: 'bot', text: e.message, error: true })
+        })
+        .finally(() => {
+          if (askInflight.current === ctl) setAsking(false)
+        })
+    },
+    [addTurn, metro],
+  )
+
   // Callers show the loading state first; this looks the places up and plans the trip.
   const loadExample = useCallback(
     (trip: ExampleTrip, base: Query) =>
@@ -93,22 +155,28 @@ export function PlanPage({ network, closures, intent }: Props) {
   const [adopted, setAdopted] = useState(0)
   if (intent && intent.id !== adopted) {
     setAdopted(intent.id)
-    if ('example' in intent) {
+    if ('ask' in intent) {
+      setTab('ask')
+    } else if ('example' in intent) {
+      setTab('form')
       setResult({ status: 'loading', previous: null })
     } else {
+      setTab('form')
       setQuery({ ...query, from: intent.from, to: intent.to })
       setEditing(true)
     }
   }
   const searchedIntent = useRef(0)
+  const echoedIntent = useRef(0) // unlike searchedIntent, survives the remount
   useEffect(() => {
     if (!intent || intent.id !== adopted || intent.id === searchedIntent.current) return
     searchedIntent.current = intent.id
-    if ('example' in intent) void loadExample(intent.example, query)
-    // Sending the request is what this effect is for; run() only marks the results as loading first.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if ('ask' in intent) {
+      ask(intent.ask, echoedIntent.current !== intent.id)
+      echoedIntent.current = intent.id
+    } else if ('example' in intent) void loadExample(intent.example, query)
     else run(query)
-  }, [intent, adopted, query, run, loadExample])
+  }, [intent, adopted, query, run, loadExample, ask])
 
   // A station or section was closed or reopened: re-plan the current journey around it.
   const seenVersion = useRef(closures.version)
@@ -122,6 +190,7 @@ export function PlanPage({ network, closures, intent }: Props) {
   useEffect(
     () => () => {
       inflight.current?.abort()
+      askInflight.current?.abort()
       window.clearTimeout(timer.current)
       // The aborted search may have been a hand-over: let it run again if the page remounts.
       searchedIntent.current = 0
@@ -142,7 +211,7 @@ export function PlanPage({ network, closures, intent }: Props) {
   const data = result.status === 'success' ? result.data : result.status === 'loading' ? result.previous : null
   const route = data?.routes[selected] ?? null
   const lineById = network.status === 'ready' ? network.network.lineById : NO_LINES
-  const folded = !editing && !!query.from && !!query.to
+  const folded = tab === 'form' && !editing && !!query.from && !!query.to
 
   const panel = (
     <div className="space-y-4 p-4 lg:p-5">
@@ -150,6 +219,28 @@ export function PlanPage({ network, closures, intent }: Props) {
         <h1 id="plan-heading" className={`mb-3 text-lg font-semibold tracking-tight text-ink ${folded ? 'sr-only lg:not-sr-only' : ''}`}>
           Plan a journey
         </h1>
+        <div role="group" aria-label="How to plan" className="mb-3 grid grid-cols-2 gap-1 rounded-full bg-subtle p-1">
+          {(
+            [
+              ['ask', 'Ask Safar', Sparkles],
+              ['form', 'Choose places', Search],
+            ] as const
+          ).map(([value, label, Icon]) => (
+            <button
+              key={value}
+              type="button"
+              aria-pressed={tab === value}
+              onClick={() => setTab(value)}
+              className={`inline-flex h-9 items-center justify-center gap-1.5 rounded-full text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-brand pointer-coarse:h-10 ${
+                tab === value ? 'bg-surface text-ink shadow-card' : 'text-muted hover:text-ink'
+              }`}
+            >
+              <Icon className="size-4" aria-hidden="true" />
+              {label}
+            </button>
+          ))}
+        </div>
+        {tab === 'ask' && <AssistantChat turns={turns} busy={asking} onAsk={ask} />}
         {folded && (
           <button
             type="button"
@@ -175,7 +266,7 @@ export function PlanPage({ network, closures, intent }: Props) {
             </span>
           </button>
         )}
-        <div className={folded ? 'hidden lg:block' : undefined}>
+        <div className={tab === 'ask' ? 'hidden' : folded ? 'hidden lg:block' : undefined}>
           <JourneyForm query={query} onChange={update} onSubmit={() => run(query)} busy={result.status === 'loading'} lineById={lineById} />
         </div>
       </section>

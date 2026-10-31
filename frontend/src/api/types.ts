@@ -98,8 +98,11 @@ export interface FareQuote {
   product_name: string
   mode: RoadMode
   fare_rs: number
+  /** Fair price: what this ride typically costs. Above the top is surge or overpricing. */
   fare_range_rs: [number, number]
   surge: number
+  /** Part of the fare that is the airport pickup charge (0 elsewhere). */
+  airport_pickup_rs?: number
   pickup_eta_min: number
   ride_min: number
   total_min: number
@@ -176,6 +179,14 @@ export interface Route {
   dominated: boolean
   tickets: Ticket[]
   legs: Leg[]
+  /** Set when Ask Safar ranked the routes for a budget, time limit or preference. */
+  match?: RouteMatch
+}
+
+export interface RouteMatch {
+  best: boolean
+  fits: boolean
+  notes: string[]
 }
 
 export interface JourneyRequest {
@@ -333,4 +344,61 @@ export interface TripResponse {
   best: TourTotals & { method: TripMethod; legs: TripLeg[] }
   closures: number
   fare_note: string
+}
+
+// ---- Ask Safar (POST /assistant) ----
+
+export type Objective = 'balanced' | 'cheapest' | 'fastest' | 'fewest_changes' | 'comfort'
+
+/** What the conversation has settled so far; sent back with the next message. */
+export interface AssistantContext {
+  from: string | null
+  to: string | null
+  objective: Objective
+  budget_rs: number | null
+  max_minutes: number | null
+  depart_at: string | null
+  modes: Mode[]
+  needs: Mode[]
+  awaiting: 'from' | 'to' | null
+}
+
+export interface Understood {
+  from: Endpoint | null
+  to: Endpoint | null
+  objective: Objective
+  label: string
+  confidence: number
+  budget_rs: number | null
+  max_minutes: number | null
+  depart_at: string | null
+  modes: Mode[]
+  needs: Mode[]
+  notes: string[]
+}
+
+export type AssistantKind =
+  | 'routes'
+  | 'ask_from'
+  | 'ask_to'
+  | 'ask_trip'
+  | 'same_place'
+  | 'no_route'
+  | 'smalltalk'
+  | 'not_understood'
+
+export interface AssistantRequest {
+  message: string
+  context?: AssistantContext | null
+  now?: string
+}
+
+export interface AssistantResponse {
+  reply: string
+  kind: AssistantKind
+  understood: Understood
+  context: AssistantContext
+  journey: JourneyResponse | null
+  ranking: { pick: string; list: string; feasible: number } | null
+  suggestions: string[]
 }

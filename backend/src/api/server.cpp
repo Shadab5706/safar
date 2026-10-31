@@ -34,6 +34,7 @@ Server::Server(Config config, AppContext ctx)
     register_fare_routes();
     register_disruption_routes();
     register_trip_routes();
+    register_assistant_routes();
 }
 
 void Server::register_middleware() {

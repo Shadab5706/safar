@@ -1,15 +1,55 @@
 {
-  "_note": "APPROXIMATE rate cards, NOT live prices. Uber, Ola and Rapido publish no price API for third-party apps, so every quote is labelled source=estimate. Cards with basis=approximate were set by hand from typical Delhi-NCR fares (2025); scripts/fit_fares.py refits them from real quotes in data/fare_samples.csv and sets basis=fitted. The Delhi auto meter is the government rate card. fare = max(min_fare, base + per_km*max(0, km-base_km) + per_min*ride_min + waiting_per_min*minutes_stuck_in_traffic) * surge_by_hour[hour] * (1 + night_pct/100 at night).",
+  "_note": "Rate cards that price every cab, auto and bike option. Cards with basis=fitted are least-squares fits (scripts/fit_fares.py) to real fares in data/fare_samples.csv: Uber's published past-month average fare per route and ride option, read 2026-11-01. Cards with basis=approximate are set by hand from typical Delhi-NCR fares; their airport_pickup is copied from the closest fitted Uber card. The Delhi auto meter is the government rate card (Delhi Transport Dept., Jan 2023). The app shows fare*(1 -/+ range_pct) as the fair price; a quote above it is surge or overpricing. fare = (max(min_fare, base + per_km*max(0, km-base_km) + per_min*ride_min + waiting_per_min*minutes_stuck_in_traffic) + airport_pickup if the ride starts in an airport_zone) * surge_by_hour[hour] * (1 + night_pct/100 at night).",
   "currency": "INR",
+  "airport_zones": [{"name": "IGI Airport Terminals 2 and 3", "lat": 28.5562, "lng": 77.0867, "radius_km": 1.5}, {"name": "IGI Airport Terminal 1", "lat": 28.5649, "lng": 77.1226, "radius_km": 1.0}],
   "providers": {
     "uber": {
       "name": "Uber",
       "adapter": "uber",
       "surge_by_hour": [1.1, 1.1, 1.1, 1.05, 1.0, 1.0, 1.0, 1.1, 1.25, 1.25, 1.1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.1, 1.2, 1.3, 1.25, 1.1, 1.0, 1.05, 1.1],
       "products": {
-        "go": {"name": "Uber Go", "mode": "cab", "basis": "approximate", "base": 50, "base_km": 0, "per_km": 12, "per_min": 1.5, "min_fare": 85, "pickup_min": 5, "range_pct": 0.15},
-        "premier": {"name": "Uber Premier", "mode": "cab", "basis": "approximate", "base": 70, "base_km": 0, "per_km": 15.5, "per_min": 1.75, "min_fare": 120, "pickup_min": 6, "range_pct": 0.15},
-        "xl": {"name": "Uber XL", "mode": "cab", "basis": "approximate", "base": 90, "base_km": 0, "per_km": 20, "per_min": 2.25, "min_fare": 160, "pickup_min": 9, "range_pct": 0.15}
+        "go": {
+          "name": "Uber Go",
+          "mode": "cab",
+          "basis": "fitted",
+          "base": 50,
+          "base_km": 0,
+          "per_km": 13.48,
+          "per_min": 1.5,
+          "min_fare": 85,
+          "pickup_min": 5,
+          "range_pct": 0.1,
+          "airport_pickup": 352.89,
+          "fit": {"samples": 8, "mae_rs": 63.71, "mape_pct": 7.9, "fitted_on": "2026-11-01", "includes_examples": false}
+        },
+        "premier": {
+          "name": "Uber Premier",
+          "mode": "cab",
+          "basis": "fitted",
+          "base": 70,
+          "base_km": 0,
+          "per_km": 15.43,
+          "per_min": 1.75,
+          "min_fare": 120,
+          "pickup_min": 6,
+          "range_pct": 0.1,
+          "airport_pickup": 419.6,
+          "fit": {"samples": 8, "mae_rs": 64.38, "mape_pct": 7.1, "fitted_on": "2026-11-01", "includes_examples": false}
+        },
+        "xl": {
+          "name": "Uber XL",
+          "mode": "cab",
+          "basis": "fitted",
+          "base": 90,
+          "base_km": 0,
+          "per_km": 27.28,
+          "per_min": 2.25,
+          "min_fare": 160,
+          "pickup_min": 9,
+          "range_pct": 0.1,
+          "airport_pickup": 819.83,
+          "fit": {"samples": 8, "mae_rs": 79.01, "mape_pct": 5.2, "fitted_on": "2026-11-01", "includes_examples": false}
+        }
       }
     },
     "ola": {
@@ -17,8 +57,8 @@
       "adapter": "ola",
       "surge_by_hour": [1.1, 1.1, 1.05, 1.05, 1.0, 1.0, 1.0, 1.1, 1.2, 1.25, 1.1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.1, 1.2, 1.25, 1.25, 1.1, 1.0, 1.05, 1.1],
       "products": {
-        "mini": {"name": "Ola Mini", "mode": "cab", "app_category": "mini", "basis": "approximate", "base": 50, "base_km": 0, "per_km": 12.5, "per_min": 1.25, "min_fare": 90, "pickup_min": 6, "range_pct": 0.15},
-        "prime": {"name": "Ola Prime Sedan", "mode": "cab", "app_category": "prime", "basis": "approximate", "base": 65, "base_km": 0, "per_km": 15, "per_min": 1.5, "min_fare": 115, "pickup_min": 7, "range_pct": 0.15}
+        "mini": {"name": "Ola Mini", "mode": "cab", "app_category": "mini", "basis": "approximate", "base": 50, "base_km": 0, "per_km": 12.5, "per_min": 1.25, "min_fare": 90, "pickup_min": 6, "range_pct": 0.15, "airport_pickup": 352.89},
+        "prime": {"name": "Ola Prime Sedan", "mode": "cab", "app_category": "prime", "basis": "approximate", "base": 65, "base_km": 0, "per_km": 15, "per_min": 1.5, "min_fare": 115, "pickup_min": 7, "range_pct": 0.15, "airport_pickup": 419.6}
       }
     },
     "rapido": {
@@ -27,8 +67,8 @@
       "surge_by_hour": [1.05, 1.05, 1.05, 1.0, 1.0, 1.0, 1.0, 1.05, 1.15, 1.15, 1.05, 1.0, 1.0, 1.0, 1.0, 1.0, 1.05, 1.15, 1.2, 1.15, 1.05, 1.0, 1.0, 1.05],
       "products": {
         "bike": {"name": "Rapido Bike", "mode": "bike", "basis": "approximate", "base": 20, "base_km": 0, "per_km": 6, "per_min": 0.5, "min_fare": 25, "pickup_min": 4, "range_pct": 0.15},
-        "auto": {"name": "Rapido Auto", "mode": "auto", "basis": "approximate", "base": 30, "base_km": 1.5, "per_km": 11.5, "per_min": 0.5, "min_fare": 35, "pickup_min": 4, "range_pct": 0.15},
-        "cab": {"name": "Rapido Cab", "mode": "cab", "basis": "approximate", "base": 45, "base_km": 0, "per_km": 11.5, "per_min": 1.25, "min_fare": 80, "pickup_min": 6, "range_pct": 0.15}
+        "auto": {"name": "Rapido Auto", "mode": "auto", "basis": "approximate", "base": 30, "base_km": 1.5, "per_km": 11.5, "per_min": 0.5, "min_fare": 35, "pickup_min": 4, "range_pct": 0.15, "airport_pickup": 100},
+        "cab": {"name": "Rapido Cab", "mode": "cab", "basis": "approximate", "base": 45, "base_km": 0, "per_km": 11.5, "per_min": 1.25, "min_fare": 80, "pickup_min": 6, "range_pct": 0.15, "airport_pickup": 352.89}
       }
     },
     "delhi_auto": {

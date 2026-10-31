@@ -62,9 +62,10 @@ private:
 };
 
 // Shown next to every list of quotes.
-inline constexpr const char* kEstimateNote =
-    "Cab, auto and bike fares are estimates from approximate rate cards: Uber, Ola and Rapido have no public "
-    "price API. Open a quote's deep link to see the live price.";
+inline constexpr const char* kFairPriceNote =
+    "Fair prices come from what rides like this have cost: average fares of real trips on Delhi-NCR routes "
+    "in Oct 2026 and Delhi's official auto meter. If the app asks for more than the top of the range, that is surge "
+    "or overpricing: wait a few minutes, try another app or take the metro.";
 
 // Sorts quotes cheapest first, then quickest.
 void sort_quotes(std::vector<Quote>& quotes);

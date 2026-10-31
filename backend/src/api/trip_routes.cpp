@@ -264,7 +264,7 @@ void Server::register_trip_routes() {
                 {"results", std::move(results)},
                 {"best", std::move(best_json)},
                 {"closures", closures->closures.size()},
-                {"fare_note", fares::kEstimateNote},
+                {"fare_note", fares::kFairPriceNote},
             };
             if (optimum) {
                 json o = totals(optimum->order);

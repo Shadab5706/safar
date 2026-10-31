@@ -60,6 +60,7 @@ RateCard read_card(const json& p, const std::array<double, 24>& provider_surge) 
     c.night_to = static_cast<int>(number(p, "night_to", 5, 0, 23));
     c.pickup_min = number(p, "pickup_min", 5, 0.5, 120);
     c.range_pct = number(p, "range_pct", 0.15, 0, 0.9);
+    c.airport_pickup = number(p, "airport_pickup", 0, 0, big);
     if (c.per_km <= 0 && c.per_min <= 0) throw std::runtime_error("per_km or per_min must be positive");
     c.surge = provider_surge;
     read_surge(p, c.surge);  // a product may override its provider's surge curve
@@ -96,6 +97,18 @@ FareEngine FareEngine::from_json(const json& j, std::shared_ptr<const TransportC
     if (!j.contains("providers") || !j.at("providers").is_object() || j.at("providers").empty()) {
         throw std::runtime_error("needs a non-empty \"providers\" object");
     }
+    std::vector<AirportZone> airports;
+    if (j.contains("airport_zones")) {
+        try {
+            for (const auto& z : j.at("airport_zones")) {
+                if (!z.contains("lat") || !z.contains("lng")) throw std::runtime_error("each zone needs lat and lng");
+                airports.push_back({z.at("name").get<std::string>(), {number(z, "lat", 0, -90, 90), number(z, "lng", 0, -180, 180)},
+                                    number(z, "radius_km", 1.5, 0.1, 20)});
+            }
+        } catch (const std::exception& e) {
+            throw std::runtime_error(std::string("airport_zones: ") + e.what());
+        }
+    }
     std::vector<std::unique_ptr<RateCardProvider>> out;
     for (const auto& [pid, pj] : j.at("providers").items()) {
         if (pid.starts_with('_')) continue;  // "_note" etc.
@@ -114,6 +127,7 @@ FareEngine FareEngine::from_json(const json& j, std::shared_ptr<const TransportC
                     ProductInfo info{pid, pj.at("name").get<std::string>(), prod, p.at("name").get<std::string>(),
                                      parse_mode(p.at("mode").get<std::string>()), p.value("app_category", prod)};
                     RateCard card = read_card(p, surge);
+                    card.airports = airports;
                     if (adapter == "meter" &&
                         std::any_of(card.surge.begin(), card.surge.end(), [](double s) { return s != 1.0; })) {
                         throw std::runtime_error("a government meter has no surge");

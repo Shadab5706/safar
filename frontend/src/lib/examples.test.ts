@@ -24,6 +24,14 @@ describe('findPlace', () => {
 describe('EXAMPLE_TRIPS', () => {
   it('has distinct start and end for every trip', () => {
     for (const t of EXAMPLE_TRIPS) expect(t.from.id).not.toBe(t.to.id)
-    expect(EXAMPLE_TRIPS).toHaveLength(3)
+    expect(EXAMPLE_TRIPS).toHaveLength(6)
+  })
+
+  it('gives every trip a fair cab price range', () => {
+    for (const t of EXAMPLE_TRIPS) {
+      const [low, high] = t.cab.fair
+      expect(low).toBeGreaterThan(0)
+      expect(high).toBeGreaterThan(low)
+    }
   })
 })

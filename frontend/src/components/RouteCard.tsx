@@ -1,4 +1,4 @@
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, Sparkles } from 'lucide-react'
 import type { Route, RouteTag } from '../api/types'
 import { formatChanges, formatClock, formatDistance, formatDuration, formatRupees, tagLabel } from '../lib/format'
 import { fareBreakdown, hasEstimatedFares, isDirectRide, routeChain, textOn, timeShares, uiLegColor } from '../lib/route'
@@ -43,11 +43,29 @@ export function RouteCard({ route, index, departAt, selected, expanded, onSelect
         type="button"
         onClick={onSelect}
         aria-pressed={selected}
-        aria-label={`Route ${index + 1}: ${route.summary}. ${formatDuration(route.total_min)}, ${formatRupees(route.fare_rs)}${estimated ? ' estimated' : ''}. Show on map`}
+        aria-label={`Route ${index + 1}: ${route.summary}. ${formatDuration(route.total_min)}, ${formatRupees(route.fare_rs)}${estimated ? ' at fair ride prices' : ''}. Show on map`}
         className="block w-full px-4 pt-3.5 pb-3 text-left focus-visible:bg-brand-soft/50 focus-visible:outline-none"
       >
-        {(route.tags.length > 0 || route.dominated || isDirectRide(route)) && (
+        {(route.tags.length > 0 || route.dominated || isDirectRide(route) || route.match) && (
           <div className="mb-2.5 flex flex-wrap gap-1">
+            {route.match?.best && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2 py-0.5 text-[11px] font-semibold text-ink">
+                <Sparkles className="size-3" aria-hidden="true" />
+                Best match
+              </span>
+            )}
+            {route.match?.notes.map((n) => (
+              <span
+                key={n}
+                className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                  route.match?.fits
+                    ? 'bg-emerald-100 text-emerald-900 dark:bg-emerald-400/15 dark:text-emerald-200'
+                    : 'bg-rose-100 text-rose-900 dark:bg-rose-400/15 dark:text-rose-200'
+                }`}
+              >
+                {n}
+              </span>
+            ))}
             {route.tags.map((t) => (
               <span key={t} className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${TAG_STYLES[t] ?? 'bg-subtle'}`}>
                 {tagLabel(t)}
@@ -71,8 +89,8 @@ export function RouteCard({ route, index, departAt, selected, expanded, onSelect
             <p className="text-xl leading-tight font-semibold tracking-tight text-ink tabular-nums">{formatRupees(route.fare_rs)}</p>
             <p className="mt-0.5 text-xs text-muted">
               {estimated ? (
-                <span className="text-warn-ink">
-                  {metro > 0 ? `metro ${formatRupees(metro)} + ` : ''}est. {formatRupees(road)}
+                <span>
+                  {metro > 0 ? `metro ${formatRupees(metro)} + ` : ''}ride {formatRupees(road)}
                 </span>
               ) : (
                 'metro fare'

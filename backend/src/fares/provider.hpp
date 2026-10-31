@@ -45,6 +45,7 @@ struct Quote {
     double fare_low_rs = 0;
     double fare_high_rs = 0;
     double surge = 1;  // time-of-day multiplier already included in the fares
+    double airport_pickup_rs = 0;  // part of the fare that is the airport pickup charge
     double pickup_eta_min = 0;
     double ride_min = 0;
     double distance_km = 0;

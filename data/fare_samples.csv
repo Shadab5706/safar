@@ -1,7 +1,36 @@
-provider,product,from,to,km,minutes,hour,quoted_fare,date,source
-uber,go,Bennett University,Pari Chowk metro,7.4,16,9,178,2026-10-20,example
-uber,go,Pari Chowk metro,Bennett University,7.6,14,15,146,2026-10-20,example
-uber,go,Botanical Garden metro,India Gate,24.5,52,18,520,2026-10-21,example
-rapido,bike,Bennett University,Knowledge Park II metro,4.1,10,9,52,2026-10-20,example
-rapido,auto,Pari Chowk metro,Bennett University,7.6,18,15,118,2026-10-20,example
-ola,mini,Hauz Khas metro,India Gate,9.8,28,11,214,2026-10-22,example
+provider,product,from,to,km,minutes,hour,quoted_fare,date,source,airport_pickup
+uber,go,Bennett University,Pari Chowk metro,7.4,16,9,178,2026-10-20,example,
+uber,go,Pari Chowk metro,Bennett University,7.6,14,15,146,2026-10-20,example,
+uber,go,Botanical Garden metro,India Gate,24.5,52,18,520,2026-10-21,example,
+rapido,bike,Bennett University,Knowledge Park II metro,4.1,10,9,52,2026-10-20,example,
+rapido,auto,Pari Chowk metro,Bennett University,7.6,18,15,118,2026-10-20,example,
+ola,mini,Hauz Khas metro,India Gate,9.8,28,11,214,2026-10-22,example,
+uber,go,New Delhi,Delhi Airport (DEL),19,37,,404,2026-11-01,uber_route_average,
+uber,premier,New Delhi,Delhi Airport (DEL),19,37,,441,2026-11-01,uber_route_average,
+uber,xl,New Delhi,Delhi Airport (DEL),19,37,,705,2026-11-01,uber_route_average,
+uber,auto,New Delhi,Delhi Airport (DEL),19,37,,236,2026-11-01,uber_route_average,
+uber,bike,New Delhi,Delhi Airport (DEL),19,37,,149,2026-11-01,uber_route_average,
+uber,go,Delhi Airport (DEL),New Delhi,17,39,,814,2026-11-01,uber_route_average,yes
+uber,premier,Delhi Airport (DEL),New Delhi,17,39,,907,2026-11-01,uber_route_average,yes
+uber,xl,Delhi Airport (DEL),New Delhi,17,39,,1560,2026-11-01,uber_route_average,yes
+uber,auto,Delhi Airport (DEL),New Delhi,17,39,,337,2026-11-01,uber_route_average,yes
+uber,go,Delhi Airport (DEL),Gurgaon,20,39,,870,2026-11-01,uber_route_average,yes
+uber,premier,Delhi Airport (DEL),Gurgaon,20,39,,1013,2026-11-01,uber_route_average,yes
+uber,xl,Delhi Airport (DEL),Gurgaon,20,39,,1695,2026-11-01,uber_route_average,yes
+uber,go,Gurgaon,Delhi Airport (DEL),20,36,,515,2026-11-01,uber_route_average,
+uber,premier,Gurgaon,Delhi Airport (DEL),20,36,,623,2026-11-01,uber_route_average,
+uber,xl,Gurgaon,Delhi Airport (DEL),20,36,,905,2026-11-01,uber_route_average,
+uber,bike,Gurgaon,Delhi Airport (DEL),20,36,,316,2026-11-01,uber_route_average,
+uber,go,Delhi Airport (DEL),Gautam Buddha Nagar,46,84,,1162,2026-11-01,uber_route_average,yes
+uber,premier,Delhi Airport (DEL),Gautam Buddha Nagar,46,84,,1385,2026-11-01,uber_route_average,yes
+uber,xl,Delhi Airport (DEL),Gautam Buddha Nagar,46,84,,2530,2026-11-01,uber_route_average,yes
+uber,go,Delhi Airport (DEL),Ghaziabad,40,72,,1053,2026-11-01,uber_route_average,yes
+uber,premier,Delhi Airport (DEL),Ghaziabad,40,72,,1251,2026-11-01,uber_route_average,yes
+uber,xl,Delhi Airport (DEL),Ghaziabad,40,72,,2212,2026-11-01,uber_route_average,yes
+uber,go,Ghaziabad,Delhi Airport (DEL),40,72,,789,2026-11-01,uber_route_average,
+uber,premier,Ghaziabad,Delhi Airport (DEL),40,72,,886,2026-11-01,uber_route_average,
+uber,xl,Ghaziabad,Delhi Airport (DEL),40,72,,1428,2026-11-01,uber_route_average,
+uber,bike,Ghaziabad,Delhi Airport (DEL),40,72,,354,2026-11-01,uber_route_average,
+uber,go,Delhi Airport (DEL),Faridabad,38,72,,1161,2026-11-01,uber_route_average,yes
+uber,premier,Delhi Airport (DEL),Faridabad,38,72,,1401,2026-11-01,uber_route_average,yes
+uber,xl,Delhi Airport (DEL),Faridabad,38,72,,2496,2026-11-01,uber_route_average,yes

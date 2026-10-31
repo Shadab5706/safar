@@ -84,6 +84,24 @@ TEST(FareAdapters, MinimumFareApplies) {
     EXPECT_DOUBLE_EQ(e.find("test", "x")->fare(ride(1, 3, 3, 12)), 85);  // 66.5 metered < 85 minimum
 }
 
+TEST(FareAdapters, AirportPickupAddsItsChargeOnlyInsideAnAirportZone) {
+    auto j = one_product("uber", cab_card());
+    j["providers"]["test"]["products"]["x"]["airport_pickup"] = 300;
+    j["airport_zones"] = json::array({{{"name", "T3"}, {"lat", 28.5562}, {"lng", 77.0867}, {"radius_km", 1.5}}});
+    const auto e = fares::FareEngine::from_json(j, transport());
+    const auto* p = e.find("test", "x");
+    const fares::Ride from_airport{{28.5570, 77.0870}, {28.63, 77.22}, "IGI T3", "CP", 10, 30, 20, 14};
+    const fares::Ride to_airport{{28.63, 77.22}, {28.5570, 77.0870}, "CP", "IGI T3", 10, 30, 20, 14};
+    EXPECT_DOUBLE_EQ(p->fare(to_airport), 215);          // dropping off costs nothing extra
+    EXPECT_DOUBLE_EQ(p->fare(from_airport), 215 + 300);  // picking up does
+    EXPECT_EQ(p->quote(from_airport).airport_pickup_rs, 300);
+    EXPECT_EQ(p->quote(to_airport).airport_pickup_rs, 0);
+    EXPECT_EQ(fares::to_json(p->quote(from_airport))["airport_pickup_rs"], 300);
+
+    j["airport_zones"][0].erase("lat");
+    EXPECT_THROW(fares::FareEngine::from_json(j, transport()), std::runtime_error);
+}
+
 TEST(FareAdapters, DelhiMeterFollowsTheGovtRateCard) {
     const auto* meter = engine().find("delhi_auto", "meter");
     ASSERT_NE(meter, nullptr);
@@ -235,10 +253,17 @@ TEST(FareEngine, RejectsBadConfig) {
     expect_error(one_product("meter", cab_card(), surge), "no surge");
 }
 
-TEST(FareEngine, ShippedConfigLoadsAndIsLabelledApproximate) {
+TEST(FareEngine, ShippedConfigLoadsAndSaysWhereItsFaresComeFrom) {
     const json j = json::parse(read_file(SAFAR_TEST_CONFIG_DIR "/providers.json"));
-    EXPECT_NE(j["_note"].get<std::string>().find("APPROXIMATE"), std::string::npos);
+    EXPECT_NE(j["_note"].get<std::string>().find("fare_samples.csv"), std::string::npos);
     EXPECT_EQ(engine().providers().size(), 9u);
+    // Uber's cards are fitted to its published route averages; an airport pickup costs more.
+    const auto& go = engine().find("uber", "go")->card();
+    EXPECT_EQ(go.basis, "fitted");
+    EXPECT_GT(go.airport_pickup, 0);
+    EXPECT_GT(go.airport_charge({28.5579, 77.0835}), 0);  // IGI Terminal 3
+    EXPECT_EQ(go.airport_charge({28.6315, 77.2167}), 0);  // Connaught Place
+    EXPECT_EQ(engine().find("delhi_auto", "meter")->card().airport_pickup, 0);  // the meter is the meter
 }
 
 // ---------------------------------------------------------------- planner
@@ -352,7 +377,7 @@ TEST_F(FitFaresScript, RecoversKnownCoefficientsAndWritesProvidersJson) {
 
     std::map<std::string, std::string> skipped;
     for (const auto& s : report["skipped"]) skipped[s["provider"].get<std::string>() + "/" + s["product"].get<std::string>()] = s["reason"];
-    EXPECT_NE(skipped["rapido/bike"].find("at least 3"), std::string::npos);
+    EXPECT_NE(skipped["rapido/bike"].find("at least 4"), std::string::npos);
     EXPECT_NE(skipped["delhi_auto/meter"].find("government"), std::string::npos);
     EXPECT_EQ(report["wrote"], providers_.string());
 
@@ -380,6 +405,33 @@ TEST_F(FitFaresScript, TableShowsMaePerProductAndDryRunWritesNothing) {
     EXPECT_EQ(read_file(providers_), before);
 }
 
+TEST_F(FitFaresScript, FitsTheAirportChargeFromAllDayAveragesAndKeepsHeldTerms) {
+    const auto path = dir_ / "averages.csv";
+    std::ofstream f(path);
+    f << "provider,product,from,to,km,minutes,hour,quoted_fare,date,source,airport_pickup\n";
+    const auto& surge = engine().find("uber", "go")->card().surge;
+    double mean = 0;
+    for (double s : surge) mean += s / 24;
+    const double km[] = {17, 19, 20, 40, 46, 38, 25, 30};
+    const double min[] = {39, 37, 36, 72, 84, 72, 50, 45};
+    for (int i = 0; i < 8; ++i) {
+        const bool airport = i % 2 == 0;
+        const double fare = (50 + 14 * km[i] + 1.5 * min[i] + (airport ? 350 : 0)) * mean;
+        f << "uber,go,A,B," << km[i] << "," << min[i] << ",," << fare << ",2026-11-01,uber_route_average,"
+          << (airport ? "yes" : "") << "\n";
+    }
+    f.close();
+    ASSERT_EQ(run(path, "--json --keep base --keep per_min"), 0) << err_;
+    const json report = json::parse(out_);
+    ASSERT_EQ(report["products"].size(), 1u) << out_;
+    const auto& go = report["products"][0];
+    EXPECT_NEAR(go["base"].get<double>(), 50, 0.01);  // held at the card's value
+    EXPECT_NEAR(go["per_min"].get<double>(), 1.5, 0.01);
+    EXPECT_NEAR(go["per_km"].get<double>(), 14, 0.01);
+    EXPECT_NEAR(go["airport_pickup"].get<double>(), 350, 0.05);
+    EXPECT_NEAR(json::parse(read_file(providers_))["providers"]["uber"]["products"]["go"]["range_pct"].get<double>(), 0.10, 1e-9);
+}
+
 TEST_F(FitFaresScript, RejectsBadRowsWithTheLineNumber) {
     const auto path = dir_ / "bad.csv";
     std::ofstream(path) << "provider,product,from,to,km,minutes,hour,quoted_fare,date,source\n"
@@ -393,11 +445,19 @@ TEST_F(FitFaresScript, ShippedSamplesFileHasTheExpectedFormat) {
     std::ifstream in(samples);
     std::string header;
     std::getline(in, header);
-    EXPECT_EQ(header, "provider,product,from,to,km,minutes,hour,quoted_fare,date,source");
+    EXPECT_EQ(header, "provider,product,from,to,km,minutes,hour,quoted_fare,date,source,airport_pickup");
     for (std::string line; std::getline(in, line);) {
         if (line.empty()) continue;
-        const auto source = line.substr(line.rfind(',') + 1);
-        EXPECT_TRUE(source == "example" || source == "app") << line;
+        std::vector<std::string> cols;
+        for (std::size_t at = 0;; ++at) {
+            const auto comma = line.find(',', at);
+            cols.push_back(line.substr(at, comma - at));
+            if (comma == std::string::npos) break;
+            at = comma;
+        }
+        ASSERT_EQ(cols.size(), 11u) << line;
+        EXPECT_TRUE(cols[9] == "example" || cols[9] == "app" || cols[9] == "uber_route_average") << line;
+        EXPECT_TRUE(cols[10].empty() || cols[10] == "yes") << line;
     }
     const auto before = read_file(providers_);
     ASSERT_EQ(run(samples, "--json --dry-run"), 0) << err_;

@@ -1,5 +1,7 @@
 import type {
   AddClosureResponse,
+  AssistantRequest,
+  AssistantResponse,
   ClosureList,
   ClosureRequest,
   Envelope,
@@ -220,6 +222,11 @@ export function compareAlgorithms(req: LabRequest, signal?: AbortSignal): Promis
 
 export function optimizeTrip(req: TripRequest, signal?: AbortSignal): Promise<TripResponse> {
   return request<TripResponse>('/trips/optimize', { method: 'POST', body: JSON.stringify(req), signal })
+}
+
+/** Ask Safar: plan from a typed or spoken request, carrying the conversation in `context`. */
+export function askAssistant(req: AssistantRequest, signal?: AbortSignal): Promise<AssistantResponse> {
+  return request<AssistantResponse>('/assistant', { method: 'POST', body: JSON.stringify(req), signal })
 }
 
 /** The endpoint string the journeys API accepts: "place:<id>" or "station:<id>". */

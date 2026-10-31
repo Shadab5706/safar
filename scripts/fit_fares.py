@@ -3,19 +3,22 @@
 
 Model, per product (Uber Go, Ola Mini, Rapido Bike, ...):
 
-    quoted_fare / surge(hour) = base + per_km * km + per_min * minutes
+    quoted_fare / surge(hour) = base + per_km * km + per_min * minutes + airport_pickup * [picked up at an airport]
 
 surge(hour) is the product's time-of-day curve from providers.json, so peak-hour quotes
-are deflated before fitting. Coefficients come from ordinary least squares with every
+are deflated before fitting. A blank hour marks an all-day average (such as a route average
+the provider publishes) and is deflated by the mean of the curve instead. airport_pickup is
+the extra an airport pickup costs; it is only fitted when some samples start at an airport. Coefficients come from ordinary least squares with every
 coefficient kept >= 0 (all subsets of the three terms are solved; the feasible one with
 the lowest squared error wins). The Delhi auto meter is a government rate card and is
 never refitted.
 
 Input: data/fare_samples.csv with columns
-    provider,product,from,to,km,minutes,hour,quoted_fare,date,source
-km/minutes are the trip distance and duration the app shows, hour is 0-23, and source is
-"app" for a quote read off the app or "example" for the illustrative rows shipped with the
-repo. Example rows are ignored unless --include-examples is given, so they can never end
+    provider,product,from,to,km,minutes,hour,quoted_fare,date,source[,airport_pickup]
+km/minutes are the trip distance and duration the app shows, hour is 0-23 (blank for an
+all-day average), airport_pickup is "yes" when the ride starts at an airport, and source is
+"app" for a quote read off the app, "uber_route_average" for the past-month average fares
+Uber publishes per route, or "example" for the illustrative rows shipped with the repo. Example rows are ignored unless --include-examples is given, so they can never end
 up in the real rate cards.
 
 Output: a table (or --json report) with MAE before/after per product, and the fitted
@@ -37,8 +40,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 COLUMNS = ["provider", "product", "from", "to", "km", "minutes", "hour", "quoted_fare", "date", "source"]
-TERMS = ["base", "per_km", "per_min"]
-MODEL = "fare / surge(hour) = base + per_km*km + per_min*minutes  (least squares, coefficients >= 0)"
+TERMS = ["base", "per_km", "per_min", "airport_pickup"]
+MODEL = "fare / surge(hour) = base + per_km*km + per_min*minutes + airport_pickup*[airport]  (least squares, coefficients >= 0)"
 RECOMMENDED_SAMPLES = 8
 
 
@@ -65,15 +68,16 @@ def load_samples(path: Path, include_examples: bool):
                     "product": r["product"].strip(),
                     "km": float(r["km"]),
                     "minutes": float(r["minutes"]),
-                    "hour": int(r["hour"]),
+                    "hour": int(r["hour"]) if r["hour"].strip() else None,
                     "fare": float(r["quoted_fare"]),
+                    "airport": 1.0 if (r.get("airport_pickup") or "").strip().lower() in ("yes", "1", "true") else 0.0,
                     "line": line,
                 }
             except ValueError as e:
                 problems.append(f"line {line}: {e}")
                 continue
-            if row["km"] <= 0 or row["minutes"] <= 0 or row["fare"] <= 0 or not 0 <= row["hour"] <= 23:
-                problems.append(f"line {line}: km, minutes and quoted_fare must be > 0 and hour 0-23")
+            if row["km"] <= 0 or row["minutes"] <= 0 or row["fare"] <= 0 or not (row["hour"] is None or 0 <= row["hour"] <= 23):
+                problems.append(f"line {line}: km, minutes and quoted_fare must be > 0 and hour 0-23 or blank")
                 continue
             rows.append(row)
     if problems:
@@ -81,7 +85,9 @@ def load_samples(path: Path, include_examples: bool):
     return rows, skipped_examples
 
 
-def multiplier(provider: dict, card: dict, hour: int) -> float:
+def multiplier(provider: dict, card: dict, hour: int | None) -> float:
+    if hour is None:  # an all-day average: the mean multiplier over the day
+        return sum(multiplier(provider, card, h) for h in range(24)) / 24
     surge = card.get("surge_by_hour", provider.get("surge_by_hour", [1.0] * 24))[hour]
     night_pct = card.get("night_pct", 0)
     lo, hi = card.get("night_from", 23), card.get("night_to", 5)
@@ -93,7 +99,8 @@ def predict(provider: dict, card: dict, row: dict) -> float:
     """Same formula as RateCardProvider::fare (no traffic-waiting term for app products)."""
     metered = (card.get("base", 0) + card.get("per_km", 0) * max(0.0, row["km"] - card.get("base_km", 0))
                + card.get("per_min", 0) * row["minutes"])
-    return max(card.get("min_fare", 0), metered) * multiplier(provider, card, row["hour"])
+    airport = card.get("airport_pickup", 0) * row.get("airport", 0)
+    return (max(card.get("min_fare", 0), metered) + airport) * multiplier(provider, card, row["hour"])
 
 
 def solve(a: list[list[float]], b: list[float]):
@@ -112,12 +119,12 @@ def solve(a: list[list[float]], b: list[float]):
     return [m[i][n] / m[i][i] for i in range(n)]
 
 
-def fit_nonnegative(xs: list[list[float]], ys: list[float]):
-    """Least squares over every subset of terms; returns the best feasible coefficient list."""
+def fit_nonnegative(xs: list[list[float]], ys: list[float], free: tuple[int, ...] = tuple(range(len(TERMS)))):
+    """Least squares over every subset of the free terms; returns the best feasible coefficient list."""
     best, best_sse = None, float("inf")
-    for k in range(1, len(TERMS) + 1):
-        for subset in itertools.combinations(range(len(TERMS)), k):
-            if subset == (0,):
+    for k in range(1, len(free) + 1):
+        for subset in itertools.combinations(free, k):
+            if 1 not in subset and 2 not in subset:
                 continue  # a flat fare explains nothing about distance or time
             ata = [[sum(x[i] * x[j] for x in xs) for j in subset] for i in subset]
             aty = [sum(x[i] * y for x, y in zip(xs, ys)) for i in subset]
@@ -164,25 +171,33 @@ def run(args) -> dict:
         if len(group) < args.min_samples:
             report["skipped"].append({**skip, "reason": f"need at least {args.min_samples} samples"})
             continue
-        xs = [[1.0, r["km"], r["minutes"]] for r in group]
+        xs = [[1.0, r["km"], r["minutes"], r["airport"]] for r in group]
         ys = [r["fare"] / multiplier(provider, card, r["hour"]) for r in group]
-        coef = fit_nonnegative(xs, ys)
+        # Kept terms stay at the card's value: take their share out of the fare first.
+        kept = [i for i, t in enumerate(TERMS) if t in args.keep]
+        ys = [y - sum(card.get(TERMS[i], 0) * x[i] for i in kept) for x, y in zip(xs, ys)]
+        coef = fit_nonnegative(xs, ys, tuple(i for i in range(len(TERMS)) if i not in kept))
+        if coef is not None:
+            for i in kept:
+                coef[i] = card.get(TERMS[i], 0)
         if coef is None:
             report["skipped"].append({**skip, "reason": "samples too similar to separate km from minutes"})
             continue
 
         before = mae(provider, card, group)
         fitted = dict(card)
-        fitted.update({t: round(c, 2) for t, c in zip(TERMS, coef)})
+        fitted.update({t: round(c, 2) for t, c in zip(TERMS, coef) if t != "airport_pickup" or any(r["airport"] for r in group)})
         fitted["base_km"] = 0
         after, after_pct = mae(provider, fitted, group), mape(provider, fitted, group)
         fitted["basis"] = "fitted"
-        fitted["range_pct"] = round(min(0.5, max(0.05, after_pct / 100)), 2)
+        # The fair range shown in the app: the model's typical error, but never under +-10%,
+        # because one ride varies more than a route's monthly average does.
+        fitted["range_pct"] = round(min(0.5, max(0.10, after_pct / 100)), 2)
         fitted["fit"] = {"samples": len(group), "mae_rs": round(after, 2), "mape_pct": round(after_pct, 1),
                          "fitted_on": args.today, "includes_examples": args.include_examples}
         provider["products"][prod] = fitted
         report["products"].append({"provider": pid, "product": prod, "n": len(group),
-                                   **{t: fitted[t] for t in TERMS},
+                                   **{t: fitted[t] for t in TERMS if t in fitted},
                                    "mae_before_rs": round(before, 2), "mae_after_rs": round(after, 2),
                                    "mape_pct": round(after_pct, 1), "few_samples": len(group) < RECOMMENDED_SAMPLES})
 
@@ -210,11 +225,11 @@ def print_table(report: dict) -> None:
     print(f"samples: {report['used_rows']} used, {report['skipped_example_rows']} example rows skipped")
     if report["products"]:
         print()
-        print(f"{'product':<18}{'n':>4}{'base':>9}{'per_km':>9}{'per_min':>9}{'MAE before':>13}{'MAE after':>12}{'MAPE':>8}")
+        print(f"{'product':<18}{'n':>4}{'base':>9}{'per_km':>9}{'per_min':>9}{'airport':>9}{'MAE before':>13}{'MAE after':>12}{'MAPE':>8}")
         for p in report["products"]:
             name = f"{p['provider']}/{p['product']}"
             flag = "  (few samples)" if p["few_samples"] else ""
-            print(f"{name:<18}{p['n']:>4}{p['base']:>9.2f}{p['per_km']:>9.2f}{p['per_min']:>9.2f}"
+            print(f"{name:<18}{p['n']:>4}{p['base']:>9.2f}{p['per_km']:>9.2f}{p['per_min']:>9.2f}{p.get('airport_pickup', 0):>9.2f}"
                   f"{'Rs ' + format(p['mae_before_rs'], '.2f'):>13}{'Rs ' + format(p['mae_after_rs'], '.2f'):>12}"
                   f"{format(p['mape_pct'], '.1f') + '%':>8}{flag}")
     for s in report["skipped"]:
@@ -234,7 +249,10 @@ def main(argv=None) -> int:
     ap.add_argument("--samples", type=Path, default=ROOT / "data" / "fare_samples.csv")
     ap.add_argument("--providers", type=Path, default=ROOT / "backend" / "config" / "providers.json")
     ap.add_argument("--include-examples", action="store_true", help="also fit the illustrative example rows")
-    ap.add_argument("--min-samples", type=int, default=3, help="fewest quotes a product needs (default 3)")
+    ap.add_argument("--min-samples", type=int, default=4, help="fewest quotes a product needs (default 4)")
+    ap.add_argument("--keep", action="append", default=[], choices=TERMS,
+                    help="keep this coefficient at its current value (repeatable), e.g. --keep base when every "
+                         "sample is a long ride and says little about the flag-down fare")
     ap.add_argument("--dry-run", action="store_true", help="print the fit, do not write providers.json")
     ap.add_argument("--json", action="store_true", help="print a JSON report instead of the table")
     ap.add_argument("--today", default=dt.date.today().isoformat(), help=argparse.SUPPRESS)

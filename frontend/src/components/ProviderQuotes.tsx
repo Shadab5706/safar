@@ -14,7 +14,8 @@ export function ProviderQuotes({ options, mode }: { options: FareQuote[]; mode: 
   return (
     <div className="mt-2.5 overflow-hidden rounded-xl border border-line bg-surface">
       <p className="border-b border-line bg-subtle px-3 py-2 text-xs text-muted">
-        <span className="font-semibold text-warn-ink">Estimated prices.</span> Open the app for the live fare.
+        <span className="font-semibold text-ink-2">Fair prices</span> from real trip fares. If the app asks for more, it&apos;s
+        surge or overpricing.
       </p>
       <ul className="divide-y divide-line">
         {quotes.map((q) => (
@@ -28,17 +29,15 @@ export function ProviderQuotes({ options, mode }: { options: FareQuote[]; mode: 
                   </span>
                 )}
               </p>
-              <p className="shrink-0 text-sm font-semibold text-ink tabular-nums">
-                {formatRupees(q.fare_rs)}
-                <span className="ml-1 text-[11px] font-medium text-warn-ink">est.</span>
-              </p>
+              <p className="shrink-0 text-sm font-semibold text-ink tabular-nums">{formatRupeeRange(q.fare_range_rs)}</p>
             </div>
             <div className="mt-0.5 flex items-center justify-between gap-3">
               <p className="min-w-0 text-xs text-muted">
-                {formatRupeeRange(q.fare_range_rs)}
+                Pay up to {formatRupees(q.fare_range_rs[1])}
                 {' · '}
                 {q.deep_link ? `pickup ~${formatDuration(q.pickup_eta_min)}` : 'hail on the street, pay by meter'}
                 {q.surge > 1.01 && ` · ×${q.surge.toFixed(2)} demand`}
+                {(q.airport_pickup_rs ?? 0) > 0 && ` · incl. ${formatRupees(q.airport_pickup_rs!)} airport pickup`}
               </p>
               {q.deep_link ? (
                 <a

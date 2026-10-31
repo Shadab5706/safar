@@ -68,7 +68,7 @@ export function AboutPage() {
         </p>
       </Section>
 
-      <Section title="Which prices are estimates">
+      <Section title="Where the prices come from">
         <ul className="list-disc space-y-1.5 pl-5">
           <li>
             <strong>Delhi Metro (DMRC):</strong> the official fare slabs from 25 Aug 2025, including Sunday fares. Shown
@@ -80,13 +80,14 @@ export function AboutPage() {
             operator.
           </li>
           <li>
-            <strong>Uber, Ola and Rapido:</strong> estimates from rate cards, because these services have no public
-            price API. Every such price is marked <span className="font-medium text-warn-ink">est.</span> with a
-            likely range, and an <em>Open in app</em> link shows the live fare. Uber links fill in pickup and drop;
-            Ola&apos;s link format is unofficial; Rapido opens its website.
+            <strong>Uber, Ola and Rapido:</strong> a fair price range for every ride, from what rides like it have
+            cost. Uber&apos;s rate cards are fitted to its published average fares on Delhi-NCR routes (October 2026),
+            including the extra for an airport pickup; Ola and Rapido use typical Delhi-NCR rates. If the app asks
+            for more than the top of the range, it&apos;s surge or overpricing. <em>Open in app</em> books the ride:
+            Uber links fill in pickup and drop; Ola&apos;s link format is unofficial; Rapido opens its website.
           </li>
           <li>
-            <strong>Auto (meter):</strong> the Delhi government auto-rickshaw rate card (2022), with the night charge
+            <strong>Auto (meter):</strong> the Delhi government auto-rickshaw rate card (notified Jan 2023), with the night charge
             from 11 pm to 5 am. Many autos quote a fixed price instead.
           </li>
           <li>
@@ -120,7 +121,10 @@ export function AboutPage() {
             (Open Source Routing Machine), on OpenStreetMap roads.
           </li>
           <li>Metro fares: published DMRC fare table; operator fare charts for the other networks (approximate).</li>
-          <li>Cab, auto and bike rate cards: approximate published rates, to be refitted from real app quotes.</li>
+          <li>
+            Cab, auto and bike fares: Uber&apos;s published past-month average fare per route and ride option, fitted
+            by least squares (data/fare_samples.csv, scripts/fit_fares.py); typical Delhi-NCR rates for the rest.
+          </li>
         </ul>
         {health && (
           <p className="pt-1 text-xs text-muted">

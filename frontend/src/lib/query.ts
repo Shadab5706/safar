@@ -34,7 +34,8 @@ export function toJourneyRequest(q: Query): JourneyRequest | null {
   }
 }
 
-/** What the home page hands to the planner: a start and destination, or an example trip to look up. */
+/** What the home page hands to the planner: a start and destination, an example trip to look up, or a request for Ask Safar. */
 export type PlanIntent =
   | { id: number; from: SearchResult | null; to: SearchResult | null }
   | { id: number; example: ExampleTrip }
+  | { id: number; ask: string }

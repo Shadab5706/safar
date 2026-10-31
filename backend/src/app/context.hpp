@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include "assistant/assistant.hpp"
 #include "data/dataset.hpp"
 #include "fares/fare_engine.hpp"
 #include "fares/transport_config.hpp"
@@ -20,6 +21,7 @@ struct AppContext {
     std::shared_ptr<const graph::Graph> transit;
     std::shared_ptr<const fares::FareEngine> fares;
     std::shared_ptr<const journey::Planner> planner;
+    std::shared_ptr<const assistant::Assistant> assistant;
 
     // Throws with a clear message if any file is missing or inconsistent.
     static AppContext load(const Config& config);

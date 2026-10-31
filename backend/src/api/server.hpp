@@ -34,6 +34,7 @@ private:
     void register_fare_routes();     // api/fare_routes.cpp
     void register_disruption_routes();  // api/disruption_routes.cpp
     void register_trip_routes();        // api/trip_routes.cpp
+    void register_assistant_routes();   // api/assistant_routes.cpp
     void register_middleware();
 
     Config config_;

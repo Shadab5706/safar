@@ -1,6 +1,7 @@
 import { ArrowRight, CircleAlert, Info } from 'lucide-react'
 import type { JourneyResponse } from '../api/types'
 import { EXAMPLE_TRIPS, type ExampleTrip } from '../lib/examples'
+import { formatRupeeRange } from '../lib/format'
 import { RouteCard } from './RouteCard'
 
 export type ResultState =
@@ -54,7 +55,9 @@ export function Results({ state, selected, expanded, onSelect, onToggle, onFocus
                   <span className="block truncate text-sm font-semibold text-ink">
                     {trip.from.name} → {trip.to.name}
                   </span>
-                  <span className="block text-xs text-muted">{trip.note}</span>
+                  <span className="block text-xs text-muted">
+                    {trip.note} · {trip.cab.name} {formatRupeeRange(trip.cab.fair)}
+                  </span>
                 </span>
                 <ArrowRight className="size-4 shrink-0 text-faint transition-transform group-hover:translate-x-0.5 group-hover:text-brand-ink" aria-hidden="true" />
               </button>
@@ -121,10 +124,11 @@ export function Results({ state, selected, expanded, onSelect, onToggle, onFocus
           {data.routes.length} {data.routes.length === 1 ? 'route' : 'routes'}
         </h2>
         <p className="text-xs text-muted">
-          best of {data.stats.candidates} candidates{data.depart.sunday_fares ? ' · Sunday metro fares' : ''}
+          {data.routes[0]?.match ? 'ranked for your request' : `best of ${data.stats.candidates} candidates`}
+          {data.depart.sunday_fares ? ' · Sunday metro fares' : ''}
         </p>
       </div>
-      <div className="mb-3 flex gap-2 rounded-xl border border-warn-line bg-warn-soft px-3 py-2.5 text-xs text-warn-ink">
+      <div className="mb-3 flex gap-2 rounded-xl border border-line bg-subtle px-3 py-2.5 text-xs text-ink-2">
         <Info className="mt-px size-3.5 shrink-0" aria-hidden="true" />
         <p>{data.fare_note}</p>
       </div>

@@ -92,7 +92,7 @@ std::optional<LocalTime> parse_local(const std::string& s) {
 std::string format_local(const LocalTime& t) {
     using namespace std::chrono;
     const year_month_day ymd{t.day};
-    char buf[20];
+    char buf[64];  // room for any ints, so GCC -Wformat-truncation stays quiet
     std::snprintf(buf, sizeof buf, "%04d-%02u-%02uT%02d:%02d", static_cast<int>(ymd.year()), static_cast<unsigned>(ymd.month()),
                   static_cast<unsigned>(ymd.day()), t.minute / 60, t.minute % 60);
     return buf;

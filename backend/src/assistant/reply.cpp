@@ -11,7 +11,7 @@ std::string format_minutes(double minutes) {
     const long m = std::lround(minutes);
     if (m < 60) return std::to_string(m) + " min";
     if (m % 60 == 0) return std::to_string(m / 60) + " h";
-    char buf[24];
+    char buf[48];  // room for any two longs, so GCC -Wformat-truncation stays quiet
     std::snprintf(buf, sizeof buf, "%ld h %ld min", m / 60, m % 60);
     return buf;
 }

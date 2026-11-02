@@ -237,7 +237,7 @@ export function HomePage({ network, onPlan, onExample, onAsk, install }: Props) 
             Take an auto to the metro, ride two lines, then a bike taxi for the last stretch, all in one plan.
           </Feature>
           <Feature icon={BadgeIndianRupee} title="Prices side by side">
-            Uber, Ola and Rapido estimates and the auto meter next to exact DMRC fares, with buttons that open the app with
+            Fair prices for Uber, Ola and Rapido and the auto meter next to exact DMRC fares, with buttons that open the app with
             your trip filled in.
           </Feature>
           <Feature icon={Sparkles} title="AI search, in milliseconds">

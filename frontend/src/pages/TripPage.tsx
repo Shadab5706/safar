@@ -426,7 +426,7 @@ export function TripPage({ network, closures }: { network: NetworkState; closure
                 setting). Each leg is the recommended journey from the planner; {data.stops.length * (data.stops.length - 1)}{' '}
                 journeys planned in {Math.round(data.matrix_ms)} ms
                 {data.closures > 0 ? `, avoiding ${data.closures} line closure${data.closures === 1 ? '' : 's'}` : ''}. Cab, auto
-                and bike fares are estimates.
+                and bike fares are typical fair prices.
               </p>
             </div>
           ) : (
